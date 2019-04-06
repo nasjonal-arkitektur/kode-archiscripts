@@ -1,1 +1,1 @@
-# kode-archi-scripts
+# kode-archiscripts
