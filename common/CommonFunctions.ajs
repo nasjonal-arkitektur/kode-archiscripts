@@ -1,0 +1,89 @@
+/*
+ * CommonFunctions
+ */
+load(__DIR__ + "Constants.ajs");
+
+console.clear();
+
+var log_ListElements = function(elementList, headerText) {
+
+	console.log(headerText);	
+	
+	if (elementList != null) {
+		var i = 0;
+		
+		elementList.each(function(e) {
+			i++;
+			
+			$(e).parent().each(function(parent) {
+				console.log("   " + i + " '" + e.name + "'(" + e.id + ") in " + parent.type + " '" + parent.name + "'" );	
+				/*
+				console.log("   " + "x = " + e.bounds.x);
+				console.log("   " + "y = " + e.bounds.y);
+				console.log("   " + "width = " + e.bounds.width);
+				console.log("   " + "height = " + e.bounds.height);
+				*/
+			});
+				
+		});
+	}
+}
+
+var lib_GetDuplicateModelItems = function(elm) {
+
+    return $("element").filter(function(o) {
+        return ( (o.name == elm.name) && (o.type == elm.type) );
+    });
+}
+
+function lib_HelloWorld() {
+
+	console.log("Hello world!");
+
+}
+
+var lib_FindAllModelElementsWithName = function(elementName) {
+
+    return $("element").filter(function(o) {
+        return ( (o.name == elementName) );
+    });
+}
+
+var lib_FindElementsWithNameInList = function(elementName, list) {
+
+    return list.filter(function(o) {
+        return ( (o.name == elementName) );
+    });
+}
+
+var lib_getDuplicatesInlistGivenElement = function(elm, list) {
+
+	return list.filter(function(o) {
+        return ( (o.name == elm.name) && (o.type == elm.type) );
+    });
+}
+
+
+var lib_getDuplicatesInlistGivenElementNameNotType = function(name, list) {
+
+	var elementsWithSameName = lib_FindElementsWithNameInList(name, list); // may contain several element types
+	var allDuplicates = [];
+	var duplicates = null;
+	var types = [];
+	elementsWithSameName.each(function(e) {
+		console.log("      " + e.name + ", " + e.type + ", " + ", " + " Id = " + e.id);
+		
+		if (types.indexOf(e.type) < 0) { // don't add duplicate values to this array
+			types.push(e.type);
+			duplicates = lib_getDuplicatesInlistGivenElement(e, list);
+			if (duplicates.size() > 1)
+				allDuplicates.push(duplicates);
+		}
+
+	});
+	
+	//console.log("Number of types: " + types.length );
+	//console.log("Number of types with duplicates: " + allDuplicates.length );
+	return allDuplicates;
+	
+}

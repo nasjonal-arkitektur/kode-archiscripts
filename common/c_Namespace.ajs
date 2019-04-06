@@ -1,0 +1,150 @@
+/*
+ * c_Namespace
+ */
+ 
+ 
+//console.log("c_Namespace");
+ 
+load(__DIR__ + "Constants.ajs");
+load(__DIR__ + "c_Model.ajs");
+load(__DIR__ + "c_Concept.ajs");
+
+function cNamespace_conceptNameIncludesNamespace(c) {
+	
+	var namespaceValue = c.prop(const_prop_namespace);
+	var namespaceWithPreAndPostfix = const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;
+	
+	if (c.namespaceValue != "")
+	{
+			var startPos = c.name.indexOf(const_title_namespace_prefix);
+			if (startPos >= 0) {
+				
+				return true;
+				
+			}
+	}
+	
+	return false;
+}
+
+
+
+function cNamespace_UpdateNamespaceForGivenConcepts(givenConcepts, newNamespaceValue) {
+
+
+	//givenConcepts.prop(const_prop_namespace, newNamespaceValue);
+
+	// another way to code this: 
+	givenConcepts.each(function(c) {
+		
+
+		if (cNamespace_conceptNameIncludesNamespace(c) ) {
+			
+			cNamespace_RemoveNamespaceFromNameOfGivenConcepts(givenConcepts);
+			c.prop(const_prop_namespace, newNamespaceValue);
+			cNamespace_AddNamespaceToNameForGivenConcepts(givenConcepts);
+		}
+		else {
+			c.prop(const_prop_namespace, newNamespaceValue);
+		}
+
+	});	
+}
+
+
+function cNamespace_AddNamespaceToNameForGivenConcepts(givenConcepts) {
+
+
+	//$(selection).each(function(e) {
+	givenConcepts.each(function(e) {
+		
+		var c = e.concept; // just to make 100% sure we have the concept object
+		cConcept_AddNamespaceToName(c);
+		
+		/*
+		var namespaceValue = e.prop(const_prop_namespace);
+
+		if (e.namespaceValue != "")
+			e.name += const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;
+		*/
+		
+	});
+}
+
+function cNamespace_RemoveNamespaceFromNameOfGivenConcepts(givenConcepts) {
+
+	//$(selection).each(function(e) {
+	givenConcepts.each(function(e) {
+		
+		var c = e.concept; // just to make 100% sure we have the concept object
+		
+		cConcept_RemoveNamespaceFromName(c);
+		
+		/*
+		var namespaceValue = e.prop(const_prop_namespace);
+		var namespaceWithPreAndPostfix = const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;
+		
+		console.log("Removing " + namespaceWithPreAndPostfix + " from displayed name of " + e.name);
+		
+		// TODO: replace code by calling cNamespace_GetNameOfConceptWithoutNamespace!
+
+		if (e.namespaceValue != "") // ????????????????????????????????????????????????????
+		{
+			var startPos = e.name.indexOf(const_title_namespace_prefix);
+			if (startPos >= 0) {
+			
+				var restOfString = e.name.substring(startPos);
+				var endPos = restOfString.indexOf(const_title_namespace_postfix);
+				
+				if (endPos >= 0) {
+				
+					var strToReplace = restOfString.substring(0, endPos + 1);
+					console.log("strToReplace = " + strToReplace); // temptest
+
+					e.name = e.name.replace(strToReplace, "");	
+				}
+			}
+		}
+*/		
+	});
+
+}
+
+function cNamespace_GetNameOfConceptWithoutNamespace(givenConcept) {
+
+
+
+	var concept = givenConcept.concept; // in case we were given an element or relationship occurence of the concept rather than the concept itself
+	var nameWithoutNamespace = concept.name; // assumption to be tested and possibly modified
+
+	var namespaceValue = concept.prop(const_prop_namespace);
+	if (namespaceValue) {
+	
+		var namespaceWithPreAndPostfix = const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;
+		
+		//console.log("Removing " + namespaceWithPreAndPostfix + " from displayed name of " + concept.name);
+
+		if (namespaceWithPreAndPostfix != "")
+		{
+			var startPos = concept.name.indexOf(const_title_namespace_prefix);
+			if (startPos >= 0) {
+			
+				var restOfString = concept.name.substring(startPos);
+				var endPos = restOfString.indexOf(const_title_namespace_postfix);
+				
+				if (endPos >= 0) {
+				
+					var strToReplace = restOfString.substring(0, endPos + 1);
+console.log("strToReplace = " + strToReplace); // temptest
+
+					concept.name = concept.name.replace(strToReplace, "");	
+				}
+			}
+		}
+	
+	}
+	// else nameWithoutNamespace is already ok
+	
+	return concept.name;
+	
+}

@@ -1,0 +1,14 @@
+/*
+ * Appearance, text position middle
+ */
+ 
+console.show();
+console.clear();
+
+console.log("Set text position to middle for selected elements");
+
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Element.ajs");
+
+window.alert("Ooops - not supported by jArchi!");

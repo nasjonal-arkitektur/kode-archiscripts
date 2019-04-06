@@ -1,0 +1,39 @@
+/*
+ * Name unnamed relationships in view
+ *
+ * Erik Hagen, 2019
+ *
+ */
+ 
+ 
+console.clear();
+console.log("Name unnamed relationships in view");
+
+var type = "";
+
+function nameRelationWithDefaultNameIfUnnamed(r) {
+
+    //$("relation").each(function(r) {
+		if (!r.name)
+		{
+			type = r.type.replace("-relationship", ""); // remove this part of the name!
+			r.name = type;
+			
+			console.log("Added relationship name '" + r.name + "' to relation woith id = " + r.id);
+			
+		}
+    //});
+}
+
+	
+// Iterate through selected views and relations
+$(selection).filter("archimate-diagram-model").each(function(v) {
+
+	console.log("View: " + v.name); // erik
+
+	$(v).find("relationship").each(function(r) {
+	
+		nameRelationWithDefaultNameIfUnnamed(r);
+			
+	});
+});

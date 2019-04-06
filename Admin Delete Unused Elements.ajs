@@ -1,0 +1,22 @@
+/*
+ * deleteUnusedElements
+ */
+ 
+console.clear();
+
+function deleteUnusedElements() {
+
+	console.log("Starting function deleteUnusedElements");
+
+    $("element").each(function(element) {
+        if($(element).objectRefs().isEmpty()) {
+			console.log("Deleting unused element: " + element.name);
+            element.delete();
+        }
+    });
+
+	console.log("Ending function deleteUnusedElements");
+
+}
+
+deleteUnusedElements();

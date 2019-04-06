@@ -1,0 +1,43 @@
+/*
+ * c_Collection
+ */
+ 
+
+load(__DIR__ + "../common/Constants.ajs");
+
+
+var cCollection_GetDuplicateItems = function(coll, obj) {
+
+    return coll.filter(function(o) {
+        return ( (o.name == obj.name) && (o.type == obj.type) );
+    });
+}
+
+var cCollection_GetItemsWithGivenId = function(coll, obj) {
+
+	return coll.filter(function(o) {
+		return (o.id == obj.id) ;  
+        
+    });
+}
+
+var cCollection_GetDuplicatesInlistGivenElement = function(elm, list) {
+
+	return list.filter(function(o) {
+        return ( (o.name == elm.name) && (o.type == elm.type) );
+    });
+}
+
+var cCollection_FindElementsWithNameInList = function(elementName, list) {
+
+    return list.filter(function(o) {
+        return ( (o.name == elementName) );
+    });
+}
+
+var cCollection_GetItemsOfType = function(coll, type) {
+
+    return coll.filter(function(o) {
+        return ( (o.type == type) );
+    });
+}

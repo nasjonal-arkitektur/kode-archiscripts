@@ -1,0 +1,96 @@
+/*
+ * c_Element
+ */
+
+"use strict"; 
+load(__DIR__ + "CommonFunctions.ajs");
+ 
+
+var cElement = {
+	m_archiElement: null
+
+};
+
+
+function cElement_InitFromArchiObject(archiElement) {
+	
+	this.m_archiElement = archiElement;
+	//console.log("cElement_InitFromArchiObject " + this.m_archiElement.name);
+}
+
+function cElement_MergeAsMasterWithOtherConceptsInView(elm) {
+
+	if (elm.view == null)
+		return;
+	
+ 	var duplicates = cView_GetOtherConceptsInViewWithSameName(elm.view, elm);
+	
+	
+	duplicates.each(function(d) {
+	
+		debug?(console.log("Merging " + d.name + ", id = " + d.id + " in view " + elm.view )):true;
+		var newViewObj = elm.view.add(elm.concept, d.bounds.x, d.bounds.y, d.bounds.width, d.bounds.height); 
+		
+		d.concept.delete();
+		
+	});	
+}
+
+
+function cElement_HighlightConceptsInViewBeforeMerge(elm) {
+	
+	// See https://www.w3schools.com/colors/colors_rgb.asp for fill colors
+
+	console.log("cElement_HighlightConceptsInViewBeforeMerge");
+
+	if (elm.view == null){
+		console.log("WARNING: Unexpected elm.view == null in cElement_HighlightOtherConceptsInViewBeforeMerge");
+		return false;
+	}
+	
+
+	var otherSameElements = cView_GetOtherOccurencesInView(elm.view, elm);
+	otherSameElements.each(function(e) {
+	
+		debug?(console.log("Highlighting occurence" + e.name + ", id = " + e.id + " in view " + elm.view )):true;
+		e.fillColor = "#03fa00"; // green
+	});
+	
+	elm.fontColor = "#fb0100"; // red
+	
+ 	var duplicates = cView_GetOtherConceptsInViewWithSameName(elm.view, elm);
+	if (duplicates == null || duplicates.size() < 1)
+		return false;
+		
+	duplicates.each(function(d) {
+	
+		debug?(console.log("Highlighting duplicate " + d.name + ", id = " + d.id + " in view " + elm.view )):true;
+		d.fillColor = "#fc5651"; // red
+	});	
+	
+
+	return true;
+	
+	
+}
+
+function cElement_GetView(elm) {
+	
+	//console.log("cElement_GetView for elm.id=" + elm.id);
+	return elm.view; 
+	
+}
+
+/*
+
+			$(e).parents().each(function(parent) {
+				if (parent.type == "folder") 
+					console.log("    " + e.name + " is located in folder " + parent.name);			
+			});
+			
+			$(e).parent().each(function(parent) {
+				if (parent.type == "view") 
+					console.log("    " + e.name + " occurs in view " + parent.name);			
+			});
+
+*/

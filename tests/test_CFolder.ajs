@@ -1,0 +1,118 @@
+/*
+ * test_CFolder
+ */
+
+ load(__DIR__ + "/c_Test.ajs");
+ 
+load(__DIR__ + "../common/Constants.ajs");
+
+
+
+//c_Namespace
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Folder.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Element.ajs");
+load(__DIR__ + "../common/c_Relation.ajs");
+load(__DIR__ + "../common/c_Viewpoint.ajs");
+
+
+function test_CFolder_findSubfoldersOfSelectedFolders()  {
+
+	console.log("test_CFolder_findSubfoldersOfSelectedFolders");
+
+	selectedFolders = $(selection).filter("folder");
+	
+	if (selectedFolders.size() == 0) {
+		window.alert("No folders selected. Exiting...");
+		exit();
+	}
+	
+	selectedFolders.each(function(f) {
+		
+		console.log("\nSelected folder: " + f.name);
+		
+		
+		//folderList = cFolder_GetListOfFolderAndSubfoldersForAGivenFolder(f);
+		folderList = cFolder_GetSubfolders(f);
+		
+				
+		console.log("\nfolderList:");
+		folderList.each(function(f) {	
+		
+			console.log("    " + f.name);
+
+		});	
+		
+	});
+}
+
+
+function test_CFolder_findFolderAndSubfoldersOfSelectedFolders()  {
+
+	Ctest_CFolder_LogStartNewTest("test_CFolder_findFolderAndSubfoldersOfSelectedFolders");
+		
+	var selectedFolders = $(selection).filter("folder");
+	var folderList = cFolder_GetListOfFoldersAndSubfoldersForAGivenFolderList(selectedFolders);
+	
+	CTest_Log("folderList:");
+	folderList.each(function(f) {	
+		CTest_Log("    " + f.name);
+	});	
+	
+}
+
+/**
+function test_CFolder_findViewsUnderSelectedFolders()  {
+	
+	var selectedFolders = $(selection).filter("folder");
+	var viewList = cFolder_GetAllViewsUnderGivenFolders(selectedFolders);
+	
+	console.log("viewList:");
+	viewList.each(function(v) {	
+		console.log("    " + v.name);
+	});	
+}
+**/
+
+
+function test_CFolder_findItemsUnderSelectedFolders(itemType)  {
+	
+	CTest_LogStartNewTest("test_CFolder_findItensUnderSelectedFolders, itemType = " + itemType);	
+	
+	var selectedFolders = $(selection).filter("folder");
+	var itemList = cFolder_GetAllItemsUnderGivenFoldersForGivenType(selectedFolders, itemType);
+	
+	console.log("itemList(" + itemType + "):");
+	itemList.each(function(item) {	
+		console.log("    " + item.name + " (" + item.type + ")");
+	});
+	
+	window.alert("Found " + itemList.size() + " " + itemType + "s");
+}
+
+function test_CFolder_findItemsWithGivenTypeAndNameUnderSelectedFolders(itemType, itemName, completeName, caseSensitiveName)  {
+	
+	var strComplete = "complete string"
+	if (!completeName)
+		strComplete = "substring ok";
+	
+	var strCaseSensitive = "caseSensitive";
+	if (!caseSensitiveName)
+		strCaseSensitive = "not caseSensitive";
+	
+	console.log("\ntest_CFolder_findItemsWithGivenNameUnderSelectedFolders, itemType = " + itemType + ", itemName = " + itemName + ", " + strComplete +  ", " + strCaseSensitive);	
+
+	
+	var selectedFolders = $(selection).filter("folder");
+	var itemList = cFolder_GetAllItemsUnderGivenFoldersForGivenTypeAndName(selectedFolders, itemType, itemName, completeName, caseSensitiveName);
+	
+	console.log("itemList(" + itemType + "):");
+	itemList.each(function(item) {	
+		console.log("    " + item.name + " (" + item.type + ")");
+	});	
+}
+
+
+
+

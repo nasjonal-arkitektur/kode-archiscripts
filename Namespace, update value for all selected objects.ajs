@@ -1,0 +1,41 @@
+/*
+ * Namespace, update value for all selected objects.ajs
+ */
+"use strict";
+
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.clear();
+
+
+function UserDialogInputNewNamespaceValue() {
+
+		var propValue = window.prompt("Which value do you want to set for '"+const_prop_namespace+"' (leave empty to cancel)?", "");
+		return propValue;
+}
+
+
+function UpdateNamespaceForSelectedConceptsWithUserDialog() {
+
+	//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
+	var selectedConcepts = CSelection_GetSelectedConcepts("");
+	
+	if (selectedConcepts === null || selectedConcepts.size() < 1)
+	{
+		window.alert("No concepts selected. Exiting...");
+		exit();
+	}
+
+	var newNamespaceValue = UserDialogInputNewNamespaceValue();
+	if (newNamespaceValue === null || newNamespaceValue === "")
+		window.alert("Cancelled - no update done.");
+	else {
+		cNamespace_UpdateNamespaceForGivenConcepts(selectedConcepts, newNamespaceValue);
+		window.alert("Updated namespace to '" + newNamespaceValue + "' for " + selectedConcepts.size() + " concepts.");
+	}
+
+}
+
+
+UpdateNamespaceForSelectedConceptsWithUserDialog();	

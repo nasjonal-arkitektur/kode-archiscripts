@@ -1,0 +1,20 @@
+/*
+ * New Archi Script
+ */
+ 
+ 
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.show();
+console.clear();
+
+var selectedConcepts = CSelection_GetSelectedConcepts("");
+
+selectedConcepts.each(function(concept) {
+	cConcept_CreateMissingProperties(concept);
+});
+
+
+
+

@@ -1,0 +1,11 @@
+/*
+ * c_Relation
+ */
+ 
+
+var m_relation = null;
+
+function cRelation_InitExistingFromArchiObj(archiObj) {
+
+	m_relation= archiObj;
+}

@@ -1,0 +1,34 @@
+/*
+ * SetLanguageForSelectedConcepts
+ */
+
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("SetLanguageForSelectedConcepts");
+
+
+function SetLanguageForGivenConcepts(givenConcepts, language) {
+
+	givenConcepts.each(function(c) {
+		cConcept_SetLanguage(c, language);
+	});
+}
+
+var selectedConcepts = CSelection_GetSelectedConcepts("");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+var currentLanguageSetting = model.prop(const_prop_current_language);
+
+var language = window.prompt("Switch language for name of selected concepts to 'en' or 'no' (you may accept the indicated model default or change it)" , model.prop(const_prop_current_language));
+
+if (language !== const_prop_language_value_no && language !== const_prop_language_value_en) {
+	window.alert("Invalid language setting - please select either " + "'" + const_prop_language_value_no + "' or '" + const_prop_language_value_no + "'. Exiting...");
+	exit();
+}
+
+SetLanguageForGivenConcepts(selectedConcepts, language);

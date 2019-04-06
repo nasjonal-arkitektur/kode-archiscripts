@@ -1,0 +1,335 @@
+/*
+ * c_Selection
+ */
+ 
+
+load(__DIR__ + "../common/Constants.ajs");
+
+load(__DIR__ + "../common/c_Collection.ajs");
+
+//c_Namespace
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Folder.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Element.ajs");
+load(__DIR__ + "../common/c_Relation.ajs");
+load(__DIR__ + "../common/c_Viewpoint.ajs");
+
+
+
+function CSelection_findSubfoldersOfSelectedFolders()  {
+
+	selectedFolders = $(selection).filter("folder");
+	var folderList = cFolder_GetListOfSubfoldersForAGivenFolderList(selectedFolders);
+	return folderList;	
+	
+/*
+	
+	if (selectedFolders.size() == 0) {
+		window.alert("No folders selected. Exiting...");
+		exit();
+	}
+	
+	selectedFolders.each(function(f) {
+		
+		console.log("\nSelectedsdsad folder: " + f.name);
+		
+		folderList = cFolder_GetSubfolders(f);
+		
+				
+		console.log("\nfolderList:");
+		folderList.each(function(f) {	
+		
+			console.log("    " + f.name);
+
+		});	
+		
+	});
+*/
+
+}
+
+
+function CSelection_findFolderAndSubfoldersOfSelectedFolders()  {
+
+	var selectedFolders = $(selection).filter("folder");
+	var folderList = cFolder_GetListOfFoldersAndSubfoldersForAGivenFolderList(selectedFolders);
+	return folderList;
+	
+}
+
+
+function CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(itemType, itemName, completeName, caseSensitiveName)  {
+	
+	var strComplete = "complete string"
+	if (!completeName)
+		strComplete = "substring ok";
+	
+	var strCaseSensitive = "caseSensitive";
+	if (!caseSensitiveName)
+		strCaseSensitive = "not caseSensitive";
+	
+	var selectedFolders = $(selection).filter("folder");
+	var itemList = cFolder_GetAllItemsUnderGivenFoldersForGivenTypeAndName(selectedFolders, itemType, itemName, completeName, caseSensitiveName);
+
+	return itemList;
+
+}
+
+
+/**************************************************
+**************************************************/
+
+
+
+var CSelection_GetDuplicatesInlistGivenElement = function(elm, list) {
+
+	return list.filter(function(o) {
+        return ( (o.name == elm.name) && (o.type == elm.type) );
+    });
+}
+
+var CSelection_FindElementsWithNameInList = function(elementName, list) {
+
+    return list.filter(function(o) {
+        return ( (o.name == elementName) );
+    });
+}
+
+var CSelection_GetDuplicatesInlistGivenElementNameNotType = function(name, list) {
+
+	var elementsWithSameName = CSelection_FindElementsWithNameInList(name, list); // may contain several element types
+	var allDuplicates = []; // erik TODO:  fix from array to jarchi collection
+	var duplicates = null;
+	var types = [];  // erik TODO: fix from array to jarchi collection
+	elementsWithSameName.each(function(e) {
+		console.log("      " + e.name + ", " + e.type + ", " + ", " + " Id = " + e.id);
+		
+		if (types.indexOf(e.type) < 0) { // don't add duplicate values to this array
+			types.push(e.type); // add to end of array
+			duplicates = CSelection_GetDuplicatesInlistGivenElement(e, list);
+			if (duplicates.size() > 1)
+				allDuplicates.push(duplicates); // add to end of array 
+		}
+
+	});
+	
+	//console.log("Number of types: " + types.length );
+	//console.log("Number of types with duplicates: " + allDuplicates.length );
+	return allDuplicates;
+	
+}
+
+
+function CSelection_findItemsUnderSelectedFolders(itemType)  {
+	
+	
+	var selectedFolders = $(selection).filter("folder");
+	
+	if (selectedFolders.size() < 1) {
+		
+		//console.log("Warning: " + "selectedFolders = 0 in function CSelection_findItemsUnderSelectedFolders(itemType)");
+	}
+	
+	
+	//var allItems = cFolder_GetAllItemsUnderGivenFoldersForGivenType(selectedFolders, itemType);
+	var folderItems = null;
+	var resultingItems = null; //emptyArchiCollection.clone();
+	 
+	
+	selectedFolders.each(function(folder) {
+		
+		folderItems = $(folder).find().filter(itemType);
+		
+		folderItems.each(function(item) {	
+		
+			if (itemType == "concept")
+				item = item.concept;
+		
+			if (resultingItems == null) {
+				resultingItems = $(item);
+			}
+			else {
+				
+				var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+				
+				if (itemInList.size() < 1)
+					resultingItems.add($(item));
+			}
+
+		});		
+	});
+
+	return resultingItems;
+}
+
+function CSelection_GetDirectlySelectedViews() {
+
+	var selectedViews = $(selection).filter("archimate-diagram-model");
+	return selectedViews;
+}
+
+function CSelection_GetViewsUnderSelectedFoldersAndSubfolders() {
+	
+	var selectedFolders = $(selection).filter("folder");
+	var views = cFolder_GetAllItemsUnderGivenFoldersForGivenType(selectedFolders, "view");
+	return views;
+}
+
+function CSelection_GetAllSelectedViews() {
+	
+	var directlySelectedViews = CSelection_GetDirectlySelectedViews();
+	var folderViews = CSelection_GetViewsUnderSelectedFoldersAndSubfolders();
+	var views = directlySelectedViews;
+	if (directlySelectedViews != null)	{
+		if (folderViews != null)
+			views.add(folderViews);
+	}
+	
+	return views;
+
+}
+
+/*********************************
+* Below here mey be untested
+***********************************/
+
+function CSelection_GetAllItemsOfGivenTypeInSelectedViews(itemType) {
+	
+	var resultingItems = null;
+	var viewItems = null;
+	var selectedViews = CSelection_GetAllSelectedViews();
+
+
+
+	selectedViews.each(function(view) {
+	
+		viewItems = $(view).find().filter(itemType);
+
+		viewItems.each(function(item) {	
+		
+			if (itemType == "concept")
+				item = item.concept;
+		
+			if (resultingItems == null) {
+				resultingItems = $(item);
+			}
+			else {
+				
+				var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+				
+				if (itemInList.size() < 1)
+					resultingItems.add($(item));
+			}
+		});
+	});
+
+	return resultingItems;
+}
+
+function CSelection_GetAllItemsOfGivenTypeAndNameInSelectedViews(itemType, itemName) {
+	
+	var resultingItems = null;
+	var viewItems = null;
+	var selectedViews = CSelection_GetAllSelectedViews();
+
+
+
+	selectedViews.each(function(view) {
+	
+		viewItems = $(view).find().filter(itemType);
+
+		viewItems.each(function(item) {	
+		
+			if (itemType == "concept")
+				item = item.concept;
+		
+			if (resultingItems == null) {
+				if (item.name == itemName) // case sensitive
+					resultingItems = $(item);
+			}
+			else {
+				
+				var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+				
+				if (itemInList.size() < 1) {
+					if (item.name == itemName) // case sensitive
+						resultingItems.add($(item));
+				}
+			}
+		});
+	});
+
+	return resultingItems;
+}
+
+
+function CSelection_GetAllDirectlySelectedConcepts() {
+	var resultingItems = null;
+	var selectedItems = null;
+
+
+	selectedItems = $(selection).filter("concept");
+	
+	selectedItems.each(function(item) {	
+		
+		//if (itemType == "concept")
+		item = item.concept; 
+				
+		//if (itemType != null && item.type == itemType) {
+		
+			if (resultingItems == null) {
+				resultingItems = $(item);
+			}
+			else {
+				
+				var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+				
+				if (itemInList.size() < 1)
+					resultingItems.add($(item));
+			}
+		//}
+			
+	});
+	
+	return resultingItems;
+	
+}
+
+function CSelection_GetSelectedConcepts(conceptType) { // always return the concepts only, not the occurences
+
+	var selectedConcepts = null;
+	var directlySelectedConcepts = null;
+	var conceptsInSelectedViews = null;
+	var conceptsUnderSelectedFolders = null;
+		
+	directlySelectedConcepts = CSelection_GetAllDirectlySelectedConcepts();
+	if (directlySelectedConcepts != null)
+		selectedConcepts = directlySelectedConcepts;
+	
+	conceptsInSelectedViews = CSelection_GetAllItemsOfGivenTypeInSelectedViews("concept");
+	if (selectedConcepts == null)
+		selectedConcepts = conceptsInSelectedViews;
+	else if (conceptsInSelectedViews != null)
+		selectedConcepts.add(conceptsInSelectedViews);
+
+	conceptsUnderSelectedFolders = CSelection_findItemsUnderSelectedFolders("concept");
+	if (selectedConcepts == null)
+		selectedConcepts = conceptsUnderSelectedFolders;
+	else if (conceptsUnderSelectedFolders != null)
+		selectedConcepts.add(conceptsUnderSelectedFolders);
+
+	if (conceptType != null && conceptType != "")
+		selectedConcepts = cCollection_GetItemsOfType(selectedConcepts, conceptType);
+	
+	return selectedConcepts;
+}
+
+
+function CSelection_GetDirectlySelectedOccurences() {
+
+	var selectedOccurences = $(selection).filter("element");
+	selectedOccurences.add( $(selection).filter("relationship") );
+	
+	return selectedOccurences;
+}

@@ -1,0 +1,126 @@
+/*
+ * c_Test
+ */
+ 
+function CTest_LogStartNewTest(testHeading) {
+
+
+	var underscoreChar = "-";
+	var underScore = "";
+	
+	for (i= 1; i <= testHeading.length; i++) // makes perfect sense for some fonts only, but anyway...
+		underScore += underscoreChar;
+	
+	console.log(underScore);	
+	console.log(testHeading);
+	console.log(underScore);
+}
+
+
+function CTest_LogText(textToLog) {
+
+	console.log(textToLog);
+}
+
+function CTest_LogObjectListWithType(items) {
+
+	if (items != null) {
+		var i = 0;
+		console.log("No." + "\t" + "Name" + "\t" + "Type" + "\t" + "Id");
+		items.each(function(item) {	
+		
+			console.log(++i + "\t" + item.name + "\t" + item.type + "\t" + item.id);
+			//console.log(++i + "\t" + item.name + "\t" + item.type + "\t" + item.id + "\t" + item.parent);
+		});
+	}
+	else {
+		//console.log("Found 0 selected " + itemType + "s");
+	}
+}
+
+function CTest_LogObjectList(items) {
+
+	if (items != null) {
+		var i = 0;
+		console.log("No." + "\t" + "Name" + "\t" + "Id");
+		items.each(function(item) {	
+		
+			console.log(++i + "\t" + item.name + "\t" + item.id);
+			//console.log(++i + "\t" + item.name + "\t" + item.type + "\t" + item.id + "\t" + item.parent);
+		});
+	}
+	else {
+		console.log("Found 0 selected items");
+	}
+}
+
+function CTest_CSelection_findItemsUnderSelectedFolders(testnum, itemType) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_findItemsUnderSelectedFolders" + ", itemType = " + itemType);	
+	var itemList = CSelection_findItemsUnderSelectedFolders(itemType);
+	CTest_LogObjectListWithType(itemList);
+}
+
+	
+function CTest_CSelection_findFoldersAndSubfoldersOfSelectedFolders(testnum) {
+
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_findFoldersAndSubfoldersOfSelectedFolders");
+	var allFolders = CSelection_findFolderAndSubfoldersOfSelectedFolders();
+	CTest_LogObjectList(allFolders);
+}
+
+function CTest_CSelection_findSubfoldersOfSelectedFolders(testnum) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_findSubfoldersOfSelectedFolders");
+	var allFolders = CSelection_findSubfoldersOfSelectedFolders();
+	CTest_LogObjectList(allFolders);
+}
+
+function CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(testnum, itemType, itemName, completeName, caseSensitiveName) {
+
+
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(" + itemType + ", " + itemName + ", " + completeName + ", " + caseSensitiveName + ")" );
+	
+	var selectedItems = CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(itemType, itemName, completeName, caseSensitiveName);
+	CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(++testnum, "business-actor", "Erik", true, true);
+	
+	CTest_LogObjectList(selectedItems);
+	
+}
+
+function CTest_CSelection_GetDirectlySelectedViews(testnum) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_GetDirectlySelectedViews");
+	var selectedViews = CSelection_GetDirectlySelectedViews();
+	CTest_LogObjectList(selectedViews);
+}
+
+
+function CTest_CSelection_GetViewsUnderSelectedFoldersAndSubfolders(testnum) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_GetViewsUnderSelectedFoldersAndSubfolders");
+	var selectedViews = CSelection_GetViewsUnderSelectedFoldersAndSubfolders();
+	CTest_LogObjectList(selectedViews);
+}
+
+function CTest_CSelection_GetAllSelectedViews(testnum) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_GetAllSelectedViews");
+	var selectedViews = CSelection_GetAllSelectedViews();
+	CTest_LogObjectList(selectedViews);
+}
+
+
+function CTest_CSelection_GetAllItemsOfGivenTypeInSelectedViews(testnum, itemType) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_GetAllItemsOfGivenTypeInSelectedViews(" + itemType + ")");
+	var items = CSelection_GetAllItemsOfGivenTypeInSelectedViews(itemType);
+	CTest_LogObjectListWithType(items);
+}
+
+function CTest_CSelection_GetAllItemsOfGivenTypeAndNameInSelectedViews(testnum, itemType, itemName) {
+	
+	CTest_LogStartNewTest("Test " + testnum + ": " + "CTest_CSelection_GetAllItemsOfGivenTypeInSelectedViews(" + itemType + ", " + itemName + ")");
+	var items = CSelection_GetAllItemsOfGivenTypeAndNameInSelectedViews(itemType, itemName);
+	CTest_LogObjectListWithType(items);
+}

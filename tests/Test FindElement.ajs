@@ -1,0 +1,111 @@
+/*
+ * FindElement
+ */
+load(__DIR__ + "CommonFunctions.ajs");
+load(__DIR__ + "c_Model.ajs");
+load(__DIR__ + "c_Folder.ajs");
+load(__DIR__ + "c_View.ajs");
+load(__DIR__ + "c_Element.ajs");
+load(__DIR__ + "c_Relation.ajs");
+load(__DIR__ + "c_Viewpoint.ajs");
+
+console.clear();
+console.log("Start test...\n");
+
+//// TESTING..............................
+
+//var currentModel = cModel_InitExistingFromFile("C:\\Users\\eha\\OneDrive\\GitHub\\nasjonal-arkitektur\\modeller-archi-na\\eriktest1.archimate");
+//currentModel = cModel_InitExistingFromFile(null);
+//console.log("Model name = " + currentModel.name);
+
+
+
+console.log("1");
+var elementsInSelectedViews = cModel_GetElementsInSelectedViews();
+debug?log_ListElements(elementsInSelectedViews, "elementsInSelectedViews:"):true;
+
+console.log("2");
+var directlySelectedElements = cModel_GetDirectlySelectedElements();
+debug?log_ListElements(directlySelectedElements, "directlySelectedElements:"):true;
+
+
+console.log("3");
+var v = cModel_GetSelectedView();
+if (v != null)
+	console.log("Selected one view = " + v.name);
+
+console.log("4");
+directlySelectedElements.each(function(e) {
+	
+	cElement_HighlightOtherConceptsInViewBeforeMerge(e);
+	//cElement_MergeAsMasterWithOtherConceptsInView(e);
+	
+});	
+
+
+console.log("\nExiting test!");
+exit();
+	
+/*	// GetElementsInFolder
+	$(selection).filter("folder").each(function(f) {
+	console.log("Selected folder: " + f.name );	
+
+		$(f).children().filter("element").each(function(child) {
+			console.log("    has DIRECT child element: " + child.name);			
+		});	
+	});			
+*/		
+	
+	// GetElementsInFolderHierarchically-wellNotYet
+	$(selection).filter("folder").each(function(f) {
+		console.log("Selected folder: " + f.name );	
+
+			$(f).children().filter("element").each(function(childElement) {
+				console.log("	has child element: " + childElement.name);			
+			});	
+		
+		$(f).children().filter("view").each(function(childView) {
+			console.log("	has child view: " + childView.name);
+
+			$(childView).children().filter("element").each(function(childElement) {
+				console.log("		has child element " + childElement.name);			
+			});	
+			
+		});	
+		
+		$(f).children().filter("folder").each(function(childFolder) {
+			console.log("    has child folder: " + childFolder.name);	
+
+			$(childFolder).children().filter("element").each(function(childElement) {
+				console.log("		has child element " + childElement.name);			
+			});				
+		});	
+		
+	});
+
+
+
+var elmName = window.prompt("Name of element to find?", "");
+
+var foundElements = lib_FindAllModelElementsWithName(elmName);
+
+console.log("Found " + foundElements.size() + " elements: "  );
+
+console.log("#" + "	" + "name" + "	" + "id");
+var i = 0;
+foundElements.each(function(e) { 
+	i++;
+	
+	console.log(i + "	" + e.name + "	" + e.id);
+	
+			$(e).parents().each(function(parent) {
+				if (parent.type == "folder") 
+					console.log("    " + e.name + " is located in folder " + parent.name);			
+			});
+			
+			$(e).parent().each(function(parent) {
+				if (parent.type == "view") 
+					console.log("    " + e.name + " occurs in view " + parent.name);			
+			});
+
+});

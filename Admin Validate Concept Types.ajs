@@ -1,0 +1,47 @@
+/*
+ * Admin Validate Concept Types
+ */
+ 
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+
+
+function ValidateConceptTypes() {
+
+	console.clear();
+	console.show();
+	console.log("Starting ValidateConceptTypes");
+	
+	var numIssues = 0;
+	var selectedConcepts = null;
+	// test using selection
+	
+	selectedConcepts = CSelection_GetSelectedConcepts("");
+	if (selectedConcepts === null || selectedConcepts === 0) 
+		selectedConcepts = $("concept");
+		
+		
+	selectedConcepts.each(function(concept) {
+		if (!cConcept_ValidateConceptType(concept) )
+			numIssues++;
+	});
+
+
+	/*
+    $("concept").each(function(concept) {
+		numIssues = numIssues + cConcept_ValidateConceptType(concept);
+    });
+	*/
+	
+	console.log("Ended ValidateConceptTypes - processed " + selectedConcepts.size() + " concepts");
+	
+	if (numIssues === 0)
+		window.alert("No invalid concept types found."); 
+	else
+		window.alert(numIssues + " invalid concept types found; see log."); 
+
+}
+
+ValidateConceptTypes();

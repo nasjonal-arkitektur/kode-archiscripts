@@ -1,0 +1,85 @@
+/*
+ * ListDuplicateNames
+ */
+
+console.clear();
+
+
+var getDuplicateItemsInlist = function(elm, list) {
+
+    //return $("element").filter(function(o) {
+	return list.filter(function(o) {
+
+        return ( (o.name == elm.name) && (o.type == elm.type) );
+    });
+}
+
+ 
+function ListDuplicateNames() {
+
+	var allelements = $("element");
+	var sameNames = null;
+	var allDuplicates = null;
+	 
+	var elm = null;
+	var index = 0;
+	
+	console.log(new Date() + ": Starting function ListDuplicateNames");
+	
+	 
+	/* doesn't work
+	allelements.each(function(elm) { 
+		
+		console.log("Checking: " + elm.name);
+		
+		sameNames = getDuplicateItems(elm);
+		if (sameNames.size() > 1) {
+			console.log("  The name '" + elm.name + "' appears in " + sameNames.size() + " elements of type '" + elm.type + "'");
+			sameNames.each(function(e) {
+					console.log("      " + e.name + ", " + e.type + ", " + ", " + " Id = " + e.id);
+			});		
+			
+			allelements = allelements.not(sameNames); // remove the duplicate items
+		}
+
+	});
+	*/
+
+	
+	while (index < allelements.size() - 1) { //	Erik note: Using while. since I had a problem with looping by allelements.each(function(element)
+	
+		elm = allelements[index];
+		//console.log("Checking: " + elm.name);
+		
+		sameNames = getDuplicateItemsInlist(elm, allelements);
+		if (sameNames.size() > 1) {
+			console.log("    The name '" + elm.name + "' of type '" + elm.type + "'" + "' is used for " + sameNames.size() + " different elements");
+			
+			/*
+			sameNames.each(function(e) {
+					console.log("      " + e.name + ", " + e.type + ", " + ", " + " Id = " + e.id);
+			});
+			*/
+			
+			allelements = allelements.not(sameNames); // remove the duplicate items
+			
+		}
+		else {
+			
+			//index++; // alternative to removing the first item, but the overall result is very much slower
+			
+			allelements = allelements.filter(function(o) {
+				return (o.id != elm.id); // in effect here removes the first array element 
+			});
+		}
+		
+	};		
+	
+	console.log(new Date() + ": Ending function ListDuplicateNames");
+
+}
+
+ListDuplicateNames();
+
+
+

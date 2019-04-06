@@ -1,0 +1,105 @@
+/*
+ * Check if other concepts with same name exist
+ */
+ 
+console.show();
+console.clear();
+
+load(__DIR__ + "./common/c_Namespace.ajs");
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Model.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./tests/c_Test.ajs");
+
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+//CTest_LogObjectListWithType(selectedOccurences);
+
+
+if (selectedOccurences.size() > 1) {
+	window.alert("Several objects selected. Please select only one element or relationship object. Exiting...");
+	exit();
+}
+else if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element or relationship object. Exiting...");
+	exit();
+}
+	
+var selectedOccurence = selectedOccurences.first();
+
+//console.log("Selected " + selectedOccurence.name);
+
+
+var others = cModel_OtherConceptsWithSameNameandType(selectedOccurence, false, false); // caseSensitive, namespaceSensitive
+
+//console.log("others.size = " + others.size());
+
+var strListOfOtherConceptsWithSameNameandType = "";
+
+var i = 0;
+others.each(function(o) {
+	
+	i++;
+	
+	if (strListOfOtherConceptsWithSameNameandType != "")
+		strListOfOtherConceptsWithSameNameandType += "; ";
+	
+	strListOfOtherConceptsWithSameNameandType += "\n" + i.toString() + ". Other concept with sane name:\t" + o.name + "\t" + o.id;
+		
+});
+
+if (others.size() == 1 ) {
+
+	var str = "Another concept with the same name as the selected object exists." 
+				+ "\n"
+				+ "\t" + "Name" + "\t" + "Id"
+				+ "\n"
+				+ "0. Selected concept:\t" + selectedOccurence.name + "\t" + selectedOccurence.concept.id 
+				+ strListOfOtherConceptsWithSameNameandType;
+				
+	str += "\n\nMerge and use the existing #0?\n";
+	
+	console.log(str);
+
+	var merge = window.confirm(str);
+	
+	if (merge) {
+		
+		cConcept_MergeWithMasterConcept(selectedOccurence.concept, others.first());
+		window.alert("Merge done");
+	
+	}
+	else
+		window.alert("OK - no merge done (canceled)");
+		
+	
+		
+	
+	
+}
+else if (others.size() > 1 ) {
+		
+	var alertStr = "Several other concepts with the same name as the selected object exist."
+					+ "\n\n"
+					+ "\t" + "Name" + "\t" + "Id"
+					+ "\n"
+					+ "0. Selected concept:\t" + selectedOccurence.name + "\t" + selectedOccurence.id 
+					//+ "\n"
+					+ strListOfOtherConceptsWithSameNameandType;
+
+	alertStr += "\n\n\Advice: Consider merging or renaming the other concepts before adding another concept with the sane name."
+	alertStr += "\n\nHint: Such merging is supported by TBD;)"					
+	
+	//window.alert(alertStr);
+	window.alert("Several other concepts with the same name as the selected object exist.");
+	window.alert("Advice: Consider merging or renaming the other concepts before adding another concept with the sane name.");
+	window.alert("Hint: Such merging is supported by TBD;)");
+	
+	console.log(alertStr);
+	
+	//window.confirm("ok?");
+}
+else {
+	window.alert("No other concepts exist for the select object");
+}
+

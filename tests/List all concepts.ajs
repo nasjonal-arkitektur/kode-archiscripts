@@ -1,0 +1,43 @@
+/*
+ * List all concepts
+ */
+ 
+console.clear();
+
+load(__DIR__ + "./common/c_Model.ajs");
+
+var i = 0;
+console.log("Concepts:");
+console.log("#" + "\t" + "type" + "\t" + "name" + "\t" + "id");
+var allConcepts = cModel_GetAllModelConcepts();
+allConcepts.each(function(o) {
+	console.log(++i + "\t" + o.type + "\t" + o.name + "\t" + o.id);
+	
+	//$(o).children().filter("element").each(function(childElement) {
+	$(o).children().each(function(childElement) {
+		console.log("		has child element " + childElement.name);			
+	});	
+	
+});
+
+/*
+i = 0;
+console.log("\n");
+console.log("Elements:");
+console.log("#" + "\t" + "type" + "\t" + "name" + "\t" + "id");
+var allElements = cModel_GetAllModelElements();
+allElements.each(function(o) {
+	console.log(++i + "\t" + o.type + "\t" + o.name + "\t" + o.id);
+});
+
+i = 0;
+console.log("\n");
+console.log("Relationships:");
+console.log("#" + "\t" + "type" + "\t" + "name" + "\t" + "id");
+var allRelationships = cModel_GetAllModelRelationships();
+allRelationships.each(function(o) {
+	console.log(++i + "\t" + o.type + "\t" + o.name + "\t" + o.id);
+});
+*/
+
+window.alert("Total of " + i + " concepts");

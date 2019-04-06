@@ -1,0 +1,411 @@
+/*
+ * Constants
+ */
+ 
+var debug = false;
+var debug2 = true;
+ 
+var const_title_namespace_prefix = " [ns:";
+var const_title_namespace_postfix = "]";
+ 
+var const_prop_namespace = "difi:namespace";
+//const_prop_namespace_values = ["-", "eira", "eirabased"];
+var const_prop_namespace_value_default = "-";
+var const_prop_namespace_val_eira = "eira";
+var const_prop_namespace_val_eirabased = "eirabased";
+
+var const_prop_language = "difi:language";
+const_prop_default_language = "difi:default_language";
+const_prop_current_language = "difi:current_language";
+var const_prop_language_value_no = "no";
+var const_prop_language_value_en = "en";
+
+var const_prop_name_to_display = "difi:display_name";
+var const_prop_name_no = "difi:name_no";
+var const_prop_name_en = "difi:name_en";
+var const_prop_description_no = "difi:description_no";
+var const_prop_description_en = "difi:description_en";
+var const_prop_description_default = "-";
+
+var const_prop_link1 = "difi:link1";
+
+
+https://www.rambus.com/blogs/what-is-a-token-service-provider/
+
+// EIRA properties:
+var const_prop_ID = "ID";
+var const_prop_dct_type = "dct:type"; // !!!!!!!!!!!!!!!!!!
+
+var const_prop_dct_publisher = "dct:publisher";
+var const_prop_dct_modified = "dct:modified";
+var const_prop_eira_status = "eira:status"; // [ Exists | Development planned ]
+var const_prop_eira_reusability = "eira:reusability"; // [ Excellent (90-100%) | Very good (70-89,9%) | Fair (50-74,9%) | Poor (0-49,9%) ]
+var const_prop_eira_actual_use = "eira:actual_use"; // [ Currently used | Used planned | No ]
+
+// other interesting dct properties
+var const_prop_dct_identifier = "dct:identifier";
+
+
+// other ideas
+var const_prop_difi_enterprise_continuum = "difi:enterpriseContinuum"; // 
+
+
+// prefixes
+var const_prop_dctType_archi_prefix = "archi:"; 
+var const_prop_dctType_difi_prefix = "difi:"; 
+
+
+/*
+*  difi dctType extensions
+*
+*  NOTE: all extensions should be handled in cConcept_VerifyExtensionType
+*/
+
+
+/*
+*	Relationships
+*/		
+var const_conceptType_association__synonym = "difi:synonym-preferred-term-of";
+
+/*
+*	Elements
+*/		
+var const_conceptType_resource__reference_arhitecture = "difi:reference-arhitecture";
+var const_conceptType_business_object__term = "difi:term";
+
+
+
+// risk/security related extensions
+var const_conceptType_grouping__risk_security_domain = "difi:risk-security-domain";
+var const_conceptType_assessment__risk = "difi:risk";
+var const_conceptType_business_actor__threat_agent = "difi:threat-agent";
+var const_conceptType_assessment__vulnerability = "difi:vulnerability";
+var const_conceptType_business_event__threat_event = "difi:threat-event";
+var const_conceptType_business_event__loss_event = "difi:loss-event";
+
+
+//var const_conceptType_threat = "difi:threat";
+//var const_conceptType_business_event__attack_event = "difi:attack-event";
+var const_conceptType_driver__risk_security_driverrisk_security_driver = "difi:risk-security-driver";
+var const_conceptType_goal__risk_control_objective = "difi:risk-control-objective";
+var const_conceptType_goal__security_control_objective = "difi:security-control-objective";
+var const_conceptType_requirement__security_requirement = "difi:security-requirement";
+var const_conceptType_requirement__control_measure = "difi:control-measure"; // requirement??
+var const_conceptType_principle__security_principle = "difi:security-principle";
+
+
+
+
+// Strategy
+var const_conceptType_resource = "archi:resource";
+var const_conceptType_capability = "archi:capability";
+var const_conceptType_course_of_action = "archi:course-of-action";
+
+// Business
+var const_conceptType_business_actor = "archi:business-actor";
+var const_conceptType_business_role = "archi:business-role";
+var const_conceptType_business_collaboration = "archi:business-collaboration";
+var const_conceptType_business_interface = "archi:business-interface";
+var const_conceptType_business_process = "archi:business-process";
+var const_conceptType_business_function = "archi:business-function";
+var const_conceptType_business_interaction = "archi:business-interaction";
+var const_conceptType_business_event = "archi:business-event";
+var const_conceptType_business_service = "archi:business-service";
+var const_conceptType_business_object = "archi:business-object";
+var const_conceptType_contract = "archi:contract";
+var const_conceptType_representation = "archi:representation";
+var const_conceptType_product = "archi:product";
+
+// Application
+var const_conceptType_application_component = "archi:application-component";
+var const_conceptType_application_collaboration = "archi:application-collaboration";
+var const_conceptType_application_interface = "archi:application-interface";
+var const_conceptType_application_function = "archi:application-function";
+var const_conceptType_application_process = "archi:application-process";
+var const_conceptType_application_interaction = "archi:application-interaction";
+var const_conceptType_application_event = "archi:application-event";
+var const_conceptType_application_service = "archi:application-service";
+var const_conceptType_data_object = "archi:data-object";
+
+// Technology
+var const_conceptType_node = "archi:node";
+var const_conceptType_device = "archi:device";
+var const_conceptType_system_software = "archi:system-software";
+var const_conceptType_technology_collaboration = "archi:technology-collaboration";
+var const_conceptType_technology_interface = "archi:technology-interface";
+var const_conceptType_path = "archi:path";
+var const_conceptType_communication_network = "archi:communication-network";
+var const_conceptType_technology_function = "archi:technology-function";
+var const_conceptType_technology_process = "archi:technology-process";
+var const_conceptType_technology_interaction = "archi:technology-interaction";
+var const_conceptType_technology_event = "archi:technology-event";
+var const_conceptType_technology_service = "archi:technology-service";
+var const_conceptType_artifact = "archi:artifact";
+
+
+// Physical
+var const_conceptType_equipment = "archi:equipment";
+var const_conceptType_facility = "archi:facility";
+var const_conceptType_distribution_network = "archi:distribution-network";
+var const_conceptType_material = "archi:material";
+
+// Motivation
+var const_conceptType_stakeholder = "archi:stakeholder";
+var const_conceptType_driver = "archi:driver";
+var const_conceptType_assessment = "archi:assessment";
+var const_conceptType_goal = "archi:goal";
+var const_conceptType_outcome = "archi:outcome";
+var const_conceptType_principle = "archi:principle";
+var const_conceptType_requirement = "archi:requirement";
+var const_conceptType_constraint = "archi:constraint";
+var const_conceptType_meaning = "archi:meaning";
+var const_conceptType_value = "archi:value";
+
+
+//  Implementation & Migration
+var const_conceptType_work_package = "archi:work-package";
+var const_conceptType_deliverable = "archi:deliverable";
+var const_conceptType_implementation_event = "archi:implementation-event";
+var const_conceptType_plateau = "archi:plateau";
+var const_conceptType_gap = "archi:gap";
+
+
+// Other
+var const_conceptType_location = "archi:location";
+var const_conceptType_grouping = "archi:grouping";
+var const_conceptType_junction = "archi:junction";
+
+// Relationships
+
+var const_conceptType_composition_relationship = "archi:composition-relationship";
+var const_conceptType_aggregation_relationship = "archi:aggregation-relationship";
+var const_conceptType_assignment_relationship = "archi:assignment-relationship";
+var const_conceptType_realization_relationship = "archi:realization-relationship";
+var const_conceptType_serving_relationship = "archi:serving-relationship";
+var const_conceptType_access_relationship = "archi:access-relationship";
+var const_conceptType_influence_relationship = "archi:influence-relationship";
+var const_conceptType_triggering_relationship = "archi:triggering-relationship";
+var const_conceptType_flow_relationship = "archi:flow-relationship";
+var const_conceptType_specialization_relationship = "archi:specialization-relationship";
+var const_conceptType_association_relationship = "archi:association-relationship";
+
+/*
+
+// Strategy
+resource
+capability
+course-of-action
+
+// Business
+business-actor
+business-role
+business-collaboration
+business-interface
+business-process
+business-function
+business-interaction
+business-event
+business-service
+business-object
+contract
+representation
+product
+
+// Application
+application-component
+application-collaboration
+application-interface
+application-function
+application-process
+application-interaction
+application-event
+application-service
+data-object
+
+// Technology
+node
+device
+system-software
+technology-collaboration
+technology-interface
+path
+communication-network
+technology-function
+technology-process
+technology-interaction
+technology-event
+technology-service
+artifact
+
+
+
+// Physical
+equipment
+facility
+distribution-network
+material
+
+// Motivation
+stakeholder
+driver
+assessment
+goal
+outcome
+principle
+requirement
+constraint
+meaning
+value
+
+
+//  Implementation & Migration
+work-package
+deliverable
+implementation-even?????????????
+plateau
+gap
+
+
+// Other
+location
+grouping
+junction
+
+// Relationships
+
+composition-relationship
+aggregation-relationship
+assignment-relationship
+realization-relationship
+serving-relationship
+access-relationship
+influence-relationship
+triggering-relationship
+flow-relationship
+specialization-relationship
+association-relationship
+
+*/
+
+/*
+var ArrayOfValidArchiConceptTypes = [
+
+// Strategy
+	const_conceptType_resource,
+	const_conceptType_capability,
+	const_conceptType_course_of_action,
+
+// Business
+	const_conceptType_business_actor,
+	const_conceptType_business_role,
+	const_conceptType_business_collaboration,
+	const_conceptType_business_interface,
+	const_conceptType_business_process,
+	const_conceptType_business_function,
+	const_conceptType_business_interaction,
+	const_conceptType_business_event,
+	const_conceptType_business_service,
+	const_conceptType_business_object,
+	const_conceptType_contract,
+	const_conceptType_representation,
+	const_conceptType_product,
+
+// Application
+	const_conceptType_application_component,
+	const_conceptType_application_collaboration,
+	const_conceptType_application_interface,
+	const_conceptType_application_function,
+	const_conceptType_application_process,
+	const_conceptType_application_interaction,
+	const_conceptType_application_event,
+	const_conceptType_application_service,
+	const_conceptType_data_object,
+
+// Technology
+	const_conceptType_node,
+	const_conceptType_device,
+	const_conceptType_system_software,
+	const_conceptType_technology_collaboration,
+	const_conceptType_technology_interface,
+	const_conceptType_path,
+	const_conceptType_communication_network,
+	const_conceptType_technology_function,
+	const_conceptType_technology_process,
+	const_conceptType_technology_interaction,
+	const_conceptType_technology_event,
+	const_conceptType_technology_service,
+	const_conceptType_artifact,
+
+
+// Physical
+	const_conceptType_equipment,
+	const_conceptType_facility,
+	const_conceptType_distribution_network,
+	const_conceptType_material,
+
+// Motivation
+	const_conceptType_stakeholder,
+	const_conceptType_driver,
+	const_conceptType_assessment,
+	const_conceptType_goal,
+	const_conceptType_outcome,
+	const_conceptType_principle,
+	const_conceptType_requirement,
+	const_conceptType_constraint,
+	const_conceptType_meaning,
+	const_conceptType_value,
+
+
+//  Implementation & Migration
+	const_conceptType_work_package,
+	const_conceptType_deliverable,
+	const_conceptType_implementation_event,
+	const_conceptType_plateau,
+	const_conceptType_gap,
+
+
+// Other
+	const_conceptType_location,
+	const_conceptType_grouping,
+	const_conceptType_junction,
+
+// Relationships
+
+	composition-relationship,
+	aggregation-relationship,
+	assignment-relationship,
+	realization-relationship,
+	serving-relationship,
+	access-relationship,
+	influence-relationship,
+	triggering-relationship,
+	flow-relationship,
+	specialization-relationship,
+	association-relationship
+
+];
+*/
+
+var ArrayOfValidElementExtensions = [
+
+	const_conceptType_resource__reference_arhitecture,
+
+// risk/security related extensions
+	const_conceptType_grouping__risk_security_domain,
+	const_conceptType_assessment__risk,
+	const_conceptType_business_actor__threat_agent,
+	const_conceptType_assessment__vulnerability,
+	const_conceptType_business_event__threat_event,
+	const_conceptType_business_event__loss_event,
+
+	//	const_conceptType_threat,
+	//	const_conceptType_business_event__attack_event,
+	const_conceptType_driver__risk_security_driverrisk_security_driver,
+	const_conceptType_goal__risk_control_objective,
+	const_conceptType_goal__security_control_objective,
+	const_conceptType_requirement__security_requirement,
+	const_conceptType_requirement__control_measure,
+	const_conceptType_principle__security_principle
+
+];
+

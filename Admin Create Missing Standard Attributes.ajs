@@ -1,0 +1,57 @@
+/*
+ * CreateDefaultProperties
+ */
+
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+function CreateMissingProperty(concept, propName, propValue) {
+
+	if (!concept.prop(propName) ) {
+		console.log(". Creating missing or empty standard property " + propName + " for " + concept.name + " (" + concept.type + ")" );
+		concept.prop(propName, propValue);
+	}
+}
+
+
+
+
+function CreateDefaultProperties() {
+
+	console.clear();
+	console.log("Starting function CreateDefaultProperties");
+	
+	// model
+	CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
+	//CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+	
+	// views
+	$("view").each(function(view) {
+		//CreateMissingProperty(view, const_prop_default_language, const_prop_language_value_no);
+		//CreateMissingProperty(view, const_prop_current_language, const_prop_language_value_no);
+		CreateMissingProperty(view, const_prop_current_language, const_prop_language_value_no);
+    });
+	
+	// elements and relations
+    $("concept").each(function(concept) {
+		
+		cConcept_CreateMissingProperties(concept);
+		/*
+		CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);
+		CreateMissingProperty(concept, const_prop_name_no, concept.name); // TBD: consider model const_prop_current_language
+		CreateMissingProperty(concept, const_prop_name_en, ""); // TBD: consider model const_prop_current_language
+		
+		CreateMissingProperty(concept, const_prop_description_no, concept.documentation ); // TBD: consider model const_prop_current_language
+		CreateMissingProperty(concept, const_prop_description_en, ""); // TBD: consider model const_prop_current_language
+		
+		//CreateMissingProperty(concept, const_prop_name_to_display, "");
+		*/
+		
+    });
+	
+	console.log("Ending function CreateDefaultProperties");
+
+}
+
+CreateDefaultProperties();
+

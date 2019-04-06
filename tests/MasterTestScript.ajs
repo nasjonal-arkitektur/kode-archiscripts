@@ -1,0 +1,58 @@
+/*
+ * MasterTestScript
+ */
+
+ 
+/** 
+load(__DIR__ + "../common/Constants.ajs");
+//c_Namespace
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Folder.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Element.ajs");
+load(__DIR__ + "../common/c_Relation.ajs");
+load(__DIR__ + "../common/c_Viewpoint.ajs");
+*/
+
+load(__DIR__ + "../common/c_selection.ajs");
+
+load(__DIR__ + "c_Test.ajs");
+
+
+var testnum = 0;
+
+
+CTest_cModel_isExistingConcept
+
+/*
+*	View related tests
+*/
+
+
+//CTest_CSelection_GetDirectlySelectedViews(++testnum);
+// CTest_CSelection_GetViewsUnderSelectedFoldersAndSubfolders(++testnum);
+// CTest_CSelection_GetAllSelectedViews(++testnum); 
+
+CTest_CSelection_GetAllItemsOfGivenTypeInSelectedViews(++testnum, "business-actor");
+CTest_CSelection_GetAllItemsOfGivenTypeInSelectedViews(++testnum, "concept");
+CTest_CSelection_GetAllItemsOfGivenTypeAndNameInSelectedViews(++testnum, "concept", "Erik"); // case insensitive?
+
+/*
+*	Folder related tests
+*/
+//CTest_CSelection_findItemsUnderSelectedFolders(++testnum, "concept");
+//CTest_CSelection_findItemsUnderSelectedFolders(++testnum, "element");
+//CTest_CSelection_findItemsUnderSelectedFolders(++testnum, "relationship");
+//CTest_CSelection_findItemsUnderSelectedFolders(++testnum, "business-actor");
+//CTest_CSelection_findItemsUnderSelectedFolders(++testnum, "view");
+
+/*
+CTest_CSelection_findSubfoldersOfSelectedFolders(++testnum);
+CTest_CSelection_findFoldersAndSubfoldersOfSelectedFolders(++testnum);
+
+CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(++testnum, "business-actor", "Erik", true, true);
+CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(++testnum, "business-actor", "rik", true, true);
+CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(++testnum, "business-actor", "rik", false, true);
+CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(++testnum, "business-actor", "RIK", false, true);
+CTest_CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(++testnum, "business-actor", "RIK", false, false);
+*/

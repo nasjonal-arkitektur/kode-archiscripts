@@ -1,0 +1,22 @@
+/*
+ * deleteUnusedRelations
+ */
+ 
+console.clear();
+
+function deleteUnusedRelations() {
+
+	console.log("Starting function deleteUnusedRelations");
+
+    $("relationship").each(function(r) {
+        if($(r).objectRefs().isEmpty()) {
+			console.log("Deleting unused relation: " + r.name);
+            r.delete();
+        }
+    });
+
+	console.log("Ending function deleteUnusedRelations");
+
+}
+
+deleteUnusedRelations();

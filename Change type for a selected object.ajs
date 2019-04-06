@@ -1,0 +1,50 @@
+/*
+ * Change type for selected objects
+ */
+ 
+console.show();
+console.clear();
+
+console.log("Change type for selected objects");
+
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element or relationship object. Exiting...");
+	exit();
+}
+	
+//var selectedOccurence = selectedOccurences.first();
+
+var newType = window.prompt("Specify an Archi concept type to set for the " + selectedOccurences.size() + " selected objects?", "");
+
+var totalProblemCount = 0;
+var successfulChanges = 0;
+selectedOccurences.each(function(o) {
+
+	var numproblems = cConcept_OKToSwitchType(o.concept, newType);
+	
+	if (numproblems === 0) {
+		o.type = newType;
+		successfulChanges++;
+		console.log("Tried to change concept type for " + o.name + " to " + newType);
+		if (o.type != newType)
+			console.log("Error: Failed to change concept type for " + o.name + " to " + newType);
+		
+	}
+	else {
+		totalProblemCount++;
+		// see logging in cConcept_OKToSwitchType
+	}
+});
+
+if (totalProblemCount === 0)
+	window.alert("Successfully changed type for the selected objects");
+else {
+	var noOfOccurencesWithProblems = selectedOccurences.size() - successfulChanges;
+	window.alert("There were problems with " +  noOfOccurencesWithProblems.toString() + " out of " + selectedOccurences.size() + " objects");
+	
+}

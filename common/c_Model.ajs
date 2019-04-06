@@ -1,0 +1,198 @@
+/*
+ * c_Model
+ */
+
+//load(__DIR__ + "c_Namespace.ajs");
+ 
+//load(__DIR__ + "Constants.ajs");
+//load(__DIR__ + "CommonFunctions.ajs");
+
+var m_model = null;
+
+
+function cModel_InitExistingFromFile(filePath) {
+
+	if (filePath == null)
+		filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: [ "*.archimate" ] });
+
+	if(filePath != null) {
+		// Load the model and set as current model
+		$.model.load(filePath).setAsCurrent();
+		m_model = model;
+
+		m_model.openInUI();
+	}
+	
+	m_testThis = 2;
+	return m_model;
+}
+
+
+function cModel_InitExistingFromArchiObject(archiModel) {
+
+	m_model = archiModel;
+	
+	if (archiModel != null)
+		m_model.openInUI();
+	
+	return m_model;
+}
+
+function cModel_GetArchiModelObject() {
+	console.log("model.name = " + model.name);
+	return m_model;
+}
+
+function cModel_GetCurrentModelName() {
+	return m_model.name;
+}
+
+var cModel_GetDirectlySelectedElements = function() { // erik: moved to CSelecton?
+
+	var elements = $(selection).filter("element");
+	return elements;
+}
+
+var cModel_GetAllDirectlySelectedConcepts = function() {  // erik: moved to CSelecton?
+
+	// directly selected by multiple selection in folder or in view
+	
+	var concepts = $(selection).filter("concept"); // includes elements and relationships, BUT NOTE that "normal mouse window selection" will not include relation - you need to use CTRL(A)
+	return concepts;
+}
+
+var cModel_GetAllSelectedConcepts = function() { // erik: moved to CSelecton?
+
+	// Could be directly selected by multiple selection in folder or in view
+	// TODO: Could also be indirectly selected via parent view or folder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	var concepts = $(selection).filter("concept"); // includes elements and relationships
+	
+	return concepts; // erik: todo: test if these are the actual concepts only, or also the occurences?
+}
+
+
+
+var cModel_GetAllModelConcepts = function() {
+	return $("concept");
+}
+
+var cModel_GetAllModelElements = function() {
+	return $("element");
+}
+
+var cModel_GetAllModelRelationships = function() {
+	return $("relationship");
+}
+
+
+var cModel_GetElementsInSelectedViews = function() {
+
+	var elements = null;
+	
+	$(selection).filter("view").each(function(v) {
+		
+		if (elements == null) {
+			elements = $(v).children().filter("element");
+			//test TBD: elements = cView_GetElementsInView(v);
+		}
+		else {
+			elements.add ( $(v).children().filter("element") );
+			//test TBD: elements.add ( cView_GetElementsInView(v) );
+		}
+		
+	});
+	
+	return elements;
+}
+
+var cModel_GetSelectedView = function() {
+
+	var vus = $(selection).filter("view");
+	
+	console.log("vus.length = " + vus.length); 	
+	if (vus.length > 1)
+		return null;
+	if (vus.length < 1)
+		return null;
+	
+	return vus[0];
+}
+
+
+var cModel_FindAllModelElementsWithName = function(elementName) {
+
+    return $("element").filter(function(o) {
+        return ( (o.name == elementName) );
+    });
+}
+	
+
+var cModel_OtherConceptsWithSameNameandType = function(occurence, caseSensitive, namespaceSensitive) {
+
+	
+	var occurenceName = occurence.name;
+	
+//console.log("occurenceName = " + occurenceName);
+	
+	if (!namespaceSensitive) {
+		occurenceName = cNamespace_GetNameOfConceptWithoutNamespace(occurence);
+		//console.log("namespaceSensitive name = ", occurence.name + ", namespaceInsensitive name = " + occurenceName);
+		
+	}
+	
+	if (!caseSensitive)
+		occurenceName = occurenceName.toUpperCase();
+	
+	var occurencetype = null;
+	if (occurence.type == "element") // works also for different types of elements, such as e.g. business-actor?
+		occurencetype = "element";
+	else if (occurence.type == "relationship")
+		occurencetype = "relationship";
+		
+/*		
+    return $(occurencetype).filter(function(o) {
+		if (caseSensitive)
+			return ( (o.name == occurenceName) && (o.type == occurence.type) && (o.concept.id != occurence.concept.id ) ); // erik: consider make it case insensitive? System option?
+		else	
+			return ( (o.name.toUpperCase() == occurenceName ) && (o.type == occurence.type) && (o.concept.id != occurence.concept.id ) ); // erik: consider make it case insensitive? System option?
+    });
+*/
+
+//console.log("occurenceName = " + occurenceName);		
+
+    //return $(occurencetype).filter(function(o) {
+	return $("element").filter(function(o) {
+		var oName = o.name;
+		
+		if (!namespaceSensitive) {
+			oName = cNamespace_GetNameOfConceptWithoutNamespace(o);
+		}
+		
+		if (!caseSensitive)
+			oName = oName.toUpperCase();
+		
+		var startOfName = null;
+		var compareOnlyStartOfName = false; // This param made for test - it works, but should be available as an option in the call
+		
+		if (compareOnlyStartOfName)
+			return ( (oName.startsWith(occurenceName) ) && (o.type == occurence.type) && (o.concept.id != occurence.concept.id ) );
+		else
+			return ( (oName	 == occurenceName ) && (o.type == occurence.type) && (o.concept.id != occurence.concept.id ) );
+			
+		
+		// old?: return ( (o.name.toUpperCase() == occurenceName ) && (o.type == occurence.type) && (o.concept.id != occurence.concept.id ) );
+    });
+	
+}
+
+
+
+var cModel_GetDuplicateModelItems = function(elm) {
+
+    return $("element").filter(function(o) {
+        return ( (o.name == elm.name) && (o.type == elm.type) ); // erik: consider make it case insensitive? System option?
+    });
+}
+
+

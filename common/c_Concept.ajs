@@ -1,0 +1,538 @@
+/*
+ * c_concept
+ */
+ 
+load(__DIR__ + "Constants.ajs");
+load(__DIR__ + "c_Model.ajs");
+
+
+function cConcept_removeProperty(concept, propName) { 
+
+	concept.removeProp(propName);
+}
+
+function cConcept_GetProperties(concept) {  // maybe not needed, but keep it to show...
+	
+	var propList = $(concept).prop();
+ 	/* .each not working here!?
+	propList.each(function(p) {
+		console.log(p);
+	});	
+	*/
+	
+	console.log("\nProperties:");
+	for (var i = 0; i < propList.size(); i++) {
+		console.log(propList[i] + ": " + concept.prop( propList[i]) );
+	}
+	
+	return propList;
+}
+
+function cConcept_getRelations(concept) { 
+
+	var relations = $(concept).rels();
+	
+	/* works
+	relations.each(function(r) {
+		console.log(r);
+	});	
+	*/
+
+	return relations;
+}
+
+function cConcept_getOutgoingRelations(concept) { 
+
+	return $(concept).outRels();
+}
+
+function cConcept_getIncomingRelations(concept) { 
+
+	return $(concept).inRels();
+}
+
+
+function cConcept_HasProperty(concept, propertyName)
+{
+	//console.log("cConcept_HasProperty(" + concept.name + ", " + propertyName + ")");
+	
+	//if (concept.prop(propertyName) )
+	//	return true;
+	
+	
+	var propList = concept.prop();
+	for (var i = 0; i < propList.size(); i++) {
+		
+		if (propList[i] == propertyName)
+			return true;
+	}	
+	
+
+	return false;
+}
+
+function cConcept_AddOtherRelation(thisConcept, otherConcept, otherRelation) { 
+	console.log("cConcept_AddOtherRelation(" + thisConcept + ", " + otherConcept + ", " + otherRelation + ")" );
+
+	var newRelation = null;
+	
+	var source = $(otherRelation).sourceEnds();
+	source = source.first();
+	var target = $(otherRelation).targetEnds();
+	target = target.first();
+	
+	if (source == null) {
+		console.log("Error: source = 0, exiting...");
+		exit();
+	}
+		
+
+
+	console.log("source: " + source.id);
+	console.log("target: " + target.id);
+	
+	
+	//model.createRelationship(relationship-type, name, source, target);
+	
+	if (source.id == otherConcept.id)
+		source = thisConcept;
+	if (target.id == otherConcept.id)
+		target = thisConcept;
+
+	console.log("source: " + source.id);
+	console.log("target: " + target.id);
+	
+	newRelation = model.createRelationship(otherRelation.type, otherRelation.name, source, target); // default folder
+	
+	console.log("new Relation created");
+	
+	return newRelation;
+
+}
+
+function cConcept_MergeWithMasterConcept(conceptToReplace, masterConcept) {
+
+
+		//debug?(console.log("Merging concept " + conceptToReplace.name + ", id = " + conceptToReplace.id + " with " + masterConcept.name + ", id = " + masterConcept.id) ):true;
+		console.log("Merging concept " + conceptToReplace.name + ", id = " + conceptToReplace.id + " with " + masterConcept.name + ", id = " + masterConcept.id);
+
+		var occurencesToFix = $(conceptToReplace).objectRefs();
+		occurencesToFix.each(function(o) {
+			
+			var view = cElement_GetView(o);
+				if (view != null) {
+				console.log("Merging " + o.name + ", id = " + o.id + " in view " + view + " with masterConcept id = " + masterConcept.id );
+			
+				var newViewObj = view.add(masterConcept, o.bounds.x, o.bounds.y, o.bounds.width, o.bounds.height); 
+				o.delete(); // delete each replaced occurence
+			}
+						
+		});	
+		
+		// before deleting the conceptToReplace, merge the attributes and connections
+		// TBD: ask user first????
+		
+		// merge attributes
+		var propsOfconceptToReplace = conceptToReplace.prop();
+		for (var i = 0; i < propsOfconceptToReplace.size(); i++) {
+			
+			if (!cConcept_HasProperty(masterConcept, propsOfconceptToReplace[i]) )
+				masterConcept.prop(propsOfconceptToReplace[i], conceptToReplace.prop( propsOfconceptToReplace[i]));
+		}	
+
+		// merge connections
+		var relationsOfconceptToReplace = cConcept_getRelations(conceptToReplace);
+		relationsOfconceptToReplace.each(function(r) {
+			
+			newR = cConcept_AddOtherRelation(masterConcept, conceptToReplace, r);
+			
+		});	
+		
+		// consider enhancement: show the newly created relations if the corresponding old ones were shown...
+		//      ... will need to iterate tgroug all views and getDiagramComponents prior to deleting the occurences above
+		
+		conceptToReplace.delete(); // finally delete the replaced concept
+
+}
+
+
+
+function cConcept_getRelations(concept) { 
+
+	var relations = $(concept).rels();
+	
+	/* works
+	relations.each(function(r) {
+		console.log(r);
+	});	
+	*/
+
+	return relations;
+}
+
+
+function cConcept_SetProperty(concept, propName, propvalue) {
+	
+	concept.prop(propName, propvalue);
+}
+
+function cConcept_SetName(concept, name) {
+	
+	concept.name = name;
+}
+
+function cConcept_GetProperty(concept, propName) {
+	
+	//if (!cConcept_HasProperty(concept, propertyName) )
+	//	return false;
+	
+	var propValue = concept.prop(propName);
+
+//console.log("cConcept_GetProperty propValue = ", propValue);
+
+	return propValue;
+}
+
+function cConcept_SetLanguage(concept, language) {
+	
+	// 1. set the nam3
+	var localizedName = null;
+	var propName = null;
+	
+
+	if (language === const_prop_language_value_no) {	
+		propName = const_prop_name_no;
+	}
+	else if (language === const_prop_language_value_en) {	
+		propName = const_prop_name_en;
+	}
+	else {
+		console.log("Error: Invalid language '" + language + "'" + ". Existing...");
+	}
+	
+	localizedName = cConcept_GetProperty(concept, propName);
+	
+	if (localizedName === null) {
+		console.log("Warning: Cannot set language '" + language + "' for name, due to missing property " + propName);
+		return;
+	}
+	else if (localizedName === "") {
+		console.log("Warning: cannot set name to language '" + language + "', due to blank property " + propName);
+		return;
+	}
+	
+	cConcept_SetName(concept, localizedName);
+
+
+
+	
+/*
+	if (language === const_prop_language_value_no) {
+		
+		if (name_no === null) {
+			console.log("Warning: Cannot set language '" + language + "' for name, due to missing property " + const_prop_name_no);
+			return;
+		}
+		if (name_no === "") {
+			console.log("Warning: cannot set name to language '" + const_prop_language_value_no + "', due to blank property " + const_prop_name_no);
+			return;
+		}
+		
+		cConcept_SetName(concept, name_no);
+			
+	}
+	else if (language === const_prop_language_value_en) {
+		
+		if (name_en === null) {
+			console.log("Warning: cannot set name to language '" + const_prop_language_value_en + "', due to missing property " + const_prop_name_en);
+			return;
+		}
+		if (name_en === "") {
+			console.log("Warning: cannot set name to language '" + const_prop_language_value_en + "', due to blank property " + const_prop_name_en);
+			return;
+		}
+		
+		
+		cConcept_SetName(concept, name_en);
+	}
+	else {
+		var errorMsg = "Error: Invalid language '" + language + "'" + ". Existing..."; 
+		console.log(errorMsg);
+window.alert(errorMsg);
+		exit();
+	}
+	
+*/	
+	
+	// 2. update the language property of the concept
+	cConcept_SetProperty(concept, const_prop_language, language);
+
+}
+
+
+function cConcept_RemoveNamespaceFromName(concept) {
+
+		var namespaceValue = concept.prop(const_prop_namespace);
+		var namespaceWithPreAndPostfix = const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;
+		
+		console.log("Removing " + namespaceWithPreAndPostfix + " from displayed name of " + concept.name);
+		
+		// TODO: replace code by calling cNamespace_GetNameOfConceptWithoutNamespace!
+
+		if (concept.namespaceValue != "") // also test for null?
+		{
+			var startPos = concept.name.indexOf(const_title_namespace_prefix);
+			if (startPos >= 0) {
+			
+				var restOfString = concept.name.substring(startPos);
+				var endPos = restOfString.indexOf(const_title_namespace_postfix);
+				
+				if (endPos >= 0) {
+				
+					var strToReplace = restOfString.substring(0, endPos + 1);
+					//console.log("strToReplace = " + strToReplace); // temptest
+
+					concept.name = concept.name.replace(strToReplace, "");	
+				}
+			}
+		}	
+		
+		return concept.name;
+}
+
+
+function cConcept_AddNamespaceToName(concept) {
+
+		var namespaceValue = concept.prop(const_prop_namespace);
+
+		if (concept.namespaceValue != "") {
+			concept.name = cConcept_RemoveNamespaceFromName(concept);
+			
+			var namespaceWithPreAndPostfix = const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;;
+			
+			console.log("Adding " + namespaceWithPreAndPostfix + " to displayed name of " + concept.name);
+			//concept.name += const_title_namespace_prefix + namespaceValue + const_title_namespace_postfix;
+			concept.name += namespaceWithPreAndPostfix;
+		}
+}
+
+function cConcept_OKToSwitchType(concept, newType) {  // NOTE: IN WORK**************************
+
+console.log("cConcept_OKToSwitchType for " + concept.name + " from " + concept.type + " to " + newType);
+
+	// check all the relations to verify they will be valid with the new type
+	
+	var thisConcept = concept.concept; // just to make 100% sure we're dealing with the conceot object and not an occurence
+	//isAllowedRelationship(relationship-type, source-concept-type, target-concept-type)
+	
+	//var relations = cConcept_getRelations(concept);
+	
+	var outRels = cConcept_getOutgoingRelations(thisConcept);
+	var inRels = cConcept_getIncomingRelations(thisConcept);
+	
+	//console.log("outRels.size = " + outRels.size() );
+	//console.log("inRels.size = " + inRels.size() );
+	
+	var i = 0;
+	
+	outRels.each(function(r) {
+		var target = $(r).targetEnds();
+		target = target.first();
+			
+		var allowedOut = ($.model).isAllowedRelationship(r.type, thisConcept.type, target.type );
+		
+		if (!allowedOut) {
+			i++;
+			console.log("Error: Invalid relation " + r.type + " from " +  newType + " (" + thisConcept.name + " )" + " to " +  target.type + " (" + target.name + " )" );
+		}
+	});	
+
+	
+	inRels.each(function(r) {
+		var source = $(r).sourceEnds();
+		source = source.first();
+		
+		var allowedIn = ($.model).isAllowedRelationship(r.type, source.type, thisConcept.type );
+		if (!allowedIn) {
+			i++;
+			console.log("Error: Invalid relation " + r.type + " from " + source.type + " ( " + source.name + ") to " + newType + " (" + thisConcept.name + " )" );
+		} 
+	});
+	
+	return i;
+
+}
+
+function cConcept_CreateMissingProperty(concept, propName, propValue) {
+
+	if (!cConcept_HasProperty(concept, propName) ) {
+	//if (!concept.prop(propName) ) {
+		console.log(". Creating missing or empty standard property " + propName + "=" + propValue + " for " + concept.type  + " " + concept.name );
+		concept.prop(propName, propValue);
+	}
+}
+
+function cConcept_CreateMissingProperties(concept) {
+
+
+//cConcept_removeProperty(concept, const_prop_dct_type); // very very temporary!
+ 	
+	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
+		
+	cConcept_CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);
+	cConcept_CreateMissingProperty(concept, const_prop_name_no, concept.name); // TBD: consider model const_prop_current_language
+	cConcept_CreateMissingProperty(concept, const_prop_name_en, ""); // TBD: consider model const_prop_current_language
+	
+	cConcept_CreateMissingProperty(concept, const_prop_description_no, concept.documentation ); // TBD: consider model const_prop_current_language
+	cConcept_CreateMissingProperty(concept, const_prop_description_en, ""); // TBD: consider model const_prop_current_language
+	
+	//cConcept_CreateMissingProperty(concept, const_prop_link1, "");
+
+	
+	//cConcept_CreateMissingProperty(concept, const_prop_name_to_display, "");
+}
+
+
+function cConcept_compareConceptTypeWithCustomArchiExtension(concept, customArchiExtension) {
+	
+	// note that we need to renove the "archi:" prefix of the customArchiExtension before comparing strings
+	
+	if (concept.type === customArchiExtension.substr(const_prop_dctType_archi_prefix.length, customArchiExtension.length - 1))
+		return true;
+	else
+		return false;
+}
+	
+function cConcept_VerifyExtensionType(concept) {
+
+	// assume property const_prop_dct_typeis present; see cConcept_ValidateConceptType (calling this function)
+	
+
+	var dctType = cConcept_GetProperty(concept, const_prop_dct_type);
+	var result = true;
+
+	switch (dctType) {
+		
+		/*
+		*	Relationships
+		*/		
+		
+		case const_conceptType_association__synonym:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_association))
+				result = false;
+			break;
+
+		
+		/*
+		*	Elements
+		*/
+		
+		case const_conceptType_resource__reference_arhitecture:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_resource))
+				result = false;
+			break;
+			
+		case const_conceptType_business_object__term:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_business_object))
+				result = false;
+			break;
+			
+			
+		// risk/security related extensions
+		case const_conceptType_grouping__risk_security_domain:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_grouping))
+				result = false;
+			break;
+		case const_conceptType_assessment__risk:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_assessment))
+				result = false;
+			break;
+		case const_conceptType_business_actor__threat_agent:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_business_actor))
+				result = false;
+			break;
+		case const_conceptType_assessment__vulnerability:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_assessment))
+				result = false;
+			break;
+		case const_conceptType_business_event__threat_event:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_business_event))
+				result = false;
+			break;
+		case const_conceptType_business_event__loss_event:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_business_event))
+				result = false;
+			break;
+
+		//	case const_conceptType_threat:
+		//	case const_conceptType_business_event__attack_event:
+		case const_conceptType_driver__risk_security_driverrisk_security_driver:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_driver))
+				result = false;
+			break;
+		case const_conceptType_goal__risk_control_objective:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_goal))
+				result = false;
+			break;
+		case const_conceptType_goal__security_control_objective:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_goal))
+				result = false;
+			break;
+		case const_conceptType_requirement__security_requirement:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_requirement))
+				result = false;
+			break;
+		case const_conceptType_requirement__control_measure:
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_asseconst_conceptType_requirementssment))
+				result = false;
+			break;
+		case const_conceptType_principle__security_principle:		
+			if (!cConcept_compareConceptTypeWithCustomArchiExtension(concept, const_conceptType_principle))
+				result = false;
+			break;
+
+	}
+	
+	return result;
+}
+
+function cConcept_ValidateConceptType(concept) {
+
+
+	//console.log("cConcept_ValidateConceptType");
+
+	if (!cConcept_HasProperty(concept, const_prop_dct_type) ) {
+		
+		//console.log(concept.type + " " + concept.name + " missing property " + const_prop_dct_type);
+		//return false;
+		
+		// property is missing - just fix it, assuming the default value
+		cConcept_CreateMissingProperties(concept); // also create any other missing properties, while we're at it
+		return true;
+	}
+
+	var dctType = cConcept_GetProperty(concept, const_prop_dct_type);
+	var standardArchiType = null;
+	
+	if (dctType.substr(0, const_prop_dctType_archi_prefix.length) === const_prop_dctType_archi_prefix) {
+		standardArchiType = dctType.substr(const_prop_dctType_archi_prefix.length, dctType.length - 1);
+	
+		//console.log("standardArchiType=" + standardArchiType);
+	
+		if (standardArchiType === concept.type) 
+			return true;
+	}
+		
+	// not a standard archi type, so check if it's in the list of our extensions
+	for (var i=0; i<ArrayOfValidElementExtensions.length; i++) {
+		if (ArrayOfValidElementExtensions[i] === dctType) {
+			if (cConcept_VerifyExtensionType(concept)) // verify that the extension dct_type matches the concept.type
+				return true;
+		}
+	}
+	
+	console.log("Warning: Invalid concept extension dct_type = " + dctType + " for concept with Archi concept type=" + concept.type + ", name=" + concept.name);
+	return false;
+	
+}
+

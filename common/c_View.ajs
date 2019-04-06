@@ -1,0 +1,72 @@
+/*
+ * c_View
+ */
+ 
+load(__DIR__ + "../common/c_Folder.ajs");
+
+var m_view = null;
+
+function cView_GetSelectedElements() {
+
+	$(selection).filter("element").each(function(e) {
+		console.log("Selected element: " + e.name );			
+	});
+	
+}
+
+function cView_GetSelectedConcepts() {
+
+
+	return $(selection).filter("concept");
+	
+	/*
+	$(selection).filter("concept").each(function(e) {
+		console.log("Selected concept: " + e.name );			
+	});
+	*/
+	
+}	
+	
+var cView_GetElementsInView = function(v) {
+
+	var elements = $(v).children().filter("element");
+	return elements;
+}
+
+var cView_GetOtherConceptsInViewWithSameName = function(vu, elm) {
+
+    return $(vu).children().filter("element").filter(function(o) {
+		
+		return ( (o.name == elm.name) && ( (o.type == elm.type) && (o.concept.id != elm.concept.id)) );
+	
+    });
+}
+
+var cView_GetOtherOccurencesInView = function(vu, elm) {
+
+
+	console.log("cView_GetOtherOccurencesInView, " + "view = " + vu.name + ", element = " + elm.name);  
+	
+	/*
+    return $(vu).children().filter("element").filter(function(o) { // erik tbd! doesn't work for nested objects - need recursion or ...!!!!!?
+		return ( o.concept.id == elm.concept.id );
+	*/
+	
+	return $("element").filter(function(o) { 
+		if (o.view == vu)
+			return ( o.concept.id == elm.concept.id );
+		else
+			return null;
+	
+    });
+}
+
+var cView_MergeWithDuplicateElementsInView = function(v) {
+
+	window.prompt("cView_MergeWithDuplicateElementsInView yet to be implemented!? Exiting...");
+	exit();
+
+	var elements = $(v).children().filter("element");
+	return elements;
+}
+

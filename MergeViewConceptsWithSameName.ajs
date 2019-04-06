@@ -1,0 +1,39 @@
+/*
+ * MergeViewConceptsWithSameName.ajs
+ */
+load(__DIR__ + "/common/Constants.ajs");
+
+load(__DIR__ + "/common/CommonFunctions.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_Folder.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Element.ajs");
+//load(__DIR__ + "/common/c_Relation.ajs");
+//load(__DIR__ + "/common/_Viewpoint.ajs");
+
+console.clear();
+console.log("MergeViewConceptsWithSameName");
+
+var directlySelectedElements = cModel_GetDirectlySelectedElements();
+debug?log_ListElements(directlySelectedElements, "directlySelectedElements:"):true;
+
+if (directlySelectedElements.size() < 1) {
+
+	window.alert("No elements selected. Exiting...");
+	exit();
+}
+
+
+directlySelectedElements.each(function(e) {
+	
+	if (cElement_HighlightConceptsInViewBeforeMerge(e) ) {
+		
+		var confirmed = window.confirm("Merge the highlighted objects with same name in this view, substituting red objects with green objects as master?"); 
+		
+		if (confirmed) {
+			cElement_MergeAsMasterWithOtherConceptsInView(e);
+		}
+		
+	}
+	
+});	

@@ -1,0 +1,13 @@
+/*
+ * Add namespace to name of selected objects
+ * 
+ */
+
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+ 
+console.show();
+console.clear();
+
+var selectedConcepts = CSelection_GetSelectedConcepts("");
+cNamespace_AddNamespaceToNameForGivenConcepts(selectedConcepts);

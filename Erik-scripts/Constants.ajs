@@ -1,0 +1,42 @@
+/*
+ * Constants
+ */
+ 
+var debug = true;
+ 
+var const_title_namespace_prefix = " [ns:";
+var const_title_namespace_postfix = "]";
+ 
+var const_prop_namespace = "difi:namespace";
+//const_prop_namespace_values = ["-", "eira", "eirabased"];
+var const_prop_namespace_value_default = "-";
+var const_prop_namespace_val_eira = "eira";
+var const_prop_namespace_val_eirabased = "eirabased";
+
+var const_prop_language = "difi:language";
+const_prop_default_language = "difi:defaultLanguage";
+const_prop_current_language = "difi:currentLanguage";
+var const_prop_language_value_no = "no";
+var const_prop_language_value_en = "en";
+
+var const_prop_name_no = "difi:name_no";
+var const_prop_name_en = "difi:name_en";
+var const_prop_description_no = "difi:description_no";
+var const_prop_description_en = "difi:description_en";
+var const_prop_description_default = "-";
+
+// EIRA properties:
+var const_prop_ID = "ID";
+var const_prop_dct_type = "dct:type"; // !!!!!!!!!!!!!!!!!!
+var const_prop_dct_publisher = "dct:publisher";
+var const_prop_dct_modified = "dct:modified";
+var const_prop_eira_status = "eira:status"; // [ Exists | Development planned ]
+var const_prop_eira_reusability = "eira:reusability"; // [ Excellent (90-100%) | Very good (70-89,9%) | Fair (50-74,9%) | Poor (0-49,9%) ]
+var const_prop_eira_actual_use = "eira:actual_use"; // [ Currently used | Used planned | No ]
+
+// other interesting dct properties
+var const_prop_dct_identifier = "dct:identifier";
+
+
+// other ideas
+var const_prop_difi_enterprise_continuum = "difi:enterpriseContinuum"; // 

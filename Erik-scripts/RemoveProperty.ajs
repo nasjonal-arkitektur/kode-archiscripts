@@ -1,0 +1,10 @@
+/*
+ * Remove property
+ */
+ 
+console.log("Remove property");
+
+var propName = window.prompt("Which property do you want to remove (leave empty to cancel)?", "");
+if (propName) {
+	$(selection).removeProp(propName);
+}

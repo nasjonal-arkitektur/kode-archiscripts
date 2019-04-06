@@ -1,0 +1,100 @@
+/*
+ * MergeObjectsWithGivenName
+ */
+
+ 
+load(__DIR__ + "CommonFunctions.ajs");
+
+console.clear();
+
+
+var debug = true;
+
+var MergeObjectsWithGivenName = function(name ) {
+	
+	console.log(new Date() + "MergeObjectsWithGivenName");
+	
+	var numMerged = 0;
+	var allModelElements = $("element");
+	var elementsWithDuplicateGivenNameAllTypes = lib_FindElementsWithNameInList(elmName, allModelElements);
+	
+	if (elementsWithDuplicateGivenNameAllTypes.size() == 0 )
+		return numMerged;
+		//window.alert("No duplicates!");
+	else
+		//window.alert("Duplicate names, but need to check types!");
+		console.log("Duplicates exist, but need to check types!");
+	
+		
+	var duplicatesArray = [];
+	duplicatesArray = lib_getDuplicatesInlistGivenElementNameNotType(name, allModelElements);
+	//console.log("Number of types with duplicates: " + duplicatesArray.length );
+	
+	if (duplicatesArray.length == 1) {
+		
+		console.log("Found " + duplicatesArray[0].size() + " elements of type " + duplicatesArray[0][0].type + ". Merging..." );
+		
+		// TODO: Merge
+	}
+	else if (duplicatesArray.length > 1) {
+		
+		var alternatives = "";
+	
+		var duplicates = null;
+		
+		for (var i = 0; i < duplicatesArray.length; i++) {
+			duplicates = duplicatesArray[i];
+			alternatives += duplicates[0].type;
+			if (i < duplicatesArray.length - 1)
+				alternatives += ";"
+		}
+		
+		var typeToMerge = window.prompt("Found duplicate names for several element types. You may deselect one or more types before merging...", alternatives);
+		
+	}
+	
+	
+/**	
+	var thisType = "";
+	var previousType = "";
+	var types = null;......................................................................
+	
+	elementsWithDuplicateGivenNameAllTypes.each(function(elm) { 
+	
+		if (previousType)
+			thisType = elm.type;
+		
+	
+	}
+	
+	
+	var duplicateList = lib_getDuplicatesInlistGivenElementNameNotType(elmName);
+	if (duplicateList.size
+	
+	elementsWithDuplicateNamesAllTypes
+	
+	duplicateList = lib_getDuplicatesInlistGivenElement(elementsWithDuplicateNamesAllTypes);
+	
+	**/
+	
+	return numMerged;
+	
+}
+
+///////////////////////////////////////////////////////////////
+var elmName = window.prompt("Name of elements to merge?", "");
+/*
+var archiType = window.prompt("Archi type of '"+elmName+"'", "");
+if (archiType) {
+}
+*/
+if (!elmName)
+{
+	window.alert("Exiting (cancelled)");
+	//return;
+}
+else
+{
+	var cnt = MergeObjectsWithGivenName(elmName);
+	window.alert(cnt + " duplicates 'merged'");
+}

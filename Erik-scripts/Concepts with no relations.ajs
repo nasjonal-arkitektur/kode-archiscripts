@@ -1,0 +1,8 @@
+/*
+ * List concepts with no relations
+ */
+ 
+console.clear();
+console.log("List concepts with no relations");
+
+console.log("TBD.");

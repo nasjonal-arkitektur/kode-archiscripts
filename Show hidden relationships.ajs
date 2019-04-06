@@ -1,0 +1,60 @@
+/*
+ * Add unshown relationship
+ */
+ 
+var debug = true;
+
+// Find DiagramComponents for a given element in a given view
+var getDiagramComponents = function(v, e) {
+
+    return $(v).find().filter(function(o) {
+        return o.concept.id == e.id;
+    });
+}
+
+
+// Checks if a view contains a visual connection from src and tgt visual objects
+var contains = function(r, src, tgt) {
+    found = false;
+    
+    $(r).objectRefs().each(function(o) {
+        if (o.source.id == src.id && o.target.id == tgt.id) {
+            found = true;
+        }
+    });
+    
+    return found;;
+}
+
+
+console.clear();
+console.log("Add unshown relationships");
+
+// Iterate through selected views to add relationships which exist in the model but not in the view
+$(selection).filter("archimate-diagram-model").each(function(v) {
+
+	console.log("View: " + v.name); // erik
+
+	$(v).find("element").each(function(e) {
+
+		debug? console.log("    Checking element: " + e.name):true; // erik
+
+		$(e.concept).rels().each(function(r) {
+		
+			if (r.source.id == e.concept.id) { // Erik-1: The end result will be the same, but this makes it more logical to me  
+	
+				getDiagramComponents(v,r.source).each(function(src) {
+				
+					getDiagramComponents(v,r.target).each(function(tgt) {
+					
+						if (! contains(r, src, tgt)) {
+							debug? console.log("        => Adding " + r.type + "(" + r.name + ") from " + src.name + " to " + tgt.name ):true; // erik
+							v.add(r, src, tgt);
+						}
+					});
+				
+				});
+			} // Erik-1
+		});
+	});
+});
