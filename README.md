@@ -1,1 +1,0 @@
-# kode-archi-scripts

@@ -1,5 +1,5 @@
 /*
- * Check if other concepts with same name exist
+ * Merge with duplicate concept
  */
  
 console.show();
@@ -11,6 +11,7 @@ load(__DIR__ + "./common/c_Model.ajs");
 load(__DIR__ + "./common/c_Concept.ajs");
 load(__DIR__ + "./tests/c_Test.ajs");
 
+console.log("Hey Jude");
 
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
 //CTest_LogObjectListWithType(selectedOccurences);
@@ -50,15 +51,16 @@ others.each(function(o) {
 
 if (others.size() == 1 ) {
 
-	var str = "Another concept with the same name as the selected object exists." 
+	//var str = "Another concept with the same name as the selected object exists." 
 				+ "\n"
 				+ "\t" + "Name" + "\t" + "Id"
 				+ "\n"
 				+ "0. Selected concept:\t" + selectedOccurence.name + "\t" + selectedOccurence.concept.id 
 				+ strListOfOtherConceptsWithSameNameandType;
 				
-	str += "\n\nMerge and use the existing #0?\n";
+	//str += "\n\nMerge and use the existing #0?\n";
 	
+	var str = "Another concept with name " + selectedOccurence.name +  " exists. Proceed with merging?"; 
 	console.log(str);
 
 	var merge = window.confirm(str);
@@ -71,10 +73,6 @@ if (others.size() == 1 ) {
 	}
 	else
 		window.alert("OK - no merge done (canceled)");
-		
-	
-		
-	
 	
 }
 else if (others.size() > 1 ) {
@@ -92,14 +90,13 @@ else if (others.size() > 1 ) {
 	
 	//window.alert(alertStr);
 	window.alert("Several other concepts with the same name as the selected object exist.");
-	window.alert("Advice: Consider merging or renaming the other concepts before adding another concept with the sane name.");
-	window.alert("Hint: Such merging is supported by TBD;)");
+	window.alert("Advice: Consider (merging or renaming the other concepts before adding another concept with the sane name.");
+	//window.alert("Hint: Such merging is supported by TBD;)");
 	
 	console.log(alertStr);
 	
-	//window.confirm("ok?");
 }
 else {
-	window.alert("No other concepts exist for the select object");
+	window.alert("No other concepts with the same name as the selected object found.");
 }
 

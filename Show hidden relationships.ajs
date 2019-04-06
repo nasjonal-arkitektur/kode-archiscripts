@@ -1,5 +1,5 @@
 /*
- * Add unshown relationship
+ * Show hidden relationship
  */
  
 var debug = true;
