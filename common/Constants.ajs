@@ -20,7 +20,9 @@ const_prop_current_language = "difi:current_language";
 var const_prop_language_value_no = "no";
 var const_prop_language_value_en = "en";
 
-var const_prop_name_to_display = "difi:display_name";
+//var const_prop_name_to_display = "difi:display_name";
+var const_prop_label = "label";
+
 var const_prop_name_no = "difi:name_no";
 var const_prop_name_en = "difi:name_en";
 var const_prop_description_no = "difi:description_no";
@@ -30,7 +32,7 @@ var const_prop_description_default = "-";
 var const_prop_link1 = "difi:link1";
 
 
-https://www.rambus.com/blogs/what-is-a-token-service-provider/
+
 
 // EIRA properties:
 var const_prop_ID = "ID";

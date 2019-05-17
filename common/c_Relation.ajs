@@ -1,11 +1,16 @@
 /*
  * c_Relation
  */
- 
 
+load(__DIR__ + "Constants.ajs");
+load(__DIR__ + "c_Model.ajs");
+
+/*
 var m_relation = null;
 
 function cRelation_InitExistingFromArchiObj(archiObj) {
 
 	m_relation= archiObj;
 }
+*/
+

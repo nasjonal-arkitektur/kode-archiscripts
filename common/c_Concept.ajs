@@ -71,6 +71,42 @@ function cConcept_HasProperty(concept, propertyName)
 	return false;
 }
 
+function cConcept_HasRelation(concept, otherRelation)
+{
+console.log("\ncConcept_HasRelation," + concept.name );	
+	var thisConcept = concept.concept; // just to make 100% sure we're dealing with the concept object and not an occurence
+	
+	var result = false;
+	
+	var rels= cConcept_getRelations(thisConcept);
+	rels.each(function(r) {
+		
+		var thisSource = $(r).sourceEnds();
+		thisSource = thisSource.first();
+		var otherSource = $(otherRelation).sourceEnds();
+		otherSource = otherSource.first();
+
+		var thisTarget = $(r).targetEnds();
+		thisTarget = thisTarget.first();	
+		var otherTarget = $(otherRelation).targetEnds();
+		otherTarget = otherTarget.first();
+
+		if (thisSource.name === otherSource.name && thisTarget.name === otherTarget.name) {
+			console.log(thisSource.name + ": Same source and target");	
+
+			if (r.name === otherRelation.name && r.type === otherRelation.type) {
+				console.log(thisSource.name + ": Same name and type");
+				result = true;
+			}
+				
+		}		
+	});		
+
+	
+	return result;
+}
+
+
 function cConcept_AddOtherRelation(thisConcept, otherConcept, otherRelation) { 
 	console.log("cConcept_AddOtherRelation(" + thisConcept + ", " + otherConcept + ", " + otherRelation + ")" );
 
@@ -102,10 +138,13 @@ function cConcept_AddOtherRelation(thisConcept, otherConcept, otherRelation) {
 	console.log("source: " + source.id);
 	console.log("target: " + target.id);
 	
-	newRelation = model.createRelationship(otherRelation.type, otherRelation.name, source, target); // default folder
+	var hasRelation = cConcept_HasRelation(thisConcept, otherRelation);
+console.log(hasRelation);
 	
-	console.log("new Relation created");
-	
+	if (!hasRelation) {
+		newRelation = model.createRelationship(otherRelation.type, otherRelation.name, source, target); // default folder
+		console.log("New Relation created");
+	}
 	return newRelation;
 
 }
@@ -121,7 +160,7 @@ function cConcept_MergeWithMasterConcept(conceptToReplace, masterConcept) {
 			
 			var view = cElement_GetView(o);
 				if (view != null) {
-				console.log("Merging " + o.name + ", id = " + o.id + " in view " + view + " with masterConcept id = " + masterConcept.id );
+				console.log("\n" + o.name + ": Merging " + o.name + ", id = " + o.id + " in view " + view + " with masterConcept id = " + masterConcept.id );
 			
 				var newViewObj = view.add(masterConcept, o.bounds.x, o.bounds.y, o.bounds.width, o.bounds.height); 
 				o.delete(); // delete each replaced occurence
@@ -181,6 +220,10 @@ function cConcept_SetName(concept, name) {
 	concept.name = name;
 }
 
+function cConcept_SetDescription(concept, description) {
+	concept.documentation = description;
+}
+
 function cConcept_GetProperty(concept, propName) {
 	
 	//if (!cConcept_HasProperty(concept, propertyName) )
@@ -197,73 +240,40 @@ function cConcept_SetLanguage(concept, language) {
 	
 	// 1. set the nam3
 	var localizedName = null;
+	var localizedDescription = null;
 	var propName = null;
+	var propDescr = null;
 	
 
 	if (language === const_prop_language_value_no) {	
 		propName = const_prop_name_no;
+		propDescr = const_prop_description_no;
 	}
 	else if (language === const_prop_language_value_en) {	
 		propName = const_prop_name_en;
+		propDescr = const_prop_description_en;
 	}
 	else {
 		console.log("Error: Invalid language '" + language + "'" + ". Existing...");
 	}
 	
+
 	localizedName = cConcept_GetProperty(concept, propName);
-	
-	if (localizedName === null) {
-		console.log("Warning: Cannot set language '" + language + "' for name, due to missing property " + propName);
-		return;
-	}
-	else if (localizedName === "") {
+
+
+	if (localizedName === "") {
 		console.log("Warning: cannot set name to language '" + language + "', due to blank property " + propName);
-		return;
+		localizedName = concept.name; // just keep it
 	}
-	
 	cConcept_SetName(concept, localizedName);
 
+	localizedDescription = cConcept_GetProperty(concept, propDescr);
+	if (localizedDescription === "") {
+		localizedDescription = concept.documentation; // just keep it
+	}
+	cConcept_SetDescription(concept, localizedDescription);
+	
 
-
-	
-/*
-	if (language === const_prop_language_value_no) {
-		
-		if (name_no === null) {
-			console.log("Warning: Cannot set language '" + language + "' for name, due to missing property " + const_prop_name_no);
-			return;
-		}
-		if (name_no === "") {
-			console.log("Warning: cannot set name to language '" + const_prop_language_value_no + "', due to blank property " + const_prop_name_no);
-			return;
-		}
-		
-		cConcept_SetName(concept, name_no);
-			
-	}
-	else if (language === const_prop_language_value_en) {
-		
-		if (name_en === null) {
-			console.log("Warning: cannot set name to language '" + const_prop_language_value_en + "', due to missing property " + const_prop_name_en);
-			return;
-		}
-		if (name_en === "") {
-			console.log("Warning: cannot set name to language '" + const_prop_language_value_en + "', due to blank property " + const_prop_name_en);
-			return;
-		}
-		
-		
-		cConcept_SetName(concept, name_en);
-	}
-	else {
-		var errorMsg = "Error: Invalid language '" + language + "'" + ". Existing..."; 
-		console.log(errorMsg);
-window.alert(errorMsg);
-		exit();
-	}
-	
-*/	
-	
 	// 2. update the language property of the concept
 	cConcept_SetProperty(concept, const_prop_language, language);
 
@@ -322,7 +332,7 @@ console.log("cConcept_OKToSwitchType for " + concept.name + " from " + concept.t
 
 	// check all the relations to verify they will be valid with the new type
 	
-	var thisConcept = concept.concept; // just to make 100% sure we're dealing with the conceot object and not an occurence
+	var thisConcept = concept.concept; // just to make 100% sure we're dealing with the concept object and not an occurence
 	//isAllowedRelationship(relationship-type, source-concept-type, target-concept-type)
 	
 	//var relations = cConcept_getRelations(concept);
@@ -363,6 +373,62 @@ console.log("cConcept_OKToSwitchType for " + concept.name + " from " + concept.t
 
 }
 
+function concept_isExtension(concept) {
+	
+	return true; //erik:TBD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+}
+
+
+function concept_nameEqualsNameInDefaultLanguage(concept) {
+	
+	return false; //erik:TBD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+}
+
+function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!!!!!
+
+	var label = "${name}";
+	var doShowNamespace = false;
+	var doShowType = false;
+	var doShowLanguage = false;
+
+	var option_caseForShowingNamespace = "duplicateNames";//"always"
+	var option_caseForShowingConceptType = "extensions"; //"always"
+	var option_caseForShowingLanguage = "missingDefaultLanguage"; //"always"
+
+	if (option_caseForShowingNamespace === "always")
+		doShowNamespace = true;
+	else if (option_caseForShowingNamespace === "duplicateNames")
+		if (true) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			doShowNamespace = true;
+	
+	if (option_IndicateType === "always")
+		doShowType= true;
+	else if (option_IndicateType === "extensions") {
+		if (concept_isExtension(concept))
+			doShowType= true;
+	}
+	
+
+	if (option_caseForShowingLanguage === "always")
+		doShowLanguage = true;
+	else if (option_caseForShowingLanguage === "missingDefaultLanguage")
+		if (!concept_nameEqualsNameInDefaultLanguage(concept))
+			doShowLanguage= true;
+
+	if (doShowNamespace)
+		label += "[ns:${property:difi:namespace}]";	
+	
+	if (doShowLanguage)
+		label += "[ns:${property:difi:language}]";
+			
+	if (doShowType)
+		label += "\n<<${property:dct:type}>>";
+	
+	return label;
+}
+
 function cConcept_CreateMissingProperty(concept, propName, propValue) {
 
 	if (!cConcept_HasProperty(concept, propName) ) {
@@ -390,6 +456,9 @@ function cConcept_CreateMissingProperties(concept) {
 
 	
 	//cConcept_CreateMissingProperty(concept, const_prop_name_to_display, "");
+	
+	cConcept_CreateMissingProperty(concept, const_prop_label, cConcept_EvaluateLabel(concept));
+	
 }
 
 

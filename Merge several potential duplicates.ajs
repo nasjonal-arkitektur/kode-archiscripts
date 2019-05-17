@@ -1,0 +1,119 @@
+/*
+ * Merge several potential duplicates
+ */
+
+console.show();
+console.clear();
+console.log("Merge several potential duplicates");
+ 
+load(__DIR__ + "./common/c_Namespace.ajs");
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Model.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+window.alert("Info: Typical use case: Copy&paste a view from another model and merge with existing objects in this model. When done, run Show hidden relationships to view the result.");
+
+var occurences = CSelection_GetDirectlySelectedOccurences();
+
+console.log("type" + "\t" + "name" + "\t" + "id" + "\t"+ "view" + "\t" + "concept.id");
+
+occurences.each(function(selectedOccurence) {
+	
+	//console.log("");
+	
+	var isConcept = false;
+	if (selectedOccurence.id == selectedOccurence.concept.id)
+		isConcept = true;
+	
+	if (isConcept) {
+		window.alert("Please select occurences in a view, only (selection of concepts not supported in this version); exiting...");
+		exit();
+		console.log(selectedOccurence.type + "\t" + selectedOccurence.name + "\t" + selectedOccurence.id + "\t" + cElement_GetView(selectedOccurence) + "\t" + "(is concept)" );
+	}
+	else {
+		//console.log(selectedOccurence.type + "\t" + selectedOccurence.name + "\t" + selectedOccurence.id + "\t" + cElement_GetView(selectedOccurence) + "\t" + selectedOccurence.concept.id + selectedOccurence.id + "\t" + selectedOccurence.bounds.width + "\t" + selectedOccurence.bounds.height);
+	}
+	
+	var others = cModel_OtherConceptsWithSameNameandType(selectedOccurence, false, false); // caseSensitive, namespaceSensitive
+	//console.log("others.size = " + others.size());
+	var strListOfOtherConceptsWithSameNameandType = "";
+
+	
+	var i = 0;
+	others.each(function(o) {
+		
+		i++;
+		
+		if (strListOfOtherConceptsWithSameNameandType != "")
+			strListOfOtherConceptsWithSameNameandType += "; ";
+		
+		strListOfOtherConceptsWithSameNameandType += "\n" + i.toString() + ". Other concept with same name:\t" + o.name + "\t" + o.id;
+			
+	});
+
+	if (others.size() == 1 ) {
+	/*
+		var str = "Another concept with the same name as the selected object exists." 
+					+ "\n"
+					+ "\t" + "Name" + "\t" + "Id"
+					+ "\n"
+					+ "0. Selected concept:\t" + selectedOccurence.name + "\t" + selectedOccurence.concept.id 
+					+ strListOfOtherConceptsWithSameNameandType;
+					
+		str += "\n\nMerge and use the existing #0?\n";
+	*/
+	
+
+/*	
+		var str = "Another concept with name " + selectedOccurence.name +  " exists. Proceed with merging?"; 
+		console.log(str);
+
+
+		var merge = window.confirm(str);
+		
+		if (merge) {
+			
+			cConcept_MergeWithMasterConcept(selectedOccurence.concept, others.first());
+			window.alert("Merge done");
+		
+		}
+		else
+			window.alert("OK - no merge done (canceled)");
+*/
+
+
+		cConcept_MergeWithMasterConcept(selectedOccurence.concept, others.first());
+
+		
+		
+	}
+	else if (others.size() > 1 ) {
+			
+		var alertStr = selectedOccurence.name + ": Several other concepts with the same name exist."
+						+ "\n\n"
+						+ "\t" + "Name" + "\t" + "Id"
+						+ "\n"
+						+ "0. Selected concept:\t" + selectedOccurence.name + "\t" + selectedOccurence.id 
+						//+ "\n"
+						+ strListOfOtherConceptsWithSameNameandType;
+
+		alertStr += "\n\n\Advice: Consider merging or renaming the other concepts before adding another concept with the sane name."
+		alertStr += "\n\nHint: Such merging is so far not supported;)"
+		
+		//window.alert(alertStr);
+		window.alert(selectedOccurence.name + ": Several other concepts with the same name exist.");
+		//window.alert("Advice: Consider (merging or renaming the other concepts before adding another concept with the sane name.");
+		//window.alert("Hint: Such merging is supported by TBD;)");
+		
+		console.log(alertStr);
+		
+		window.alert("Exiting - please fix problem with more than two identically named concepts before rerunning merge");
+		exit();
+	}
+	else {
+		//window.alert("No other concepts with the same name as the selected object found.");
+		console.log(selectedOccurence.name + ": OK");
+	}	
+
+
+});	

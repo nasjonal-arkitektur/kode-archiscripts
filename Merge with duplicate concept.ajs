@@ -11,8 +11,6 @@ load(__DIR__ + "./common/c_Model.ajs");
 load(__DIR__ + "./common/c_Concept.ajs");
 load(__DIR__ + "./tests/c_Test.ajs");
 
-console.log("Hey Jude");
-
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
 //CTest_LogObjectListWithType(selectedOccurences);
 

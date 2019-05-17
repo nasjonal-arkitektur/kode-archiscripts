@@ -1,0 +1,220 @@
+
+/*
+ * Export View to Markdown
+ * 
+ * Requires jArchi - https://www.archimatetool.com/blog/2018/07/02/jarchi/
+ * 
+ * Markdown - https://www.markdownguide.org/
+ * 
+ * Version 2:   Updated to support Diagram Groups
+ * Version 2.1: Add check for Selected View
+ * Version 2.2: Change to regex, added date of export
+ * Version 2.3: Include notes in documentation
+ * Version 3:   Updated to include Relationships
+ * Version 3.1: Include name and description
+ * Version 3.2: Support repeated elements
+ * Version 3.3: Fix for relationships table
+ * Version 3.4: Fix for connected notes,
+ *              Quotes in documenation,
+ *              Embed view (experimental)
+ * Version 3.5: Added support for jArchi 4.4 (additional attributes)
+ * 
+ * (c) 2018 Steven Mileham
+ *
+ */
+
+var debug = true;
+var embed = false;
+var tocMap = [];
+var bodyMap = [];
+
+function convertToText(type) {
+    var theString = type.replaceAll("-"," ").split(" ");
+    var theResult = "";
+    for (var i=0; i<theString.length; i++){
+        theResult+= theString[i][0].toUpperCase()+theString[i].substring(1,theString[i].length) + " ";
+    }
+    return theResult.trim();
+}
+
+function escapeMD(theString){
+    var newString = theString.replaceAll("<","&lt;").replaceAll("\n>","\n~QUOTE~");
+    return newString.substring(0,1)+newString.substring(1).replaceAll(">","&gt;").replaceAll("~QUOTE~",">");
+}
+
+function generateLink(theString) {
+    var regex = /[\[\]\(\)\#\\\/\"]/gi;
+    return "#"+theString.toLowerCase().replace(regex,"")
+                                      .replaceAll(" ","-")
+                                      .replaceAll("\<","lt")
+                                      .replaceAll("\>","gt");
+}
+
+function toc(d, element){
+    $(element).children().not("relationship").each(function(e) {
+        if (e.name) {
+            headerDepth="";
+            for (var i=0; i<d; i++){
+                headerDepth+="  ";
+            }
+            var theHash = generateLink(e.name +" ("+ convertToText(e.type)+")");
+            if (tocMap[theHash]==null) {
+                tocMap[theHash]=1;
+            }
+            else {
+                tocMap[theHash]+=1;
+            }
+
+            var linkNum="";
+
+            if (tocMap[theHash]>1) {
+                linkNum = "-"+tocMap[theHash];
+            }
+
+            theTOC+="\n"+headerDepth +"* ["+ escapeMD(e.name)  +" ("+ convertToText(e.type) +")"+linkNum.replace("-"," ")+"]("+theHash+linkNum+")";
+            if ($(e).children().not("relationship").length>0) {
+                d++;
+                toc(d, e);
+                d--;
+            }
+        }
+    });
+}
+
+function propertiesTable(element) {
+    var theProperties = element.prop();
+    var theHeader="";
+    var theLine="";
+    var theBody="";
+    for (var i=0; i<theProperties.length;i++){
+        theHeader+="|"+theProperties[i];
+        theLine+="|---";
+        theBody+="|"+element.prop(theProperties[i]);
+    }
+    return "**Properties**\n"+theHeader+"|\n"+theLine+"|\n"+theBody+"|\n";
+}
+
+function documentRelationships(element) {
+    var theHeader = "|From|Relationship|To|Name|Description|"
+    var theLine = "|---|---|---|---|---|";
+    var theBody = "";
+    $(element).outRels().each(function(r){
+        var q= r.concept;
+        if (r.type!="diagram-model-connection") {
+            theBody+="|"+r.source.name;
+            theBody+="|"+convertToText(r.type);
+            if (q.accessType) {
+                theBody+=" ("+q.accessType+")";
+            }
+            if (q.influenceStrength) {
+                theBody+=" ("+q.influenceStrength+")";
+            }
+            theBody+="|["+ escapeMD(r.target.name)  +" ("+ convertToText(r.target.type) +")]("+generateLink(r.target.name +" ("+ convertToText(r.target.type)+")")+")";
+            theBody+="|"+r.name;
+            theBody+="|"+r.documentation+"|\n";
+        }
+    });
+
+    return "**Relationships**\n"+theHeader+"\n"+theLine+"\n"+theBody;
+}
+
+function nestedDocumentation(d, element) {
+    $(element).children().not("relationship").each(function(e) {
+        if (e.name) {
+            var headerDepth ="##";
+            for (var i=0; i<d; i++) {
+                headerDepth+="#";
+            }
+
+            var theHash = generateLink(e.name +" ("+ convertToText(e.type)+")");
+            if (bodyMap[theHash]==null) {
+                bodyMap[theHash]=1;
+            }
+            else {
+                bodyMap[theHash]+=1;
+            }
+
+            var linkNum="";
+
+            if (bodyMap[theHash]>1) {
+                linkNum = " "+bodyMap[theHash];
+            }
+
+            theDocument+="\n"+headerDepth +" "+ escapeMD(e.name) +" ("+ convertToText(e.type) +")"+linkNum+"\n";
+            e.prop().length > 0 ? theDocument+="\n"+escapeMD(propertiesTable(e)):true;
+            $(e).outRels().length>0?theDocument+="\n"+escapeMD(documentRelationships(e)):true;
+            e.documentation ? theDocument+="\n"+escapeMD(e.documentation)+"\n":true;
+            $(e).rels().ends().each(function(r) {
+                if (r.text) {
+                    theDocument+="\n> "+escapeMD(r.text).replaceAll("\n","\n> ")+"\n";
+                }
+            });
+            debug? console.log(e.name+":"+$(e).children().not("relationship")+":"+e):true;
+            if ($(e).children().length>0) {
+                d++;
+                nestedDocumentation(d, e);
+                d--;
+            }
+        }
+    });
+}
+
+console.show();
+console.clear();
+console.log("Export to Markdown");
+
+var theDocument = "";
+var theTOC = "* [Introduction](#introduction)";
+
+var theView = $(selection).filter("archimate-diagram-model").first();
+
+if (theView) {
+
+    theDocument+="# "+theView.name+"[^1]\n";
+    toc(0,theView);
+
+    theDocument+="\n"+theTOC+"\n";
+
+    theDocument+="\n## Introduction\n";
+
+    if (embed==true){
+        var bytes = $.model.renderViewAsBase64(theView, "PNG", {scale: 2, margin: 10});
+        theDocument+="\n!["+theView.name+"](data:image/png;base64,"+bytes+")\n";
+    }
+    else {theDocument+="\n!["+theView.name+"][embedView]\n";}
+
+    theView.documentation!=""?theDocument+="\n"+theView.documentation+"\n":true;
+
+    // Notes with no relationships
+    $(selection).find().not("element").not("relationship").each(function(c){
+        if (c.text) {
+            if ($(c).rels().length==0) {
+                theDocument+="\n"+escapeMD(c.text).replaceAll("\n","\n> ")+"\n";
+            }
+        };
+    })
+
+    nestedDocumentation(0, theView);
+
+    var defaultFileName = theView.name ? model.name + "-" + theView.name + ".md" : "Exported View.md"; // Default file name
+    var exportFile = window.promptSaveFile({ title: "Export to Markdown", filterExtensions: [ "*.md" ], fileName: defaultFileName } );
+
+    if(exportFile != null) {
+        if (!embed) {
+            imageURL = exportFile.substring(0,exportFile.length-3).replaceAll(" ","%20")+".png";
+            relativeURL = imageURL.split("\\");
+            var bytes = $.model.renderViewAsBase64(theView, "PNG", {scale: 2, margin: 10});
+            $.fs.writeFile(exportFile.substring(0,exportFile.length-3) +".png", bytes, "BASE64");    
+            theDocument+="\n[embedView]: "+relativeURL[relativeURL.length-1];
+        }
+        theDocument+="\n[^1]: Generated: "+ new Date().toLocaleString()+"\n";
+        $.fs.writeFile(exportFile, theDocument);
+        console.log("> Export done");
+    }
+    else {
+        console.log("> Export cancelled");
+    }
+}
+else {
+    console.log("> Please Select a View");
+}

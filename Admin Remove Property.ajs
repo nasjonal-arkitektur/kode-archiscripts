@@ -29,7 +29,7 @@ function RemovePropertiesGlobally() {
 		//concept.removeProp(const_prop_name_en);		
 		//concept.removeProp(const_prop_description_en);
 		
-		concept.removeProp(const_prop_name_to_display);
+		//concept.removeProp(const_prop_name_to_display);
 		
     });
 	
