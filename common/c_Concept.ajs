@@ -375,8 +375,27 @@ console.log("cConcept_OKToSwitchType for " + concept.name + " from " + concept.t
 
 function concept_isExtension(concept) {
 	
-	return true; //erik:TBD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (!cConcept_HasProperty(concept, const_prop_dct_type) ) {
+		
+		// property is missing - just fix it, assuming the default value
+		cConcept_CreateMissingProperties(concept); // also create any other missing properties, while we're at it
+	}
+
+	var dctType = cConcept_GetProperty(concept, const_prop_dct_type);
+	var standardArchiType = null;
 	
+	if (dctType.substr(0, const_prop_dctType_archi_prefix.length) === const_prop_dctType_archi_prefix) {
+		standardArchiType = dctType.substr(const_prop_dctType_archi_prefix.length, dctType.length - 1);
+	
+		//console.log("standardArchiType=" + standardArchiType);
+	
+		if (standardArchiType === concept.type) 
+			return false;
+	}
+		
+	// not a standard archi type
+	
+	return true;
 }
 
 
@@ -396,16 +415,21 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 	var option_caseForShowingNamespace = "duplicateNames";//"always"
 	var option_caseForShowingConceptType = "extensions"; //"always"
 	var option_caseForShowingLanguage = "missingDefaultLanguage"; //"always"
+	
 
 	if (option_caseForShowingNamespace === "always")
 		doShowNamespace = true;
-	else if (option_caseForShowingNamespace === "duplicateNames")
-		if (true) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	else if (option_caseForShowingNamespace === "duplicateNames") {
+		
+		// note:the first parameter in the following call menat to be occurence. Also works for concept? Test!
+		var others = cModel_OtherConceptsWithSameNameandType(concept, false, false); // caseSensitive, namespaceSensitive
+		
+		if (others.size() > 0 ) // !!??? 1 or 0?
 			doShowNamespace = true;
-	
-	if (option_IndicateType === "always")
+	}
+	if (option_caseForShowingConceptType === "always")
 		doShowType= true;
-	else if (option_IndicateType === "extensions") {
+	else if (option_caseForShowingConceptType === "extensions") {
 		if (concept_isExtension(concept))
 			doShowType= true;
 	}
@@ -418,13 +442,13 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 			doShowLanguage= true;
 
 	if (doShowNamespace)
-		label += "[ns:${property:difi:namespace}]";	
+		label += " [ns:${property:difi:namespace}]";	// const_prop_namespace
 	
 	if (doShowLanguage)
-		label += "[ns:${property:difi:language}]";
+		label += " [lang:${property:difi:language}]"; // const_prop_language
 			
 	if (doShowType)
-		label += "\n<<${property:dct:type}>>";
+		label += "\n<<${property:dct:type}>>"; // const_prop_dct_type
 	
 	return label;
 }
@@ -565,6 +589,8 @@ function cConcept_VerifyExtensionType(concept) {
 	return result;
 }
 
+
+
 function cConcept_ValidateConceptType(concept) {
 
 
@@ -603,5 +629,11 @@ function cConcept_ValidateConceptType(concept) {
 	console.log("Warning: Invalid concept extension dct_type = " + dctType + " for concept with Archi concept type=" + concept.type + ", name=" + concept.name);
 	return false;
 	
+}
+
+function cConcept_UpdateLabel(concept) {
+
+	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept));
+
 }
 

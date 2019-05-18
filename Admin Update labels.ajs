@@ -1,7 +1,7 @@
 /*
- * New Archi Script
+ * Admin Update labels
  */
-
+ 
 load(__DIR__ + "/common/c_Namespace.ajs");
 load(__DIR__ + "/common/c_Concept.ajs");
 load(__DIR__ + "/common/c_Selection.ajs");
@@ -9,13 +9,12 @@ load(__DIR__ + "/common/c_Selection.ajs");
 console.show();
 console.clear();
 
+console.log("Started Admin Update labels");
 
 var selectedConcepts = CSelection_GetSelectedConcepts("");
 
 selectedConcepts.each(function(concept) {
-	cConcept_CreateMissingProperties(concept);
+	cConcept_UpdateLabel(concept);
 });
 
-
-
-
+console.log("Endded Admin Update labels");

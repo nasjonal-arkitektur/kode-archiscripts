@@ -70,3 +70,6 @@ var cView_MergeWithDuplicateElementsInView = function(v) {
 	return elements;
 }
 
+function cView_GetCurrentLanguage(view) {	
+	return view.prop(const_prop_current_language);
+}

@@ -47,6 +47,14 @@ function cModel_GetCurrentModelName() {
 	return m_model.name;
 }
 
+function cModel_GetCurrentLanguage() {	
+	return model.prop(const_prop_current_language);
+}
+
+function cModel_GetDefaultLanguage() {
+	return model.prop(const_prop_default_language);
+}
+
 var cModel_GetDirectlySelectedElements = function() { // erik: moved to CSelecton?
 
 	var elements = $(selection).filter("element");

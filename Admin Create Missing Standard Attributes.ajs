@@ -2,6 +2,7 @@
  * CreateDefaultProperties
  */
 
+load(__DIR__ + "/common/c_Namespace.ajs");
 load(__DIR__ + "./common/Constants.ajs");
 load(__DIR__ + "./common/c_Concept.ajs");
 
@@ -23,7 +24,7 @@ function CreateDefaultProperties() {
 	
 	// model
 	CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
-	//CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+	CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
 	
 	// views
 	$("view").each(function(view) {
@@ -36,16 +37,7 @@ function CreateDefaultProperties() {
     $("concept").each(function(concept) {
 		
 		cConcept_CreateMissingProperties(concept);
-		/*
-		CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);
-		CreateMissingProperty(concept, const_prop_name_no, concept.name); // TBD: consider model const_prop_current_language
-		CreateMissingProperty(concept, const_prop_name_en, ""); // TBD: consider model const_prop_current_language
-		
-		CreateMissingProperty(concept, const_prop_description_no, concept.documentation ); // TBD: consider model const_prop_current_language
-		CreateMissingProperty(concept, const_prop_description_en, ""); // TBD: consider model const_prop_current_language
-		
-		//CreateMissingProperty(concept, const_prop_name_to_display, "");
-		*/
+
 		
     });
 	
