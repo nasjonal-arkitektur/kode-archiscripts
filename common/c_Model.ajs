@@ -55,6 +55,69 @@ function cModel_GetDefaultLanguage() {
 	return model.prop(const_prop_default_language);
 }
 
+
+function cModel_IsValidLanguage(language) {	
+
+	var valid = false;
+
+	if (language === const_prop_language_value_no)
+		valid = true;
+	else if (language === const_prop_language_value_en)
+		valid = true;
+
+	return valid;
+	
+}
+
+function cModel_SetDefaultLanguage(language) {	
+
+	if (cModel_IsValidLanguage() )
+		model.prop(const_prop_current_language, language);
+	else {
+		console.log("Error: Invalid language '" + language + "'" + ".Exiting...");
+		exit();
+	}
+}
+
+function cModel_SetCurrentLanguage(language) {	
+
+	if (cModel_IsValidLanguage() )
+		model.prop(const_prop_current_language, language);
+	else {
+		console.log("Error: Invalid language '" + language + "'" + ".Exiting...");
+		exit();
+	}
+
+	
+	if (language === cModel_GetCurrentLanguage() )
+		return; // no change
+
+
+	// views
+	$("view").each(function(view) {
+
+		cView_SetLanguage(view, language);
+		
+    });
+	
+	// elements and relations
+
+    $("concept").each(function(concept) {
+		
+		cConcept_SetLanguage(concept, language);
+
+		
+    });
+	
+	
+	
+	
+	
+	
+}
+
+
+
 var cModel_GetDirectlySelectedElements = function() { // erik: moved to CSelecton?
 
 	var elements = $(selection).filter("element");

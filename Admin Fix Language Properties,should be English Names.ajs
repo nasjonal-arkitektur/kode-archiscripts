@@ -1,0 +1,36 @@
+/*
+ * New Archi Script
+ */
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Set english name property insetad of the norwegian one, as the name is actually the english one (yet to be tramslated)");
+
+
+var selectedConcepts = CSelection_GetSelectedConcepts("");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+
+selectedConcepts.each(function(concept) {
+	
+	if (cConcept_GetProperty(concept, const_prop_name_en) !="") {
+		console.log("Warning: "+ const_prop_name_en + " already exista,  " + concept.name + ". Exiting...");
+		exit();
+	}
+	
+	var norwegianNameThatIsRatherEnglish = cConcept_GetProperty(concept, const_prop_name_no);
+	cConcept_SetProperty(concept, const_prop_name_en, norwegianNameThatIsRatherEnglish);
+	cConcept_SetProperty(concept, const_prop_name_no, "");
+	
+	cConcept_SetProperty(concept, const_prop_language, const_prop_language_value_en);
+	
+	cConcept_UpdateLabel(concept);
+	
+});
+
+console.log("Script completed");

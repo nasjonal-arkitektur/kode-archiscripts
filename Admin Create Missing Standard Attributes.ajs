@@ -12,7 +12,7 @@ function CreateMissingProperty(concept, propName, propValue) {
 		console.log(". Creating missing or empty standard property " + propName + " for " + concept.name + " (" + concept.type + ")" );
 		concept.prop(propName, propValue);
 	}
-}
+}	
 
 
 
@@ -24,22 +24,65 @@ function CreateDefaultProperties() {
 	
 	// model
 	CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
-	CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+	CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_no);
 	
 	// views
 	$("view").each(function(view) {
+		
+		
+		//view.removeProp(const_prop_default_language); // very very temporary!
+		//view.removeProp(const_prop_current_language); // very very temporary!
 		//CreateMissingProperty(view, const_prop_default_language, const_prop_language_value_no);
 		//CreateMissingProperty(view, const_prop_current_language, const_prop_language_value_no);
-		CreateMissingProperty(view, const_prop_current_language, const_prop_language_value_no);
+		
+		
+		CreateMissingProperty(view, const_prop_language, cModel_GetCurrentLanguage() );
+		
+		if (cModel_GetCurrentLanguage() === "no") {
+			CreateMissingProperty(view, const_prop_name_no, view.name );
+			CreateMissingProperty(view, const_prop_name_en, "" );
+			CreateMissingProperty(view, const_prop_description_no, view.documentation );
+			CreateMissingProperty(view, const_prop_description_en, "" );
+		}
+		else if (cModel_GetCurrentLanguage() === "en") {
+			CreateMissingProperty(view, const_prop_name_no, "" );
+			CreateMissingProperty(view, const_prop_name_en, view.name );
+			CreateMissingProperty(view, const_prop_description_no, "" );
+			CreateMissingProperty(view, const_prop_description_en, view.documentation );
+		}
+				
+    });
+	
+	// folders
+	$("folder").each(function(folder) {
+		
+		CreateMissingProperty(folder, const_prop_language, cModel_GetCurrentLanguage() );
+		
+		if (cModel_GetCurrentLanguage() === "no") {
+			CreateMissingProperty(folder, const_prop_name_no, folder.name );
+			CreateMissingProperty(folder, const_prop_name_en, "" );
+			CreateMissingProperty(folder, const_prop_description_no, folder.documentation );
+			CreateMissingProperty(folder, const_prop_description_en, "" );
+		}
+		else if (cModel_GetCurrentLanguage() === "en") {
+			CreateMissingProperty(folder, const_prop_name_no, "" );
+			CreateMissingProperty(folder, const_prop_name_en, folder.name );
+			CreateMissingProperty(folder, const_prop_description_no, "" );
+			CreateMissingProperty(folder, const_prop_description_en, folder.documentation );
+		}
+
     });
 	
 	// elements and relations
-    $("concept").each(function(concept) {
-		
-		cConcept_CreateMissingProperties(concept);
+	var doItNow = false;
+	if (doItNow){
+		$("concept").each(function(concept) {
+			
+			cConcept_CreateMissingProperties(concept);
 
-		
-    });
+			
+		});
+	}
 	
 	console.log("Ending function CreateDefaultProperties");
 

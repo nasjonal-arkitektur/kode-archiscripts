@@ -1,11 +1,13 @@
-/*
+	/*
  * Admin remove property
  */
 
 load(__DIR__ + "./common/Constants.ajs");
  
 console.clear();
- 
+
+
+
 function RemovePropertiesGlobally() {
  
  

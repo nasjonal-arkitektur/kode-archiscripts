@@ -1,4 +1,5 @@
 /*
+/*
  * c_concept
  */
  
@@ -215,6 +216,7 @@ function cConcept_SetProperty(concept, propName, propvalue) {
 	concept.prop(propName, propvalue);
 }
 
+
 function cConcept_SetName(concept, name) {
 	
 	concept.name = name;
@@ -238,7 +240,7 @@ function cConcept_GetProperty(concept, propName) {
 
 function cConcept_SetLanguage(concept, language) {
 	
-	// 1. set the nam3
+	// 1. set the name
 	var localizedName = null;
 	var localizedDescription = null;
 	var propName = null;
@@ -254,28 +256,34 @@ function cConcept_SetLanguage(concept, language) {
 		propDescr = const_prop_description_en;
 	}
 	else {
-		console.log("Error: Invalid language '" + language + "'" + ". Existing...");
+		console.log("Error: Invalid language '" + language + "'" + ". Exiting...");
 	}
 	
 
 	localizedName = cConcept_GetProperty(concept, propName);
 
 
-	if (localizedName === "") {
-		console.log("Warning: cannot set name to language '" + language + "', due to blank property " + propName);
+	if (localizedName === "" || localizedName === null ) {
+		console.log("Warning: cannot set name(" + concept.name + ") to language '" + language + "', due to blank property " + propName);// + ". Exiting...");
 		localizedName = concept.name; // just keep it
 	}
+	else
+		cConcept_SetProperty(concept, const_prop_language, language); // update the language property of the concept
+	
 	cConcept_SetName(concept, localizedName);
 
 	localizedDescription = cConcept_GetProperty(concept, propDescr);
-	if (localizedDescription === "") {
+	if (localizedDescription === "" || localizedDescription === null ) {
 		localizedDescription = concept.documentation; // just keep it
 	}
 	cConcept_SetDescription(concept, localizedDescription);
 	
 
-	// 2. update the language property of the concept
-	cConcept_SetProperty(concept, const_prop_language, language);
+	
+	
+	
+	// 3. update label
+	cConcept_UpdateLabel(concept);
 
 }
 
@@ -378,7 +386,8 @@ function concept_isExtension(concept) {
 	if (!cConcept_HasProperty(concept, const_prop_dct_type) ) {
 		
 		// property is missing - just fix it, assuming the default value
-		cConcept_CreateMissingProperties(concept); // also create any other missing properties, while we're at it
+		cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
+		
 	}
 
 	var dctType = cConcept_GetProperty(concept, const_prop_dct_type);
@@ -399,10 +408,42 @@ function concept_isExtension(concept) {
 }
 
 
-function concept_nameEqualsNameInDefaultLanguage(concept) {
+function concept_NameForCurrentModelLanguageMissing(concept) {
 	
-	return false; //erik:TBD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	result = false;
 	
+	if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
+		
+		if (cConcept_GetProperty(concept, const_prop_name_no) === "")
+			result = true;
+	}
+	else if(cModel_GetCurrentLanguage() == const_prop_language_value_en) {
+		
+		if (cConcept_GetProperty(concept, const_prop_name_en) === "")
+			result = true;
+	}
+	
+	return result;
+
+}
+
+function concept_nameEqualsNameOfCurrentLanguage(concept) {
+	
+	result = false;
+	
+	if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
+		
+		if (concept.name === cConcept_GetProperty(concept, const_prop_name_no))
+			result = true;
+	}
+	else if(cModel_GetCurrentLanguage() == const_prop_language_value_en) {
+		
+		if (concept.name === cConcept_GetProperty(concept, const_prop_name_en))
+			result = true;
+	}
+	
+	return result;
+
 }
 
 function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!!!!!
@@ -414,17 +455,17 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 
 	var option_caseForShowingNamespace = "duplicateNames";//"always"
 	var option_caseForShowingConceptType = "extensions"; //"always"
-	var option_caseForShowingLanguage = "missingDefaultLanguage"; //"always"
+	var option_caseForShowingLanguage = "missingCurrentLanguage"; //"always"
 	
 
 	if (option_caseForShowingNamespace === "always")
 		doShowNamespace = true;
 	else if (option_caseForShowingNamespace === "duplicateNames") {
 		
-		// note:the first parameter in the following call menat to be occurence. Also works for concept? Test!
+		// note:the first parameter in the following call originally meant to be occurence. Also works for concept...
 		var others = cModel_OtherConceptsWithSameNameandType(concept, false, false); // caseSensitive, namespaceSensitive
 		
-		if (others.size() > 0 ) // !!??? 1 or 0?
+		if (others.size() > 0 ) 
 			doShowNamespace = true;
 	}
 	if (option_caseForShowingConceptType === "always")
@@ -437,15 +478,21 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 
 	if (option_caseForShowingLanguage === "always")
 		doShowLanguage = true;
-	else if (option_caseForShowingLanguage === "missingDefaultLanguage")
-		if (!concept_nameEqualsNameInDefaultLanguage(concept))
-			doShowLanguage= true;
+	else if (option_caseForShowingLanguage === "missingCurrentLanguage")
+		if (concept.name != "")
+			//if (!concept_nameEqualsNameOfCurrentLanguage(concept))
+			if (concept_NameForCurrentModelLanguageMissing(concept) )
+				doShowLanguage= true;
 
 	if (doShowNamespace)
 		label += " [ns:${property:difi:namespace}]";	// const_prop_namespace
 	
+	
+	
 	if (doShowLanguage)
 		label += " [lang:${property:difi:language}]"; // const_prop_language
+	
+		// NOTE: Should have considered the models alternative/default language
 			
 	if (doShowType)
 		label += "\n<<${property:dct:type}>>"; // const_prop_dct_type
@@ -470,11 +517,31 @@ function cConcept_CreateMissingProperties(concept) {
 	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
 		
 	cConcept_CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);
-	cConcept_CreateMissingProperty(concept, const_prop_name_no, concept.name); // TBD: consider model const_prop_current_language
-	cConcept_CreateMissingProperty(concept, const_prop_name_en, ""); // TBD: consider model const_prop_current_language
+
+	cConcept_CreateMissingProperty(concept, const_prop_language, cModel_GetCurrentLanguage() );
 	
-	cConcept_CreateMissingProperty(concept, const_prop_description_no, concept.documentation ); // TBD: consider model const_prop_current_language
-	cConcept_CreateMissingProperty(concept, const_prop_description_en, ""); // TBD: consider model const_prop_current_language
+	
+	if (concept.name === null || concept.name === "") {
+		concept.name = concept.type;
+		
+		//Note: Assuming no element concepts have "-relationship" as part of the name...but should check type first...!!! erik
+		concept.name = concept.name.replace("-relationship", ""); // remove this part of the name (applies for relationship conceps only)
+	}
+	
+	if (cModel_GetCurrentLanguage() === "no") {
+		cConcept_CreateMissingProperty(concept, const_prop_name_no, concept.name );
+		cConcept_CreateMissingProperty(concept, const_prop_name_en, "" );
+		cConcept_CreateMissingProperty(concept, const_prop_description_no, concept.documentation );
+		cConcept_CreateMissingProperty(concept, const_prop_description_en, "" );
+	}
+	else if (cModel_GetCurrentLanguage() === "en") {
+		cConcept_CreateMissingProperty(concept, const_prop_name_no, "" );
+		cConcept_CreateMissingProperty(concept, const_prop_name_en, concept.name );
+		cConcept_CreateMissingProperty(concept, const_prop_description_no, "" );
+		cConcept_CreateMissingProperty(concept, const_prop_description_en, concept.documentation );
+	}
+	
+	
 	
 	//cConcept_CreateMissingProperty(concept, const_prop_link1, "");
 
@@ -602,7 +669,7 @@ function cConcept_ValidateConceptType(concept) {
 		//return false;
 		
 		// property is missing - just fix it, assuming the default value
-		cConcept_CreateMissingProperties(concept); // also create any other missing properties, while we're at it
+		cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
 		return true;
 	}
 
@@ -632,8 +699,17 @@ function cConcept_ValidateConceptType(concept) {
 }
 
 function cConcept_UpdateLabel(concept) {
-
+	 
 	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept));
 
 }
 
+function cConcept_UpdateNameAndDescriptionAndLabel(concept) {
+	 
+	// name and description:
+	cConcept_SetLanguage(concept, cModel_GetCurrentLanguage()); // sets name and description
+	
+	// label:
+	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept));
+
+}

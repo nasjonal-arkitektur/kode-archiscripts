@@ -17,4 +17,4 @@ selectedConcepts.each(function(concept) {
 	cConcept_UpdateLabel(concept);
 });
 
-console.log("Endded Admin Update labels");
+console.log("Ended Admin Update labels");

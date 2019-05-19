@@ -16,6 +16,6 @@ selectedConcepts.each(function(concept) {
 	cConcept_CreateMissingProperties(concept);
 });
 
-
+console.log("Script completed");
 
 

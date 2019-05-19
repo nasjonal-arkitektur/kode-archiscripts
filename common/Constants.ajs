@@ -15,7 +15,7 @@ var const_prop_namespace_val_eira = "eira";
 var const_prop_namespace_val_eirabased = "eirabased";
 
 var const_prop_language = "difi:language";
-const_prop_default_language = "difi:default_language";
+const_prop_default_language = "difi:default_language"; // rename to "alternative language"??
 const_prop_current_language = "difi:current_language";
 var const_prop_language_value_no = "no";
 var const_prop_language_value_en = "en";
