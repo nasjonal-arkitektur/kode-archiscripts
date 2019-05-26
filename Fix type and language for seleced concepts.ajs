@@ -1,0 +1,36 @@
+/*
+ * New Archi Script
+ */
+ 
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.show();
+console.clear();
+
+console.log("Fix type and language for seleced concepts.ajs");
+
+
+var selectedConcepts = CSelection_GetSelectedConcepts("");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+	$(selectedConcepts).find("relationship").each(function(r) {
+	
+		nameRelationWithDefaultNameIfUnnamed(r);
+			
+	});
+
+selectedConcepts.each(function(concept) {
+
+	concept.removeProp("dct:type");
+	cConcept_CreateMissingProperties(concept);
+	cConcept_SetLanguage(concept, "no"); // temporary implentation!!!!!!!!!!!!
+
+});
+
+console.log("Script completed");

@@ -22,6 +22,9 @@ function nameRelationWithDefaultNameIfUnnamed(r) {
 			console.log("Added relationship name '" + r.name + "' to relation woith id = " + r.id);
 			
 		}
+		
+		r.prop("label", " ");
+		
     //});
 }
 

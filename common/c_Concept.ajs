@@ -265,16 +265,45 @@ function cConcept_SetLanguage(concept, language) {
 
 	if (localizedName === "" || localizedName === null ) {
 		console.log("Warning: cannot set name(" + concept.name + ") to language '" + language + "', due to blank property " + propName);// + ". Exiting...");
-		localizedName = concept.name; // just keep it
+		
+		
+		// Keep the name as it is...
+		localizedName = concept.name; 
+		
+		
+		//... and fix the blank property
+		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
+			cConcept_SetProperty(concept, const_prop_name_no, concept.name);
+		}
+		else if (cModel_GetCurrentLanguage() == const_prop_language_value_en) {
+			cConcept_SetProperty(concept, const_prop_name_en, concept.name);
+		}
+		console.log("Info: Blank name property updated according to the model's current language;"); 
+		
 	}
 	else
 		cConcept_SetProperty(concept, const_prop_language, language); // update the language property of the concept
 	
 	cConcept_SetName(concept, localizedName);
+	
+	
+	
+	
 
 	localizedDescription = cConcept_GetProperty(concept, propDescr);
 	if (localizedDescription === "" || localizedDescription === null ) {
 		localizedDescription = concept.documentation; // just keep it
+		
+		//... and fix the blank property
+		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
+			cConcept_SetProperty(concept, const_prop_description_no, concept.documentation);
+		}
+		else if (cModel_GetCurrentLanguage() == const_prop_language_value_en) {
+			cConcept_SetProperty(concept, const_prop_description_en, concept.documentation);
+		}
+		console.log("Info: Blank description property updated according to the model's current language;"); 		
+		
+		
 	}
 	cConcept_SetDescription(concept, localizedDescription);
 	
@@ -386,6 +415,7 @@ function concept_isExtension(concept) {
 	if (!cConcept_HasProperty(concept, const_prop_dct_type) ) {
 		
 		// property is missing - just fix it, assuming the default value
+		console.log("Info: Missing property for dct:type se to standard archi type=" + const_prop_dctType_archi_prefix + concept.type);
 		cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
 		
 	}
@@ -454,7 +484,7 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 	var doShowLanguage = false;
 
 	var option_caseForShowingNamespace = "duplicateNames";//"always"
-	var option_caseForShowingConceptType = "extensions"; //"always"
+	var option_caseForShowingConceptType = "extensions"; //"extensions" "always" "never"
 	var option_caseForShowingLanguage = "missingCurrentLanguage"; //"always"
 	
 
@@ -514,6 +544,7 @@ function cConcept_CreateMissingProperties(concept) {
 
 //cConcept_removeProperty(concept, const_prop_dct_type); // very very temporary!
  	
+	
 	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
 		
 	cConcept_CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);

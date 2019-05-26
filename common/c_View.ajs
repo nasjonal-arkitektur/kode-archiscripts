@@ -14,6 +14,14 @@ function cView_GetSelectedElements() {
 	
 }
 
+function cView_GetSelectedRelationship() {
+
+	$(selection).filter("relationship").each(function(r) {
+		console.log("Selected relationship: " + r.name );			
+	});
+	
+}
+
 function cView_GetSelectedConcepts() {
 
 

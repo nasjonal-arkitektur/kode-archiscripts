@@ -18,6 +18,8 @@ if (conceptType == null) // means user hit Cancel
 var list = null;
 list = CSelection_GetSelectedConcepts(conceptType);
 
+
+
 if (list == null)
 	window.alert("No matching concepts found");
 else {	

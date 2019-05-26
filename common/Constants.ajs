@@ -27,12 +27,14 @@ var const_prop_name_no = "difi:name_no";
 var const_prop_name_en = "difi:name_en";
 var const_prop_description_no = "difi:description_no";
 var const_prop_description_en = "difi:description_en";
-var const_prop_description_default = "-";
+var const_prop_description_default = "";
 
 var const_prop_link1 = "difi:link1";
 
+var const_prop_owner = "difi:owner";// text (also soo relation difi:association-relationship-owner
 
-
+var const_prop_owner = "difi:status"; // text
+var const_prop_owner = "difi:status_time"; //timestamp
 
 // EIRA properties:
 var const_prop_ID = "ID";
@@ -390,6 +392,7 @@ var ArrayOfValidArchiConceptTypes = [
 
 var ArrayOfValidElementExtensions = [
 
+	const_conceptType_business_object__term,
 	const_conceptType_resource__reference_arhitecture,
 
 // risk/security related extensions
