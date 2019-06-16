@@ -12,7 +12,7 @@ console.clear();
 console.log("Fix type and language for seleced concepts.ajs");
 
 
-var selectedConcepts = CSelection_GetSelectedConcepts("");
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
 {
 	window.alert("No concepts selected. Exiting...");

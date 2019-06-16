@@ -16,7 +16,7 @@ function SetLanguageForGivenConcepts(givenConcepts, language) {
 	});
 }
 
-var selectedConcepts = CSelection_GetSelectedConcepts("");
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
 {
 	window.alert("No concepts selected. Exiting...");

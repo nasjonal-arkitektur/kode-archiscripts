@@ -177,7 +177,7 @@ var cModel_GetElementsInSelectedViews = function() {
 	return elements;
 }
 
-var cModel_GetSelectedView = function() {
+var cModel_GetSelectedView = function() { // also see...
 
 	var vus = $(selection).filter("view");
 	
@@ -198,6 +198,51 @@ var cModel_FindAllModelElementsWithName = function(elementName) {
     });
 }
 	
+function cModel_GetElementWithId(id) {
+	
+   var elms =  $("concept").filter(function(o) {
+        return ( (o.id == id) );
+    });
+	
+	if (elms.size() < 1) {
+		
+		console.log("cModel_GetElementWithId: No elements with given id = " + id + "! Exiting!");
+		exit();
+	}
+	else if (elms.size() > 1) {
+		window.alert("More than one element selected");
+		exit();
+	}
+	
+		
+	var elm = elms.first();
+	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
+	return elm;
+			
+	
+}
+
+function cModel_GetViewWithId(id) {
+
+    var views =  $("view").filter(function(o) {
+        return ( (o.id == id) );
+    });
+	
+	if (views.size < 1) {
+		
+		console.log("No views with given id! Exiting!");
+		exit();
+	}
+	else if (views.size() > 1) {
+		window.alert("More than one view selected");
+		exit();
+	}
+	
+	var view = views.first();
+	console.log("viewname = " + view.name);
+	return views.first();
+		
+}
 
 var cModel_OtherConceptsWithSameNameandType = function(occurence, caseSensitive, namespaceSensitive) {
 

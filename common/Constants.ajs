@@ -29,12 +29,19 @@ var const_prop_description_no = "difi:description_no";
 var const_prop_description_en = "difi:description_en";
 var const_prop_description_default = "";
 
-var const_prop_link1 = "difi:link1";
+var const_prop_link1_text = "difi:link1-text";
+var const_prop_link1_address = "difi:link1-address";
 
-var const_prop_owner = "difi:owner";// text (also soo relation difi:association-relationship-owner
+var const_prop__owning_actor = "difi:owning-actor";// text; resricted to valid actor (also see const_conceptType_association__owner)
+var const_prop__owning_role = "difi:owning-role";// text; resricted to valid actor (also see const_conceptType_association__owner)
 
-var const_prop_owner = "difi:status"; // text
-var const_prop_owner = "difi:status_time"; //timestamp
+var const_prop_solution_lifecycle = "difi:sbb-lifecycle"; // Suggested; Planned; Under development; Operational; Deprecated 
+var const_prop_doc_lifecycle = "difi:doc-lifecycle"; // Initial; Preliminary; In work; Ready for review; Established; To be revised; Archived; To be deleted  
+var const_prop_validityarea = "difi:sbb-validityarea"; // assume template with info about valid_from_date; valid_to_date; sectors (list); ...
+
+var const_prop_doc_lifecycle_timestamp = "difi:docstatus_timestamp"; // 
+var const_prop_doc_lifecycle_comment = "difi:docstatus_comment"; // 
+var const_prop_doc_lifecycle_history = "difi:docstatus_history"; // auto generated; works if always using script to change status
 
 // EIRA properties:
 var const_prop_ID = "ID";
@@ -70,6 +77,13 @@ var const_prop_dctType_difi_prefix = "difi:";
 *	Relationships
 */		
 var const_conceptType_association__synonym = "difi:synonym-preferred-term-of";
+
+// Roles
+var const_conceptType_association__owns = "difi:is-owner-of";
+var const_conceptType_association__manages = "difi:is-manager-of";
+var const_conceptType_association__develops = "difi:developing";
+
+
 
 /*
 *	Elements

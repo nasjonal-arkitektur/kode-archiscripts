@@ -10,7 +10,7 @@ console.show();
 console.clear();
 
 
-var selectedConcepts = CSelection_GetSelectedConcepts("");
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 
 selectedConcepts.each(function(concept) {
 	cConcept_CreateMissingProperties(concept);

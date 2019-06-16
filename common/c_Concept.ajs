@@ -483,9 +483,11 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 	var doShowType = false;
 	var doShowLanguage = false;
 
-	var option_caseForShowingNamespace = "duplicateNames";//"always"
-	var option_caseForShowingConceptType = "extensions"; //"extensions" "always" "never"
-	var option_caseForShowingLanguage = "missingCurrentLanguage"; //"always"
+	//var option_caseForShowingNamespace = "duplicateNames";//"always"
+	var option_caseForShowingNamespace = "always";//"always"
+	
+	var option_caseForShowingConceptType = "never"; //"extensions" "always" "never"
+	var option_caseForShowingLanguage = "always"; //"always", missingCurrentLanguage
 	
 
 	if (option_caseForShowingNamespace === "always")
@@ -556,11 +558,15 @@ function cConcept_CreateMissingProperties(concept) {
 		concept.name = concept.type;
 		
 		//Note: Assuming no element concepts have "-relationship" as part of the name...but should check type first...!!! erik
+		
 		concept.name = concept.name.replace("-relationship", ""); // remove this part of the name (applies for relationship conceps only)
 	}
 	
 	if (cModel_GetCurrentLanguage() === "no") {
 		cConcept_CreateMissingProperty(concept, const_prop_name_no, concept.name );
+		
+		// TODO: cConcept_CreateMissingProperty(concept, const_prop_origname, concept.name );
+
 		cConcept_CreateMissingProperty(concept, const_prop_name_en, "" );
 		cConcept_CreateMissingProperty(concept, const_prop_description_no, concept.documentation );
 		cConcept_CreateMissingProperty(concept, const_prop_description_en, "" );

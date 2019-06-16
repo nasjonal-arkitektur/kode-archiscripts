@@ -22,7 +22,7 @@ if (conceptType == null) // means user hit Cancel
 var givenName = window.prompt("Specify the name to set for the selected relationships", "");
 
 var list = null;
-list = CSelection_GetSelectedConcepts(conceptType);
+list = CSelection_GetSelectedConcepts(conceptType, "");
 
 
 if (list === null )

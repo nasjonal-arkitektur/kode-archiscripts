@@ -18,13 +18,13 @@ function ValidateConceptTypes() {
 	var selectedConcepts = null;
 	// test using selection
 	
-	selectedConcepts = CSelection_GetSelectedConcepts("");
+	selectedConcepts = CSelection_GetSelectedConcepts("", "");
 	if (selectedConcepts === null || selectedConcepts === 0) 
 		selectedConcepts = $("concept");
 		
 		
 	selectedConcepts.each(function(concept) {
-		if (!cConcept_ValidateConceptType(concept) )
+		if (!	(concept) )
 			numIssues++;
 	});
 

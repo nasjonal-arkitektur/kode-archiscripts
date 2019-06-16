@@ -41,3 +41,10 @@ var cCollection_GetItemsOfType = function(coll, type) {
         return ( (o.type == type) );
     });
 }
+
+var cCollection_GetItemsWithNamespace = function(coll, namespace){
+
+    return coll.filter(function(o) {
+        return ( o.prop(const_prop_namespace) == namespace );
+    });
+}

@@ -9,5 +9,5 @@ load(__DIR__ + "/common/c_Selection.ajs");
 console.show();
 console.clear();
 
-var selectedConcepts = CSelection_GetSelectedConcepts("");
+var selectedConcepts = CSelection_GetSelectedConcepts("","");
 cNamespace_AddNamespaceToNameForGivenConcepts(selectedConcepts);

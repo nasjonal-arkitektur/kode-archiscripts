@@ -19,7 +19,7 @@ function UserDialogInputNewNamespaceValue() {
 function UpdateNamespaceForSelectedConceptsWithUserDialog() {
 
 	//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
-	var selectedConcepts = CSelection_GetSelectedConcepts("");
+	var selectedConcepts = CSelection_GetSelectedConcepts("","");
 	
 	if (selectedConcepts === null || selectedConcepts.size() < 1)
 	{

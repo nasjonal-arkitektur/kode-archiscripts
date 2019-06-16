@@ -76,12 +76,18 @@ function CreateDefaultProperties() {
 	// elements and relations
 	var doItNow = false;
 	if (doItNow){
-		$("concept").each(function(concept) {
-			
-			cConcept_CreateMissingProperties(concept);
+		//$("concept").each(function(concept) {
+		//	cConcept_CreateMissingProperties(concept);
+		//});
 
-			
+		$("element").each(function(element) {
+			cConcept_CreateMissingProperties(element.concept);
 		});
+		$("relationship").each(function(relation) {
+			cConcept_CreateMissingProperties(relation.concept);
+		});
+
+
 	}
 	
 	console.log("Ending function CreateDefaultProperties");

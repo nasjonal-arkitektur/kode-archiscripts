@@ -8,7 +8,7 @@ load(__DIR__ + "/common/c_Selection.ajs");
 console.log("Set english name property insetad of the norwegian one, as the name is actually the english one (yet to be tramslated)");
 
 
-var selectedConcepts = CSelection_GetSelectedConcepts("");
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
 {
 	window.alert("No concepts selected. Exiting...");

@@ -296,7 +296,7 @@ function CSelection_GetAllDirectlySelectedConcepts() {
 	
 }
 
-function CSelection_GetSelectedConcepts(conceptType) { // always return the concepts only, not the occurences
+function CSelection_GetSelectedConcepts(conceptType, namespace) { // always return the concepts only, not the occurences
 
 	var selectedConcepts = null;
 	var directlySelectedConcepts = null;
@@ -321,6 +321,11 @@ function CSelection_GetSelectedConcepts(conceptType) { // always return the conc
 
 	if (conceptType != null && conceptType != "")
 		selectedConcepts = cCollection_GetItemsOfType(selectedConcepts, conceptType);
+	
+	if (namespace != null && namespace != "")
+		selectedConcepts = cCollection_GetItemsWithNamespace(selectedConcepts, namespace);
+
+	
 	
 	return selectedConcepts;
 }

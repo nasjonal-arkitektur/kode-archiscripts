@@ -28,9 +28,12 @@ selectedOccurences.each(function(o) {
 	var numproblems = cConcept_OKToSwitchType(o.concept, newType);
 	
 	if (numproblems === 0) {
-		o.type = newType;
+
+		//o.type = newType;
+		o.concept.type = newType;
 		console.log("Tried to change concept type for " + o.name + " to " + newType);
-		if (o.type != newType)
+		//if (o.type != newType)
+		if (o.concept.type != newType)	
 			console.log("Error: Failed to change concept type for " + o.name + " to " + newType);
 		else
 			successfulChanges++;
