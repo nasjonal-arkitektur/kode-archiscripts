@@ -1,0 +1,66 @@
+/*
+ * Create elements from clibboard.ajs
+ */
+
+console.show();
+console.clear();
+console.log("Create elements from clibboard.ajs");
+
+
+function getClipboard() {
+	
+	var Toolkit = Java.type("java.awt.Toolkit");
+	var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	
+
+    //try {
+      if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+
+		return txt;
+        //return txt.trim();
+      }
+    //} catch (Exception e) {
+    //}
+
+    return "";
+}
+  
+var txt = getClipboard();
+console.log(txt);
+
+var selectedViews = $(selection).filter("archimate-diagram-model");
+
+if(selectedViews.size() < 1) {
+	window.alert("No views selected");
+	exit();
+}
+else if(selectedViews.size() > 1) {
+	window.alert("More than one view selected");
+	exit();
+}
+
+var view = selectedViews.first();
+
+
+var arr = txt.split("\n");
+var concept = null;
+var elm = null;
+var x = 10;
+var y = 200;
+
+var elementType = "resource";
+var elementType = window.prompt("Archi concept type?", elementType);
+
+for (i = 0; i < arr.length; i++) {
+	concept= model.createElement(elementType, arr[i]);
+	elm = view.add(concept, x, y, -1, -1);	
+	//elm.documentation = "doc";
+	x += 143; // default width is 133
+}
+
+
+
+

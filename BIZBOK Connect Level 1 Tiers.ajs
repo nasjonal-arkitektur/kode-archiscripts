@@ -1,0 +1,70 @@
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.show();
+console.clear();
+console.log("BIZBOK connect level 1 Tiers - assuming one or more of the tier 1-3 group objects are selected");
+
+function GetLevelOneConceptsForTierGroup(tierGroupConcept) {
+	
+	var tierNumber = cConcept_GetProperty(tierGroupConcept, "bizbok:tier");
+	
+	
+	var concepts =  $("concept").filter(function(o) {
+		
+		var tier = cConcept_GetProperty(o, "bizbok:tier");
+        return ( tier === 1 );
+    });
+	
+	var c = concepts.first();
+	return c;
+}
+
+var selectedElements = cView_GetSelectedElements();
+if (selectedElements == null || selectedElements.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}
+
+if (selectedElements > 3)
+{
+	window.alert("More than 3 elements selected, but there is only 3 BIZBOK tiers. Exiting...");
+	exit();
+}
+
+selectedElements.each(function(e) {
+	var c = e.concept;
+	
+
+	if (c.type != "grouping")
+	{
+		window.alert("Found element " + c.name + " of type " + c.type + ". Only grouping elements are accepted by this script. Exiting...");
+		exit();
+	}	
+
+	if (c.type != "grouping")
+	{
+		window.alert("Found element " + c.name + " of type " + c.type + ". Only grouping elements are accepted by this script. Exiting...");
+		exit();
+	}	
+
+	console.log(c.name + ", " + e.view.name);
+
+});
+
+// Validation ok - we now have 1, 2 or 3 BIZBOK tier group elements selected
+selectedElements.each(function(e) {
+	var c = e.concept;
+	
+	console.log("Prosessing " + c.name);
+	
+	// Getall Tier 1 level 1 concepts
+	var tier1Level1Concepts = GetLevelOneConceptsForTierGroup(c);
+	
+	selectedElements.each(function(tier1Level1Concept) {
+		
+		console.log("tier1Level1Concept: " + tier1Level1Concept.name);
+	});
+
+});

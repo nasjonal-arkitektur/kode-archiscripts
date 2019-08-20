@@ -1,0 +1,14 @@
+/*
+ * New Archi Script
+ */
+ 
+console.clear();
+
+$(selection).each(function(o) {
+
+		var concept = o.concept;
+		console.log("Concept " + concept.name + "\t" + concept.id);
+		//concept.id = "b1e0d42a-0e15-4844-b2a2-272eb99e563e";
+		//console.log("New " + concept.name + "\t" + concept.id);
+	
+	});

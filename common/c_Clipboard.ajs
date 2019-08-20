@@ -1,0 +1,45 @@
+/*
+ * c_Clipboard
+ */
+ 
+ function cClipboard_SetClipboardString(string) {
+	
+	var Toolkit = Java.type("java.awt.Toolkit");
+	var Transferable = Java.type("java.awt.datatransfer.StringSelection");
+
+    try {
+		var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		//transferable =  new StringSelection(string);
+		transferable =  new Transferable(string);
+		
+		clipboard.setContents(transferable, transferable);
+	  
+    
+    } 
+	catch (e) {
+		console.log("Failed copy string " + string + " to the clipboard due to exception: " + e);
+    }
+  //}
+}
+
+function cClipboard_GetClipboardString() {
+	
+	var Toolkit = Java.type("java.awt.Toolkit");
+	var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	
+
+    try {
+      if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+
+		return txt;
+        //return txt.trim();
+      }
+    } catch (e) {
+		console.log("getClipboardString exception: " + e);
+    }
+
+    return "";
+}

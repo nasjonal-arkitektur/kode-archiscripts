@@ -7,6 +7,7 @@ console.log("Remove property for 'archi selection'");
 var propName = window.prompt("Which property do you want to remove (leave empty to cancel)?", "");
 if (propName) {
 	$(selection).removeProp(propName);
+
 }
 
 console.log("Remove property '" + propName + "' completed");

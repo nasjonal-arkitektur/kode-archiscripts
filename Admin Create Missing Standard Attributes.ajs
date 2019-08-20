@@ -23,8 +23,8 @@ function CreateDefaultProperties() {
 	console.log("Starting function CreateDefaultProperties");
 	
 	// model
-	CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
-	CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_no);
+	CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_en);	
+	CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
 	
 	// views
 	$("view").each(function(view) {

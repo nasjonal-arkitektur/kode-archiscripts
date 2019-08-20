@@ -1,0 +1,56 @@
+/*
+ * Change relationship type for selected relations
+ */
+
+console.show();
+console.clear();
+console.log("Change relationship type for selected relations");
+
+
+var rels = $(selection).filter("relationship");
+
+
+
+
+if (rels.size() < 1)
+{
+	
+	// TODO: select relationships of selected elements
+	var elms = $(selection).filter("element");
+	rels = elms.rels();
+	
+	if (rels.size() < 1) {
+		window.alert("No selectedrelationships");
+		exit();
+	}
+}
+
+if (!window.confirm("Switch between aggecation and composition for selected relationships?") )
+	exit();
+
+rels.each(function(r) {
+		
+	
+		
+	var source = $(r).sourceEnds();
+	source = source.first();	
+	var target = $(r).targetEnds();
+	target = target.first();	
+
+	console.log(source.name +" to " + target.name);
+
+	var newType = "";
+	if (r.type === "composition-relationship")
+		newType = "aggregation-relationship";
+	else if (r.type === "aggregation-relationship")
+		newType = "composition-relationship";
+
+	console.log("Try to change type from "+ r.type + " to " + newType);
+	var c = r.concept;
+	
+	c.type = newType;
+	
+	if (r.type === newType)
+		console.log("Success");
+		
+});		

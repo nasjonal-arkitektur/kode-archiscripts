@@ -222,6 +222,21 @@ function cModel_GetElementWithId(id) {
 	
 }
 
+function cModel_GetElementWithName(name) {
+	
+	var elms =  $("concept").filter(function(o) {
+        return ( (o.name == name)  );
+    });
+	
+	var elm = elms.first();
+	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
+	return elm;
+			
+	
+}
+
+
+
 function cModel_GetViewWithId(id) {
 
     var views =  $("view").filter(function(o) {
@@ -309,6 +324,29 @@ var cModel_GetDuplicateModelItems = function(elm) {
     return $("element").filter(function(o) {
         return ( (o.name == elm.name) && (o.type == elm.type) ); // erik: consider make it case insensitive? System option?
     });
+}
+
+
+function cModel_createConcept(type, name) {
+
+	var elm = model.createElement(type, name);
+	var concept = elm.concept;
+	if (!concept) {
+		window.alert("Failed to create concept with type " + type + " and name " + name + ". Exiting...");
+		exit();
+	}
+		
+	return  concept;
+}
+
+function cModel_createRelationship(relationshipType, name, source, target) {
+
+	rel = model.createRelationship(relationshipType, name, source, target);
+	if (!rel){
+		window.alert("Failed to create relationship with type " + type);
+		exit();
+	}
+	return rel;
 }
 
 

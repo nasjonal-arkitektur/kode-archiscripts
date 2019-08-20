@@ -264,7 +264,7 @@ function cConcept_SetLanguage(concept, language) {
 
 
 	if (localizedName === "" || localizedName === null ) {
-		console.log("Warning: cannot set name(" + concept.name + ") to language '" + language + "', due to blank property " + propName);// + ". Exiting...");
+		//console.log("Warning: cannot set name(" + concept.name + ") to language '" + language + "', due to blank property " + propName);// + ". Exiting...");
 		
 		
 		// Keep the name as it is...
@@ -272,6 +272,20 @@ function cConcept_SetLanguage(concept, language) {
 		
 		
 		//... and fix the blank property
+		
+		// hmmm... only update blank localized property if there is no value set for any language
+		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
+			if (cConcept_GetProperty(concept, const_prop_name_en) === "" )
+				cConcept_SetProperty(concept, const_prop_name_no, concept.name);
+		}
+		else if (cModel_GetCurrentLanguage() == const_prop_language_value_en) {
+			if (cConcept_GetProperty(concept, const_prop_name_no) === "" )
+				cConcept_SetProperty(concept, const_prop_name_en, concept.name);
+		}
+		
+		
+		
+		/*
 		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
 			cConcept_SetProperty(concept, const_prop_name_no, concept.name);
 		}
@@ -279,10 +293,13 @@ function cConcept_SetLanguage(concept, language) {
 			cConcept_SetProperty(concept, const_prop_name_en, concept.name);
 		}
 		console.log("Info: Blank name property updated according to the model's current language;"); 
-		
+		*/
 	}
 	else
-		cConcept_SetProperty(concept, const_prop_language, language); // update the language property of the concept
+		cConcept_SetProperty(concept, const_prop_language, language); // update the language property of the concept, provided the name exists in this language
+	
+	
+	
 	
 	cConcept_SetName(concept, localizedName);
 	
@@ -295,6 +312,7 @@ function cConcept_SetLanguage(concept, language) {
 		localizedDescription = concept.documentation; // just keep it
 		
 		//... and fix the blank property
+		
 		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
 			cConcept_SetProperty(concept, const_prop_description_no, concept.documentation);
 		}
@@ -483,11 +501,11 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 	var doShowType = false;
 	var doShowLanguage = false;
 
-	//var option_caseForShowingNamespace = "duplicateNames";//"always"
-	var option_caseForShowingNamespace = "always";//"always"
+	var option_caseForShowingNamespace = "duplicateNames";//"always"
+	//var option_caseForShowingNamespace = "always";//"always"
 	
 	var option_caseForShowingConceptType = "never"; //"extensions" "always" "never"
-	var option_caseForShowingLanguage = "always"; //"always", missingCurrentLanguage
+	var option_caseForShowingLanguage = "missingCurrentLanguage"; //"always", missingCurrentLanguage
 	
 
 	if (option_caseForShowingNamespace === "always")
@@ -512,8 +530,8 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 		doShowLanguage = true;
 	else if (option_caseForShowingLanguage === "missingCurrentLanguage")
 		if (concept.name != "")
-			//if (!concept_nameEqualsNameOfCurrentLanguage(concept))
-			if (concept_NameForCurrentModelLanguageMissing(concept) )
+			if (!concept_nameEqualsNameOfCurrentLanguage(concept))
+			//if (concept_NameForCurrentModelLanguageMissing(concept) )
 				doShowLanguage= true;
 
 	if (doShowNamespace)

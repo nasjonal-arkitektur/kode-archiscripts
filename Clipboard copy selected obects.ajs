@@ -35,12 +35,13 @@ else {
 
     // Use the Java Collections sort routine
 	var Collections = Java.type("java.util.Collections");
-    Collections.sort(list);
+	Collections.sort(list); // note: e.g. e-seal is not sorted correctly 
+    
 	
 	var clibBoardString= "";
 	
 	list.each(function(o) {
-		console.log(o.type + "\t" + o.name + "\t" + o.prop(const_prop_namespace) + "\t" + o.id);
+		console.log(o.name + "\t" + o.prop(const_prop_namespace) + "\t" + o.type + "\t" + o.id);
 		
 		clibBoardString += o.id + "\n";
 		

@@ -1,0 +1,36 @@
+/*
+ * New Archi Script
+ */
+ 
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Remove linefeeds from documentation for selected concepts");
+
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+
+selectedConcepts.each(function(concept) {
+	
+	var str = concept.documentation;
+	var newstr = ""; 
+	for( var i = 0; i < str.length; i++ )  
+		if( (str[i] == '\n' || str[i] == '\r') ) {
+			newstr += " ";
+			i++;
+		}
+		else
+			newstr += str[i];
+		
+		
+	cConcept_SetDescription(concept, newstr)
+	
+});
+
+console.log("Script completed");

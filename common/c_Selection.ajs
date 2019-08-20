@@ -91,9 +91,9 @@ var CSelection_GetDuplicatesInlistGivenElement = function(elm, list) {
 
 var CSelection_FindElementsWithNameInList = function(elementName, list) {
 
-    return list.filter(function(o) {
-        return ( (o.name == elementName) );
-    });
+	return list.filter(function(o) {
+		return ( (o.name == elementName) );
+	});
 }
 
 var CSelection_GetDuplicatesInlistGivenElementNameNotType = function(name, list) {

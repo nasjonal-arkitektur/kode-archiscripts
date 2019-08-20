@@ -5,6 +5,8 @@
 load(__DIR__ + "/common/c_Namespace.ajs");
 load(__DIR__ + "/common/c_Concept.ajs");
 load(__DIR__ + "/common/c_Selection.ajs");
+//load(__DIR__ + "/common/c_View.ajs");
+//load(__DIR__ + "/common/c_Model.ajs");
 
 console.show();
 console.clear();
@@ -29,7 +31,13 @@ selectedConcepts.each(function(concept) {
 
 	concept.removeProp("dct:type");
 	cConcept_CreateMissingProperties(concept);
-	cConcept_SetLanguage(concept, "no"); // temporary implentation!!!!!!!!!!!!
+	
+	//var view = cElement_GetView(o);
+	var lang = cModel_GetCurrentLanguage();
+	//var lang = cConcept_GetProperty(concept, const_prop_language);
+	
+	cConcept_SetLanguage(concept, lang);
+	//cConcept_SetLanguage(concept, "en"); // temporary implentation!!!!!!!!!!!!
 
 });
 

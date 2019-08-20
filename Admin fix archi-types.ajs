@@ -1,0 +1,48 @@
+/*
+ * New Archi Script
+ */
+ 
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+console.show();
+console.clear();
+console.log("Admin fix archi types");
+
+
+var rels = $(selection).filter("relationship");
+
+if (rels.size() < 1)
+{
+	
+
+	var elms = $(selection).filter("element");
+	rels = elms.rels();
+	
+	if (rels.size() < 1) {
+		window.alert("No selectedrelationships");
+		exit();
+	}
+}
+
+rels.each(function(r) {
+		
+	var dctType = r.concept.prop(const_prop_dct_type);
+	console.log("Fixing dctType = " + dctType);
+		
+	if (dctType ==="composition-relationship" 
+	|| dctType === "aggregation-relationship"
+	|| dctType === "assignment-relationship"
+	|| dctType === "realization-relationship"
+	|| dctType === ":serving-relationship"
+	|| dctType === "access-relationship"
+	|| dctType === "influence-relationship"
+	|| dctType === "triggering-relationship"
+	|| dctType === "flow-relationship"
+	|| dctType === "specialization-relationship"
+	|| dctType === "association-relationship")
+	
+		cConcept_SetProperty(r.concept, const_prop_dct_type, const_prop_dctType_archi_prefix + dctType);
+
+		
+});	

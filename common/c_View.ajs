@@ -8,9 +8,13 @@ var m_view = null;
 
 function cView_GetSelectedElements() {
 
+	return $(selection).filter("element");
+
+/*
 	$(selection).filter("element").each(function(e) {
 		console.log("Selected element: " + e.name );			
 	});
+*/
 	
 }
 

@@ -1,0 +1,39 @@
+/*
+ * New Archi Script
+ */
+
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+ 
+console.show();
+console.clear();
+console.log("Hide relationship labels");
+
+
+var rels = $(selection).filter("relationship");
+
+
+
+
+if (rels.size() < 1)
+{
+	
+	// TODO: select relationships of selected elements
+	var elms = $(selection).filter("element");
+	rels = elms.rels();
+	
+	if (rels.size() < 1) {
+		window.alert("No selectedrelationships");
+		exit();
+	}
+}
+
+if (!window.confirm("Hide labels for selected relationships?") )
+	exit();
+
+rels.each(function(r) {
+		
+	r.concept.prop(const_prop_label, " ");
+				
+});		
+console.log("Script completed");

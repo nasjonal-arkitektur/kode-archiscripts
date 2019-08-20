@@ -47,7 +47,7 @@ $(selection).filter("archimate-diagram-model").each(function(v) {
 				
 					getDiagramComponents(v,r.target).each(function(tgt) {
 					
-						if (! contains(r, src, tgt)) {
+						if (!contains(r, src, tgt)) {
 							debug? console.log("        => Adding " + r.type + "(" + r.name + ") from " + src.name + " to " + tgt.name ):true; // erik
 							v.add(r, src, tgt);
 						}

@@ -1,0 +1,138 @@
+/*
+ * BIZBOK paste CAPABILITIES
+ */
+ 
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("BIZBOK paste capabilities");
+
+
+function GetTheSelectedView() { 
+
+	//var selectedViews = $(selection).filter("archimate-diagram-model");
+	var selectedViews = $(selection).filter("view");
+
+	if(selectedViews.size() < 1) {
+		window.alert("No views selected");
+		exit();
+	}
+	else if(selectedViews.size() > 1) {
+		window.alert("More than one view selected");
+		exit();
+	}
+
+	var view = selectedViews.first();
+
+	console.log(view.name + " " + view.id);
+	
+	return view;
+}
+
+
+function GetClipBoardArray() {
+	
+	var clipboardString = cClipboard_GetClipboardString();
+	
+	var arr = clipboardString.split("\n");
+	return arr;
+	
+}
+
+
+var theSelectedView = GetTheSelectedView();
+console.log("theSelectedView.name = " + theSelectedView.name);
+
+
+var x = 10;
+var y = 200;
+
+var arr = GetClipBoardArray();
+
+var previousConcept = null;
+var previousTier = 0;
+var previousLevel = 0;
+var currentParent = null;
+var parents = [];
+ 
+
+
+for (i = 0; i < arr.length; i++) {
+	
+	var line = arr[i];
+	
+	if (line.length > 1) {
+		
+		//window.alert(line);
+	
+		var tabs = line.split('\t');
+		
+		//for (var tab = 0; tab < tabs.length; tab++)
+		//	window.alert(tabs[tab]);
+					
+		var tier = tabs[0];
+		var level = tabs[1];
+		var name = tabs[2];
+		var description = tabs[3];
+		
+		
+		var namespace = "bizbok";
+		
+		//window.alert(tier + "\n" + level + "\n" + name + "\n" + description)
+		
+		//var existingConcept = cModel_GetElementWithName(type, name, namespace);
+		var existingConcept = cModel_GetElementWithName(name);
+		var concept = null;
+		
+		if (!existingConcept)
+			concept = cModel_createConcept("capability", name);
+		else
+			concept = existingConcept;
+		
+		cConcept_SetDescription(concept, description);
+		cConcept_SetProperty(concept, "bizbok:tier", tier);
+		cConcept_SetProperty(concept, "bizbok:level", level);
+		cConcept_SetProperty(concept, "difi:namespace", namespace);
+		
+		var addedElement = theSelectedView.add(concept, level * (133 + 30), y, -1, -1);	
+		y += 91; // default height is 71
+	
+		if (previousConcept) {
+			
+			if (tier === previousTier) {
+				if (level > previousLevel) {
+					currentParent = previousConcept;
+					parents.push(currentParent); // add to end
+				}
+				else if (level < previousLevel){
+					parents.pop(); // remove the last
+					if (parents.length > 0)
+						currentParent = parents[parents.length - 1];
+					else
+						currentParent = null;
+				}
+					
+				if (currentParent) {
+					
+					// if not relation already exists!!!!!!!!!!!!!!!
+					
+					var rel = cModel_createRelationship("composition-relationship", "", currentParent, concept);
+					//theSelectedView.add(rel, currentParen!t, addedElement);
+				}
+				
+			}
+		}
+	
+		previousConcept = concept;
+		previousTier = tier;
+		previousLevel = level;
+
+	}
+}
+
+
+console.log("script completed");
+
