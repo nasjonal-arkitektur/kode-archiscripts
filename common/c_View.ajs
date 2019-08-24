@@ -18,6 +18,13 @@ function cView_GetSelectedElements() {
 	
 }
 
+function cView_GetRelativeRenderPath(view) {
+
+	return view.prop(const_prop_viewRelativeRenderPath);
+}
+
+
+
 function cView_GetSelectedRelationship() {
 
 	$(selection).filter("relationship").each(function(r) {

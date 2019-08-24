@@ -5,6 +5,14 @@
 var debug = false;
 var debug2 = true;
  
+var const_mediaFolderName = "media"; //added 2019-08-24
+
+var const_prop_modelRenderingRootPath = "difi:modelRenderingRootPath"; //added 2019-08-24
+var const_prop_viewRelativeRenderPath =  "difi:viewRelativeRenderPath"; //added 2019-08-24
+
+var const_prop_source = "dct:BibliographicResource"; //added 2019-08-20
+
+
 var const_title_namespace_prefix = " [ns:";
 var const_title_namespace_postfix = "]";
  

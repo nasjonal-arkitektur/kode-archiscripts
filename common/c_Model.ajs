@@ -38,14 +38,21 @@ function cModel_InitExistingFromArchiObject(archiModel) {
 	return m_model;
 }
 
+
 function cModel_GetArchiModelObject() {
 	console.log("model.name = " + model.name);
 	return m_model;
 }
 
+
 function cModel_GetCurrentModelName() {
 	return m_model.name;
 }
+
+function cModel_GetRenderingRootPath() {	
+	return model.prop(const_prop_modelRenderingRootPath);
+}
+
 
 function cModel_GetCurrentLanguage() {	
 	return model.prop(const_prop_current_language);

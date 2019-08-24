@@ -1,0 +1,67 @@
+/*
+ * New Archi Script
+ */
+load(__DIR__ + "/common/Constants.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+ 
+console.show();
+console.clear();
+console.log("Save view image to file");
+
+function GetTheSelectedView() { 
+
+	//var selectedViews = $(selection).filter("archimate-diagram-model");
+	var selectedViews = $(selection).filter("view");
+
+	if(selectedViews.size() < 1) {
+		window.alert("No views selected");
+		exit();
+	}
+	else if(selectedViews.size() > 1) {
+		window.alert("More than one view selected");
+		exit();
+	}
+
+	var view = selectedViews.first();
+
+	console.log(view.name + " " + view.id);
+	
+	return view;
+}
+
+console.log(model.name);
+
+console.log("RenderingRootPath " + cModel_GetRenderingRootPath());
+
+var view = GetTheSelectedView();
+console.log("viewRelativeRenderPath " + cView_GetRelativeRenderPath(view));
+
+var renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
+console.log("renderingpath " + renderingpath);
+
+var mediaFolder = renderingpath + "\\" + const_mediaFolderName;
+console.log("mediaFolder " + mediaFolder);
+
+
+var pathAndfileName =  mediaFolder + "\\" + view.name + ".png";
+console.log("pathAndfileName " + pathAndfileName);
+
+//var bytes = $.model.renderViewAsBase64(view, "PNG", {scale: 1, margin: 20}); // Get bytes
+var bytes = $.model.renderViewAsBase64(view, "PNG"); // Get bytes
+//console.log("Bytes " + bytes.length);
+// Write to file
+
+var fileName = pathAndfileName;
+
+window.alert("Please note that the following path should exist for this script to work as espected and suggest the proper directory from model and view attributes (difi:modelRenderingRootPath and difi:viewRelativeRenderPath): " + mediaFolder);
+
+//var fileName = window.promptSaveFile( { title: "Save View", filterExtensions: [ "*.png" ], fileName: view.name + ".png" } );
+var fileName = window.promptSaveFile( { title: "Save View", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
+
+if (fileName) {
+    // Write to file
+    $.fs.writeFile(fileName, bytes, "BASE64");
+} 
+
+console.log("Script completed");

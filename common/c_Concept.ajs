@@ -273,17 +273,7 @@ function cConcept_SetLanguage(concept, language) {
 		
 		//... and fix the blank property
 		
-		// hmmm... only update blank localized property if there is no value set for any language
-		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
-			if (cConcept_GetProperty(concept, const_prop_name_en) === "" )
-				cConcept_SetProperty(concept, const_prop_name_no, concept.name);
-		}
-		else if (cModel_GetCurrentLanguage() == const_prop_language_value_en) {
-			if (cConcept_GetProperty(concept, const_prop_name_no) === "" )
-				cConcept_SetProperty(concept, const_prop_name_en, concept.name);
-		}
-		
-		
+			
 		
 		/*
 		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
@@ -501,11 +491,11 @@ function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!
 	var doShowType = false;
 	var doShowLanguage = false;
 
-	var option_caseForShowingNamespace = "duplicateNames";//"always"
+	var option_caseForShowingNamespace = "always";//"always";duplicateNames
 	//var option_caseForShowingNamespace = "always";//"always"
 	
 	var option_caseForShowingConceptType = "never"; //"extensions" "always" "never"
-	var option_caseForShowingLanguage = "missingCurrentLanguage"; //"always", missingCurrentLanguage
+	var option_caseForShowingLanguage = "always"; //"always", missingCurrentLanguage
 	
 
 	if (option_caseForShowingNamespace === "always")
