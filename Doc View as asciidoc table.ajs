@@ -1,0 +1,58 @@
+/*
+ * New Archi Script
+ */
+load(__DIR__ + "/common/Constants.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+ 
+console.show();
+console.clear();
+console.log("Script: Document view as asciidoc table");
+
+
+var docString = "";
+var view = CSelection_GetTheSelectedView();
+var elms = cView_GetElementsInView(view);
+var renderingpath = "";
+
+// chapter caption
+docString += "== "; // note: how to evaluate chapter level?
+docString += view.name;
+docString += "\n";
+
+// view description
+
+docString += "\n";
+docString += view.documentation;
+docString += "\n\n";
+
+// image of the archi view
+if ( cModel_GetRenderingRootPath() && cView_GetRelativeRenderPath(view) ) {
+	
+	
+	docString += "." + view.name;
+	renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
+	docString += "\nimage::../" +  cView_GetRelativeRenderPath(view) + "/media/" + view.name + ".png" + "[alt=" + view.name + " image]";
+	// todo: ",link = ..." for link to published web view
+
+}
+
+docString += "\n\n";
+docString += "[cols =\"1,1,3\", options=\"header\"]";
+docString += "\n.Elementer i view for " + view.name ;
+docString += "\n|===";
+
+elms.each(function(e) {
+	
+	docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
+});
+
+docString += "\n|===";
+
+cClipboard_SetClipboardString(docString);
+
+console.log(docString);
+
+console.log("Script completed");

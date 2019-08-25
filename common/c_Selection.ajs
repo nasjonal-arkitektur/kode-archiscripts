@@ -338,3 +338,23 @@ function CSelection_GetDirectlySelectedOccurences() {
 	
 	return selectedOccurences;
 }
+
+function CSelection_GetTheSelectedView() { 
+
+	var selectedViews = $(selection).filter("view");
+
+	if(selectedViews.size() < 1) {
+		window.alert("No views selected");
+		exit();
+	}
+	else if(selectedViews.size() > 1) {
+		window.alert("More than one view selected");
+		exit();
+	}
+
+	var view = selectedViews.first();
+
+	//console.log(view.name + " " + view.id);
+	
+	return view;
+}

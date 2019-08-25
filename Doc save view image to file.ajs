@@ -4,37 +4,17 @@
 load(__DIR__ + "/common/Constants.ajs");
 load(__DIR__ + "/common/c_Model.ajs");
 load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
  
 console.show();
 console.clear();
 console.log("Save view image to file");
 
-function GetTheSelectedView() { 
 
-	//var selectedViews = $(selection).filter("archimate-diagram-model");
-	var selectedViews = $(selection).filter("view");
-
-	if(selectedViews.size() < 1) {
-		window.alert("No views selected");
-		exit();
-	}
-	else if(selectedViews.size() > 1) {
-		window.alert("More than one view selected");
-		exit();
-	}
-
-	var view = selectedViews.first();
-
-	console.log(view.name + " " + view.id);
-	
-	return view;
-}
-
-console.log(model.name);
-
+//console.log(model.name);
 console.log("RenderingRootPath " + cModel_GetRenderingRootPath());
 
-var view = GetTheSelectedView();
+var view = CSelection_GetTheSelectedView();
 console.log("viewRelativeRenderPath " + cView_GetRelativeRenderPath(view));
 
 var renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);

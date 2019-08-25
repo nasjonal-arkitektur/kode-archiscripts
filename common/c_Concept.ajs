@@ -758,3 +758,4 @@ function cConcept_UpdateNameAndDescriptionAndLabel(concept) {
 	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept));
 
 }
+

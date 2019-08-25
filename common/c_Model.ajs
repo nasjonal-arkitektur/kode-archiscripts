@@ -41,12 +41,13 @@ function cModel_InitExistingFromArchiObject(archiModel) {
 
 function cModel_GetArchiModelObject() {
 	console.log("model.name = " + model.name);
-	return m_model;
+	//return m_model;
+	return model;
 }
 
 
 function cModel_GetCurrentModelName() {
-	return m_model.name;
+	return model.name;
 }
 
 function cModel_GetRenderingRootPath() {	
