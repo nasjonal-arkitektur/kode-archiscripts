@@ -6,7 +6,7 @@ load(__DIR__ + "/common/c_Model.ajs");
 load(__DIR__ + "/common/c_View.ajs");
 load(__DIR__ + "/common/c_Selection.ajs");
  
-console.show();
+console.show(); 
 console.clear();
 console.log("Save view image to file");
 
