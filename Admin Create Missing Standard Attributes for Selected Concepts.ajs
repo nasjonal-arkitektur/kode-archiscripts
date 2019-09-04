@@ -1,13 +1,27 @@
-/*
+	/*
  * New Archi Script
  */
 
 load(__DIR__ + "/common/c_Namespace.ajs");
 load(__DIR__ + "/common/c_Concept.ajs");
 load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Folder.ajs");
+
 
 console.show();
 console.clear();
+
+var selectedViews = $(selection).filter("view");
+selectedViews.each(function(view) {
+	cView_CreateMissingProperties(view);
+});
+
+var selectedFolders = $(selection).filter("folder");
+selectedFolders.each(function(folder) {
+	cFolder_createMissingProperties(folder);
+});
 
 
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");

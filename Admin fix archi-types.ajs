@@ -34,7 +34,7 @@ rels.each(function(r) {
 	|| dctType === "aggregation-relationship"
 	|| dctType === "assignment-relationship"
 	|| dctType === "realization-relationship"
-	|| dctType === ":serving-relationship"
+	|| dctType === "serving-relationship"
 	|| dctType === "access-relationship"
 	|| dctType === "influence-relationship"
 	|| dctType === "triggering-relationship"

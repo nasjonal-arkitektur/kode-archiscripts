@@ -1,0 +1,24 @@
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.show();
+console.clear();
+console.log("Labels show default relationship names.ajs, script started");
+
+var selectedRels = CSelection_GetDirectlySelectedRelations("","");
+
+selectedRels.each(function(rel) {
+	
+	var defaultRelationName = rel.type.replace("-relationship", ""); 
+	
+	console.log("defaultRelationName = ", defaultRelationName);
+	
+	var concept = rel.concept;
+	
+	if (concept.name === "") {
+		concept.prop(const_prop_label, defaultRelationName);
+	}
+});
+
+console.log("Script completed");

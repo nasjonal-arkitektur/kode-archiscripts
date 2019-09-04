@@ -339,6 +339,11 @@ function CSelection_GetDirectlySelectedOccurences() {
 	return selectedOccurences;
 }
 
+function CSelection_GetDirectlySelectedRelations() {
+	var selectedRels = $(selection).filter("relationship");
+	return selectedRels;
+}
+
 function CSelection_GetTheSelectedView() { 
 
 	var selectedViews = $(selection).filter("view");

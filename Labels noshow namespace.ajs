@@ -1,0 +1,20 @@
+/*
+ * Show namespace
+ */
+ 
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.show();
+console.clear();
+
+console.log("NOShow namespace, script started");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("","");
+
+selectedConcepts.each(function(concept) {
+	cConcept_setLabel(concept, false, true, false, false, false); //	parentConceptType, name, namespace, language, conceptType
+});
+
+console.log("Script completed");

@@ -357,4 +357,15 @@ function cModel_createRelationship(relationshipType, name, source, target) {
 	return rel;
 }
 
+function cModel_CreateMissingProperty(model, propName, propValue) {
 
+	if (!model.prop(propName) ) {
+		console.log(". Creating missing or empty standard property " + propName + " for " + model.name );
+		model.prop(propName, propValue);
+	}
+}	
+
+function cModel_createMissingProperties() {
+	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_en);	
+	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+}

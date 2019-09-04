@@ -4,8 +4,27 @@
  
 var debug = false;
 var debug2 = true;
- 
+
+
+var const_never = "never";
+var const_always = "always";
+var const_duplicateNames = "duplicateNames";
+var const_missingCurrentLanguage = "missingCurrentLanguage";
+var const_extensions = "extensions";
+var const_ifMissing = "ifMissing";
+
+var default_option_caseForShowingDefaultRelationType = const_never; // const_always const_never const_ifMissing
+var default_option_caseForShowingparentConceptType = const_never;
+var default_option_caseForShowingname= const_always;
+var default_option_caseForShowingNamespace = const_duplicateNames;//"always";duplicateNames
+var default_option_caseForShowingLanguage = "missingCurrentLanguage"; //"always", missingCurrentLanguage
+var default_option_caseForShowingConceptType = "const_never"; //"extensions" "always" "never"
+
+
 var const_mediaFolderName = "media"; //added 2019-08-24
+
+var const_prop_buildingBlocklevel = "difi:buildingBlocklevel" ; //added 2019-08-29;
+var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29;
 
 var const_prop_modelRenderingRootPath = "difi:docRootPath"; //added 2019-08-24; the local root path of asciidoc documents
 var const_prop_viewRelativeRenderPath =  "difi:docViewPath"; //added 2019-08-24; the path for storing asciidoc documents for the view in question, relative to difi:docRootPath

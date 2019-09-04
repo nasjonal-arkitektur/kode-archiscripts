@@ -14,7 +14,10 @@ console.log("Started Admin Update labels");
 var selectedConcepts = CSelection_GetSelectedConcepts("","");
 
 selectedConcepts.each(function(concept) {
+
 	cConcept_UpdateLabel(concept);
+	
+	
 });
 
 console.log("Ended Admin Update labels");

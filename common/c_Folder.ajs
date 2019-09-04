@@ -210,8 +210,36 @@ function cFolder_GetAllItemsUnderGivenFoldersForGivenTypeAndName(givenFolders, i
 		else 
 			window.alert("Error in cFolder_GetAllItemsUnderGivenFoldersForGivenTypeAndName: Unexpected input");
     });
+
 	
-	
-	
-	
+}
+
+function cFolder_CreateMissingProperty(folder, propName, propValue) {
+
+	if (!folder.prop(propName) ) {
+		console.log(". Creating missing or empty standard property " + propName + " for " + folder.name );
+		folder.prop(propName, propValue);
+	}
+}	
+
+function cFolder_createMissingProperties(folder) {
+
+
+		
+		cFolder_CreateMissingProperty(folder, const_prop_language, cModel_GetCurrentLanguage() );
+		
+		if (cModel_GetCurrentLanguage() === "no") {
+			cFolder_CreateMissingProperty(folder, const_prop_name_no, folder.name );
+			cFolder_CreateMissingProperty(folder, const_prop_name_en, "" );
+			cFolder_CreateMissingProperty(folder, const_prop_description_no, folder.documentation );
+			cFolder_CreateMissingProperty(folder, const_prop_description_en, "" );
+		}
+		else if (cModel_GetCurrentLanguage() === "en") {
+			cFolder_CreateMissingProperty(folder, const_prop_name_no, "" );
+			cFolder_CreateMissingProperty(folder, const_prop_name_en, folder.name );
+			cFolder_CreateMissingProperty(folder, const_prop_description_no, "" );
+			cFolder_CreateMissingProperty(folder, const_prop_description_en, folder.documentation );
+		}
+
+		
 }

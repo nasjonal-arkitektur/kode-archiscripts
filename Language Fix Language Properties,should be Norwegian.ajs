@@ -1,0 +1,35 @@
+
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Language switch for selected concepts.ajs");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+
+selectedConcepts.each(function(concept) {
+	
+	/*
+	if (cConcept_GetProperty(concept, const_prop_name_no) !="") {
+		console.log("Warning: "+ const_prop_name_no + " already exists,  " + concept.name + ". Exiting...");
+		exit();
+	}
+	*/
+	
+	var englishNameThatIsRatherNorwegian = cConcept_GetProperty(concept, const_prop_name_en);
+	cConcept_SetProperty(concept, const_prop_name_no, englishNameThatIsRatherNorwegian);
+	cConcept_SetProperty(concept, const_prop_name_en, "");
+	
+	cConcept_SetProperty(concept, const_prop_language, const_prop_language_value_no);
+	
+	cConcept_UpdateLabel(concept);
+	
+});
+
+console.log("Script completed");

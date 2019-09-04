@@ -275,7 +275,7 @@ function cConcept_SetLanguage(concept, language) {
 		
 			
 		
-		/*
+		
 		if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
 			cConcept_SetProperty(concept, const_prop_name_no, concept.name);
 		}
@@ -283,7 +283,7 @@ function cConcept_SetLanguage(concept, language) {
 			cConcept_SetProperty(concept, const_prop_name_en, concept.name);
 		}
 		console.log("Info: Blank name property updated according to the model's current language;"); 
-		*/
+		
 	}
 	else
 		cConcept_SetProperty(concept, const_prop_language, language); // update the language property of the concept, provided the name exists in this language
@@ -484,19 +484,13 @@ function concept_nameEqualsNameOfCurrentLanguage(concept) {
 
 }
 
-function cConcept_EvaluateLabel(concept) { // erik: preliminary code!!!!!!!!!!!!!!!!
+
+function cConcept_EvaluateLabel(concept, option_caseForShowingparentConceptType, option_caseForShowingname, option_caseForShowingNamespace, option_caseForShowingConceptType, option_caseForShowingLanguage ) {
 
 	var label = "${name}";
 	var doShowNamespace = false;
 	var doShowType = false;
 	var doShowLanguage = false;
-
-	var option_caseForShowingNamespace = "always";//"always";duplicateNames
-	//var option_caseForShowingNamespace = "always";//"always"
-	
-	var option_caseForShowingConceptType = "never"; //"extensions" "always" "never"
-	var option_caseForShowingLanguage = "always"; //"always", missingCurrentLanguage
-	
 
 	if (option_caseForShowingNamespace === "always")
 		doShowNamespace = true;
@@ -561,7 +555,7 @@ function cConcept_CreateMissingProperties(concept) {
 
 	cConcept_CreateMissingProperty(concept, const_prop_language, cModel_GetCurrentLanguage() );
 	
-	
+	/*
 	if (concept.name === null || concept.name === "") {
 		concept.name = concept.type;
 		
@@ -569,6 +563,14 @@ function cConcept_CreateMissingProperties(concept) {
 		
 		concept.name = concept.name.replace("-relationship", ""); // remove this part of the name (applies for relationship conceps only)
 	}
+	*/
+
+
+	 if (!cModel_GetCurrentLanguage() ) {
+		 
+		cModel_createMissingProperties();
+	 }
+
 	
 	if (cModel_GetCurrentLanguage() === "no") {
 		cConcept_CreateMissingProperty(concept, const_prop_name_no, concept.name );
@@ -585,6 +587,7 @@ function cConcept_CreateMissingProperties(concept) {
 		cConcept_CreateMissingProperty(concept, const_prop_description_no, "" );
 		cConcept_CreateMissingProperty(concept, const_prop_description_en, concept.documentation );
 	}
+
 	
 	
 	
@@ -593,7 +596,22 @@ function cConcept_CreateMissingProperties(concept) {
 	
 	//cConcept_CreateMissingProperty(concept, const_prop_name_to_display, "");
 	
-	cConcept_CreateMissingProperty(concept, const_prop_label, cConcept_EvaluateLabel(concept));
+	var caseForShowingparentConceptType = default_option_caseForShowingparentConceptType;
+	var caseForShowingname = default_option_caseForShowingname;
+	var caseForShowingNamespace = default_option_caseForShowingNamespace;
+	var caseForShowingConceptType = default_option_caseForShowingConceptType;
+	var caseForShowingLanguage = default_option_caseForShowingLanguage;
+	
+	cConcept_CreateMissingProperty(concept, const_prop_label, cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage));
+	
+	// The following necessary? Move to CRelation!!?
+	var defaultRelationName = concept.type.replace("-relationship", ""); 
+	if (concept.name === defaultRelationName) {
+		concept.name = "";
+	}
+	
+	//
+	cConcept_UpdateLabel(concept);
 	
 }
 
@@ -745,8 +763,31 @@ function cConcept_ValidateConceptType(concept) {
 
 function cConcept_UpdateLabel(concept) {
 	 
-	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept));
+	var caseForShowingparentConceptType = default_option_caseForShowingparentConceptType;
+	var caseForShowingname = default_option_caseForShowingname;
+	var caseForShowingNamespace = default_option_caseForShowingNamespace;
+	var caseForShowingConceptType = default_option_caseForShowingConceptType;
+	var caseForShowingLanguage = default_option_caseForShowingLanguage;
+	
+	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage));
+}
 
+function cConcept_setLabel(concept, parentConceptType, name, namespace, language, conceptType) {
+
+	var label = "";
+	
+	//if (parentConceptType)
+
+	if (name=== true)
+		label += "${name}";
+	if (namespace === true)
+		label += " [ns:${property:" + const_prop_namespace + "}]"; //" [ns:${property:difi:namespace}]";
+	if (language === true)
+		label += " [lang:${property:difi:language}]"; // const_prop_language
+	if(conceptType === true)
+		label += "\n<<${property:dct:type}>>"; // const_prop_dct_type
+	 
+	concept.prop(const_prop_label, label);
 }
 
 function cConcept_UpdateNameAndDescriptionAndLabel(concept) {

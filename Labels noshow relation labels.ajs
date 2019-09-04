@@ -1,0 +1,20 @@
+/*
+ * Show namespace
+ */
+ 
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.show();
+console.clear();
+
+console.log("NOShow relation labels, script started");
+
+var selectedRels = CSelection_GetDirectlySelectedRelations("","");
+
+selectedRels.each(function(rel) {
+	cConcept_setLabel(rel, false, false, false, false, false); //	parentConceptType, name, namespace, language, conceptType
+});
+
+console.log("Script completed");
