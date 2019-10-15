@@ -216,7 +216,7 @@ function cFolder_GetAllItemsUnderGivenFoldersForGivenTypeAndName(givenFolders, i
 
 function cFolder_CreateMissingProperty(folder, propName, propValue) {
 
-	if (!folder.prop(propName) ) {
+	if ( folder.prop(propName) === null ) {
 		console.log(". Creating missing or empty standard property " + propName + " for " + folder.name );
 		folder.prop(propName, propValue);
 	}

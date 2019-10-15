@@ -40,16 +40,21 @@ if ( cModel_GetRenderingRootPath() && cView_GetRelativeRenderPath(view) ) {
 }
 
 docString += "\n\n";
-docString += "[cols =\"1,1,3\", options=\"header\"]";
+//docString += "[cols =\"1,1,3\", options=\"header\"]";
+docString += "[cols =\"1,3\", options=\"header\"]";
 docString += "\n.Elementer i view for " + view.name ;
 docString += "\n|===";
 
+// docString += "\n\n" + "| " + "Element" + "\n" + "| " + "Type" +  "\n" + "| " + "Beskrivelse";
+docString += "\n\n" + "| " + "Element" +  "\n" + "| " + "Beskrivelse";
+
 elms.each(function(e) {
 	
-	docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
+	// docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
+	docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
 });
 
-docString += "\n|===";
+docString += "\n\n|===";
 
 cClipboard_SetClipboardString(docString);
 

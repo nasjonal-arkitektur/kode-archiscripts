@@ -48,8 +48,32 @@ function cView_GetSelectedConcepts() {
 	
 var cView_GetElementsInView = function(v) {
 
-	var elements = $(v).children().filter("element");
-	return elements;
+	//var elements = $(v).children().filter("element");
+	//return elements;
+	
+	var resultingItems = null;
+	var viewItems = null;
+	
+	viewItems = $(view).find().filter("element");
+
+	viewItems.each(function(item) {	
+	
+		//if (itemType == "concept")
+		//	item = item.concept;
+	
+		if (resultingItems == null) {
+			resultingItems = $(item);
+		}
+		else {
+			
+			var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+			
+			if (itemInList.size() < 1)
+				resultingItems.add($(item));
+		}
+	});
+	
+	return resultingItems;
 }
 
 var cView_GetOtherConceptsInViewWithSameName = function(vu, elm) {
@@ -103,14 +127,38 @@ function cView_SetCurrentLanguage(view, language) {
 
 function cView_CreateMissingProperty(view, propName, propValue) {
 
-	if (!view.prop(propName) ) {
+	if ( view.prop(propName) === null ) {
 		console.log(". Creating missing or empty standard property " + propName + " for " + view.name );
 		view.prop(propName, propValue);
 	}
 }	
 
 function cView_createMissingProperties(view) {
-	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_en);	
-	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+
+			
+		//view.removeProp(const_prop_default_language); // very very temporary!
+		//view.removeProp(const_prop_current_language); // very very temporary!
+		//CreateMissingProperty(view, const_prop_default_language, const_prop_language_value_no);
+		//CreateMissingProperty(view, const_prop_current_language, const_prop_language_value_no);
+		
+		
+		//cView_CreateMissingProperty(view, const_prop_metaLevel, const_prop_metaLevel_value_default);
+		cView_CreateMissingProperty(view, const_prop_language, cModel_GetCurrentLanguage() );
+		
+		if (cModel_GetCurrentLanguage() === "no") {
+			cView_CreateMissingProperty(view, const_prop_name_no, view.name );
+			cView_CreateMissingProperty(view, const_prop_name_en, "" );
+			cView_CreateMissingProperty(view, const_prop_description_no, view.documentation );
+			cView_CreateMissingProperty(view, const_prop_description_en, "" );
+		}
+		else if (cModel_GetCurrentLanguage() === "en") {
+			cView_CreateMissingProperty(view, const_prop_name_no, "" );
+			cView_CreateMissingProperty(view, const_prop_name_en, view.name );
+			cView_CreateMissingProperty(view, const_prop_description_no, "" );
+			cView_CreateMissingProperty(view, const_prop_description_en, view.documentation );
+		}
+			
+			
+		cView_CreateMissingProperty(view, const_prop_viewRelativeRenderPath, "");	
 }
 

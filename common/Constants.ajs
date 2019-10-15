@@ -23,8 +23,23 @@ var default_option_caseForShowingConceptType = "const_never"; //"extensions" "al
 
 var const_mediaFolderName = "media"; //added 2019-08-24
 
-var const_prop_buildingBlocklevel = "difi:buildingBlocklevel" ; //added 2019-08-29;
-var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29;
+var const_prop_notes = "difi:notes";
+
+var const_prop_metaLevel = "difi:metaLevel" ; //added 2019-09-07; meta, real, undefined
+var const_prop_metaLevel_value_meta = "meta";
+var const_prop_metaLevel_value_real = "real";
+var const_prop_metaLevel_value_undefined = "undefined";
+var const_prop_metaLevel_value_default = const_prop_metaLevel_value_undefined;
+
+var const_prop_abstractionLevel = "difi:abstractionLevel" ; //added 2019-09-04; metamodel, abb, sbb, undefined
+var const_prop_abstractionLevel_value_undefined = "undefined";
+var const_prop_abstractionLevel_value_default = const_prop_abstractionLevel_value_undefined;
+var const_prop_abstractionLevel_value_conceptual = "conceptual"; // abb
+var const_prop_abstractionLevel_value_logical = "logical"; //sbb
+var const_prop_abstractionLevel_value_physical = "physical"; // instance
+
+//var const_prop_buildingBlocklevel = "difi:buildingBlocklevel" ; //added 2019-08-29;
+var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29; 
 
 var const_prop_modelRenderingRootPath = "difi:docRootPath"; //added 2019-08-24; the local root path of asciidoc documents
 var const_prop_viewRelativeRenderPath =  "difi:docViewPath"; //added 2019-08-24; the path for storing asciidoc documents for the view in question, relative to difi:docRootPath
@@ -42,8 +57,8 @@ var const_prop_namespace_val_eira = "eira";
 var const_prop_namespace_val_eirabased = "eirabased";
 
 var const_prop_language = "difi:language";
-const_prop_default_language = "difi:default_language"; // rename to "alternative language"??
-const_prop_current_language = "difi:current_language";
+var const_prop_default_language = "difi:default_language"; // rename to "alternative language"??
+var const_prop_current_language = "difi:current_language";
 var const_prop_language_value_no = "no";
 var const_prop_language_value_en = "en";
 

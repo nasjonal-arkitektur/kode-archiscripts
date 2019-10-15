@@ -8,6 +8,9 @@ load(__DIR__ + "./common/c_Concept.ajs");
 load(__DIR__ + "/common/c_View.ajs");
 load(__DIR__ + "/common/c_Folder.ajs");
 
+window.alert("Hei Erik");
+
+
 function CreateMissingProperty(concept, propName, propValue) {
 
 	if (!concept.prop(propName) ) {

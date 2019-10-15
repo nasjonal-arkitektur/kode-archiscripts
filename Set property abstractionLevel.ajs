@@ -1,0 +1,45 @@
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Set property abstractionLevel starting...");
+
+
+function SetAbstractionLevelForGivenConcepts(givenConcepts, abstractionLevel) {
+
+	givenConcepts.each(function(concept) {
+		cConcept_SetAbstractionLevel(concept, abstractionLevel);
+	});
+}
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+var abstractionLevel = window.prompt("Specify abstractionLevel as '" +  const_prop_abstractionLevel_value_conceptual + "', '" + const_prop_abstractionLevel_value_logical  + "', '" + const_prop_abstractionLevel_value_physical + "' or '" + const_prop_abstractionLevel_value_undefined + "'");
+
+var validatedOK = false;
+
+if (abstractionLevel === const_prop_abstractionLevel_value_undefined)
+	validatedOK = true;
+//else if (abstractionLevel === const_prop_abstractionLevel_value_metamodel)
+//	validatedOK = true;
+else if (abstractionLevel === const_prop_abstractionLevel_value_conceptual)
+	validatedOK = true;
+else if (abstractionLevel === const_prop_abstractionLevel_value_logical)
+	validatedOK = true;
+else if (abstractionLevel === const_prop_abstractionLevel_value_physical)
+	validatedOK = true;
+
+if (!validatedOK) {
+	window.alert("Invalid abstractionlevel - exiting...");
+	exit();
+}
+
+
+SetAbstractionLevelForGivenConcepts(selectedConcepts, abstractionLevel);
+
+console.log("Script completed.");

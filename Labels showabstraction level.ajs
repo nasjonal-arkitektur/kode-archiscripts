@@ -1,0 +1,28 @@
+/*
+ * Labels show abstraction level
+ */
+ 
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Labels show abstraction level starting...");
+
+
+function ShowAbstractionLevelForGivenConcepts(givenConcepts) {
+
+	givenConcepts.each(function(concept) {
+		cConcept_UpdateLabel(concept, true);
+	});
+}
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+ShowAbstractionLevelForGivenConcepts(selectedConcepts);
+
+console.log("Script completed.");

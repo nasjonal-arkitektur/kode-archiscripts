@@ -15,7 +15,7 @@ console.clear();
 
 var selectedViews = $(selection).filter("view");
 selectedViews.each(function(view) {
-	cView_CreateMissingProperties(view);
+	cView_createMissingProperties(view);
 });
 
 var selectedFolders = $(selection).filter("folder");
@@ -23,9 +23,12 @@ selectedFolders.each(function(folder) {
 	cFolder_createMissingProperties(folder);
 });
 
-
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");
-
+if (!selectedConcepts) {
+	console.log("No concepts selected - exiting...");
+	exit();
+}
+	
 selectedConcepts.each(function(concept) {
 	cConcept_CreateMissingProperties(concept);
 });

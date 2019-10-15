@@ -1,0 +1,41 @@
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Set property metaLevel starting...");
+
+
+function SetMetaLevelForGivenConcepts(givenConcepts, metaLevel) {
+
+	givenConcepts.each(function(concept) {
+		cConcept_SetmetaLevel(concept, metaLevel);
+	});
+}
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+var metaLevel = window.prompt("Specify metaLevel as '" +  const_prop_metaLevel_value_real + "', '" + const_prop_metaLevel_value_meta  + "' or '" + const_prop_metaLevel_value_undefined + "'");
+
+var validatedOK = false;
+
+if (metaLevel === const_prop_metaLevel_value_real)
+	validatedOK = true;
+else if (metaLevel === const_prop_metaLevel_value_meta)
+	validatedOK = true;
+else if (metaLevel === const_prop_metaLevel_value_undefined)
+	validatedOK = true;
+
+if (!validatedOK) {
+	window.alert("Invalid metaLevel - exiting...");
+	exit();
+}
+
+
+SetMetaLevelForGivenConcepts(selectedConcepts, metaLevel);
+
+console.log("Script completed.");

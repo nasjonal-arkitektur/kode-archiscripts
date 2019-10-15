@@ -55,19 +55,17 @@ function cConcept_getIncomingRelations(concept) {
 
 function cConcept_HasProperty(concept, propertyName)
 {
-	//console.log("cConcept_HasProperty(" + concept.name + ", " + propertyName + ")");
-	
-	//if (concept.prop(propertyName) )
-	//	return true;
-	
-	
+
+	if ( concept.prop(propertyName) === null )
+		return true;
+	/*
 	var propList = concept.prop();
 	for (var i = 0; i < propList.size(); i++) {
 		
 		if (propList[i] == propertyName)
 			return true;
 	}	
-	
+	*/
 
 	return false;
 }
@@ -536,8 +534,7 @@ function cConcept_EvaluateLabel(concept, option_caseForShowingparentConceptType,
 
 function cConcept_CreateMissingProperty(concept, propName, propValue) {
 
-	if (!cConcept_HasProperty(concept, propName) ) {
-	//if (!concept.prop(propName) ) {
+	if ( cConcept_HasProperty(concept, propName)  ) {
 		console.log(". Creating missing or empty standard property " + propName + "=" + propValue + " for " + concept.type  + " " + concept.name );
 		concept.prop(propName, propValue);
 	}
@@ -547,11 +544,12 @@ function cConcept_CreateMissingProperties(concept) {
 
 
 //cConcept_removeProperty(concept, const_prop_dct_type); // very very temporary!
- 	
 	
+	cConcept_CreateMissingProperty(concept, const_prop_metaLevel, const_prop_metaLevel_value_default);
 	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
-		
 	cConcept_CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);
+	cConcept_CreateMissingProperty(concept, const_prop_abstractionLevel, const_prop_abstractionLevel_value_default);
+		
 
 	cConcept_CreateMissingProperty(concept, const_prop_language, cModel_GetCurrentLanguage() );
 	
@@ -601,6 +599,7 @@ function cConcept_CreateMissingProperties(concept) {
 	var caseForShowingNamespace = default_option_caseForShowingNamespace;
 	var caseForShowingConceptType = default_option_caseForShowingConceptType;
 	var caseForShowingLanguage = default_option_caseForShowingLanguage;
+
 	
 	cConcept_CreateMissingProperty(concept, const_prop_label, cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage));
 	
@@ -609,6 +608,10 @@ function cConcept_CreateMissingProperties(concept) {
 	if (concept.name === defaultRelationName) {
 		concept.name = "";
 	}
+	
+	cConcept_CreateMissingProperty(concept, const_prop_notes, "" );
+
+
 	
 	//
 	cConcept_UpdateLabel(concept);
@@ -761,7 +764,7 @@ function cConcept_ValidateConceptType(concept) {
 	
 }
 
-function cConcept_UpdateLabel(concept) {
+function cConcept_UpdateLabel(concept, showAbstractionLevel) {
 	 
 	var caseForShowingparentConceptType = default_option_caseForShowingparentConceptType;
 	var caseForShowingname = default_option_caseForShowingname;
@@ -769,7 +772,14 @@ function cConcept_UpdateLabel(concept) {
 	var caseForShowingConceptType = default_option_caseForShowingConceptType;
 	var caseForShowingLanguage = default_option_caseForShowingLanguage;
 	
-	concept.prop(const_prop_label, cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage));
+	var evaluatedLabel = cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage);
+	concept.prop(const_prop_label, evaluatedLabel);
+	
+	if (showAbstractionLevel) {
+		concept.prop(const_prop_label, evaluatedLabel + " [" + cConcept_GetProperty(concept, const_prop_abstractionLevel) + "]");
+		//concept.fillColor = "#0000ff"; // blue
+		concept.fillColor = "#ff0000"; // red
+	}
 }
 
 function cConcept_setLabel(concept, parentConceptType, name, namespace, language, conceptType) {
@@ -800,3 +810,18 @@ function cConcept_UpdateNameAndDescriptionAndLabel(concept) {
 
 }
 
+function cConcept_SetAbstractionLevel(concept, abstractionLevel) {
+	
+	if (abstractionLevel)
+		concept.prop(const_prop_abstractionLevel, abstractionLevel);
+	else 
+		concept.prop(const_prop_abstractionLevel, const_prop_abstractionLevel_value_default);
+}
+
+function cConcept_SetmetaLevel(concept, metaLevel) {
+	
+	if (metaLevel)
+		concept.prop(const_prop_metaLevel, metaLevel);
+	else 
+		concept.prop(const_prop_metaLevel, const_prop_metaLevel_value_default);
+}

@@ -19,17 +19,25 @@ if (selectedConcepts == null || selectedConcepts.size() < 1)
 selectedConcepts.each(function(concept) {
 	
 	if (cConcept_GetProperty(concept, const_prop_name_en) !="") {
-		console.log("Warning: "+ const_prop_name_en + " already exists,  " + concept.name + ". Exiting...");
-		exit();
+		console.log("Warning: "+ const_prop_name_en + " already exists for concept " + concept.name + ".");
+	
 	}
+	else {
 	
-	var norwegianNameThatIsRatherEnglish = cConcept_GetProperty(concept, const_prop_name_no);
-	cConcept_SetProperty(concept, const_prop_name_en, norwegianNameThatIsRatherEnglish);
-	cConcept_SetProperty(concept, const_prop_name_no, "");
-	
-	cConcept_SetProperty(concept, const_prop_language, const_prop_language_value_en);
-	
-	cConcept_UpdateLabel(concept);
+		var norwegianNameThatIsRatherEnglish = cConcept_GetProperty(concept, const_prop_name_no);
+		cConcept_SetProperty(concept, const_prop_name_en, norwegianNameThatIsRatherEnglish);
+		cConcept_SetProperty(concept, const_prop_name_no, "");
+		
+		var norwegianDescrThatIsRatherEnglish = cConcept_GetProperty(concept, const_prop_description_no);
+		cConcept_SetProperty(concept, const_prop_description_en, norwegianDescrThatIsRatherEnglish);
+		cConcept_SetProperty(concept, const_prop_description_no, "");
+		
+		
+		
+		cConcept_SetProperty(concept, const_prop_language, const_prop_language_value_en);
+		
+		cConcept_UpdateLabel(concept);
+	}
 	
 });
 
