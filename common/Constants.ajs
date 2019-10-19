@@ -31,12 +31,16 @@ var const_prop_metaLevel_value_real = "real";
 var const_prop_metaLevel_value_undefined = "undefined";
 var const_prop_metaLevel_value_default = const_prop_metaLevel_value_undefined;
 
-var const_prop_abstractionLevel = "difi:abstractionLevel" ; //added 2019-09-04; metamodel, abb, sbb, undefined
+var const_prop_abstractionLevel = "difi:abstractionLevel" ; //added 2019-09-04; metamodel, abb, sbb, instance, undefined
 var const_prop_abstractionLevel_value_undefined = "undefined";
 var const_prop_abstractionLevel_value_default = const_prop_abstractionLevel_value_undefined;
 var const_prop_abstractionLevel_value_conceptual = "conceptual"; // abb
 var const_prop_abstractionLevel_value_logical = "logical"; //sbb
 var const_prop_abstractionLevel_value_physical = "physical"; // instance
+
+var const_prop_abstractionLevel_value_abb = "abb"; //conceptual"
+var const_prop_abstractionLevel_value_sbb = "sbb"; //logical
+var const_prop_abstractionLevel_value_instance = "instance"; // physical
 
 //var const_prop_buildingBlocklevel = "difi:buildingBlocklevel" ; //added 2019-08-29;
 var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29; 

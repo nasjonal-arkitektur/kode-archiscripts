@@ -1,0 +1,117 @@
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Folder.ajs");
+
+window.alert("Hei Erik");
+
+console.clear(); 
+console.log("Admin Fix abstraction levels");
+
+
+
+function FixabstractionLevel(concept) {
+
+	var propName = const_prop_abstractionLevel;
+	var abstractionLevel = cConcept_GetProperty(concept, propName);
+	var validatedOK = false;
+	
+
+	if (abstractionLevel === const_prop_abstractionLevel_value_undefined)
+		validatedOK = true;
+	else if (abstractionLevel === const_prop_abstractionLevel_value_conceptual){
+		console.log(". Fixing  " + propName + " for " + concept.name + " (" + concept.type + ")" );
+		cConcept_SetAbstractionLevel(concept, const_prop_abstractionLevel_value_abb);
+	}
+	else if (abstractionLevel === const_prop_abstractionLevel_value_logical) {
+		console.log(". Fixing  " + propName + " for " + concept.name + " (" + concept.type + ")" );
+		cConcept_SetAbstractionLevel(concept, const_prop_abstractionLevel_value_sbb);
+	}
+	else if (abstractionLevel === const_prop_abstractionLevel_value_physical) {
+		console.log(". Fixing  " + propName + " for " + concept.name + " (" + concept.type + ")" );
+		cConcept_SetAbstractionLevel(concept, const_prop_abstractionLevel_value_instance);
+	}
+
+}	
+
+
+function ModelFixabstractionLevels() {
+
+	console.clear();
+	console.log("Starting function CreateDefaultProperties");
+	
+
+	// views
+	$("view").each(function(view) {
+		
+		FixabstractionLevel(view);
+
+    });
+	
+	// folders
+	$("folder").each(function(folder) {
+		
+		FixabstractionLevel(folder);
+
+    });
+	
+	// elements //and relations
+	var doItNow = false;
+	if (doItNow){
+
+		$("concept").each(function(concept) {
+			FixabstractionLevel(concept);
+		});
+		
+		//$("relationship").each(function(relation) {
+		//	cConcept_CreateMissingProperties(relation.concept);
+		//});
+
+
+	}
+	
+	var abstractionLevel = null;
+	$("element").each(function(element) {
+		
+		abstractionLevel = cConcept_GetProperty(element.concept, const_prop_abstractionLevel);
+		
+		//if (abstractionLevel === const_prop_abstractionLevel_value_undefined)
+		//	validatedOK = true;
+		if (abstractionLevel === const_prop_abstractionLevel_value_abb){
+
+				//element.fillColor = null; 
+		}
+		else if (abstractionLevel === const_prop_abstractionLevel_value_sbb) {
+			
+			console.log("SBB: " + element.name + " (" + element.type + ")" );
+			
+			if (element.concept.type === "application-component" ) {
+				console.log("Setting color #00ffff");
+				element.fontColor = "#00ffff";
+				
+			}
+		}
+		else if (abstractionLevel === const_prop_abstractionLevel_value_instance) {
+			
+			console.log("INSTANCE: " + element.name);
+			
+			if (element.concept.type === "application-component" ) {
+				console.log("Setting color #0080ff");
+				element.fontColor = "#0080ff";
+			}
+			
+		}
+		
+
+		
+		
+	});	
+
+}
+
+ModelFixabstractionLevels();
+
+console.log("Script completed");
+

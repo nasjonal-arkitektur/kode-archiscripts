@@ -1,0 +1,24 @@
+
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Running script Set property difi:name_no from name");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+
+selectedConcepts.each(function(concept) {
+	
+	cConcept_SetProperty(concept, const_prop_name_no, concept.name);
+	 
+	cConcept_UpdateLabel(concept);
+	
+});
+
+console.log("Script completed");

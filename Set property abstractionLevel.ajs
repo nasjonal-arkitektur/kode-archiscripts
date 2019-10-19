@@ -19,19 +19,30 @@ if (selectedConcepts == null || selectedConcepts.size() < 1)
 	exit();
 }
 
-var abstractionLevel = window.prompt("Specify abstractionLevel as '" +  const_prop_abstractionLevel_value_conceptual + "', '" + const_prop_abstractionLevel_value_logical  + "', '" + const_prop_abstractionLevel_value_physical + "' or '" + const_prop_abstractionLevel_value_undefined + "'");
-
 var validatedOK = false;
+
+/*
+var abstractionLevel = window.prompt("Specify abstractionLevel as '" +  const_prop_abstractionLevel_value_conceptual + "', '" + const_prop_abstractionLevel_value_logical  + "', '" + const_prop_abstractionLevel_value_physical + "' or '" + const_prop_abstractionLevel_value_undefined + "'");
 
 if (abstractionLevel === const_prop_abstractionLevel_value_undefined)
 	validatedOK = true;
-//else if (abstractionLevel === const_prop_abstractionLevel_value_metamodel)
-//	validatedOK = true;
 else if (abstractionLevel === const_prop_abstractionLevel_value_conceptual)
 	validatedOK = true;
 else if (abstractionLevel === const_prop_abstractionLevel_value_logical)
 	validatedOK = true;
 else if (abstractionLevel === const_prop_abstractionLevel_value_physical)
+	validatedOK = true;
+*/
+
+
+var abstractionLevel = window.prompt("Specify abstractionLevel as '" +  const_prop_abstractionLevel_value_abb + "', '" + const_prop_abstractionLevel_value_sbb  + "', '" + const_prop_abstractionLevel_value_instance + "' or '" + const_prop_abstractionLevel_value_undefined + "'");
+if (abstractionLevel === const_prop_abstractionLevel_value_undefined)
+	validatedOK = true;
+else if (abstractionLevel === const_prop_abstractionLevel_value_abb)
+	validatedOK = true;
+else if (abstractionLevel === const_prop_abstractionLevel_value_sbb)
+	validatedOK = true;
+else if (abstractionLevel === const_prop_abstractionLevel_value_instance)
 	validatedOK = true;
 
 if (!validatedOK) {

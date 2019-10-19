@@ -1,0 +1,75 @@
+
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Running script: Show hidden relationships for selected concepts only");
+
+
+// Find DiagramComponents for a given element in a given view
+var getDiagramComponents = function(v, e) {
+
+    return $(v).find().filter(function(o) {
+        return o.concept.id == e.id;
+    });
+}
+
+// Checks if a view contains a visual connection from src and tgt visual objects
+var contains = function(r, src, tgt) {
+    found = false;
+    
+    $(r).objectRefs().each(function(o) {
+        if (o.source.id == src.id && o.target.id == tgt.id) {
+            found = true;
+        }
+    });
+    
+    return found;;
+}
+
+
+var selectedItems = $(selection).filter("element");
+if (selectedItems == null || selectedItems.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}	
+
+var view = cElement_GetView(selectedItems.first());
+if (view == null)
+{
+	window.alert("No view selected. Exiting...");
+	exit();
+}
+
+selectedItems.each(function(e) {
+	
+
+	$(e.concept).rels().each(function(r) {
+	
+		if (r.source.id == e.concept.id) { // Erik-1: The end result will be the same, but this makes it more logical to me  
+
+			getDiagramComponents(view,r.source).each(function(src) {
+			
+				getDiagramComponents(view,r.target).each(function(tgt) {
+				
+					if (!contains(r, src, tgt)) {
+						debug? console.log("        => Adding " + r.type + "(" + r.name + ") from " + src.name + " to " + tgt.name ):true; // erik
+						view.add(r, src, tgt);
+					}
+				});
+			
+			});
+		} // Erik-1
+	});
+		
+ 
+	//cConcept_UpdateLabel(elm.concept);
+	
+});
+
+console.log("Script completed");
+ 
+
+
+

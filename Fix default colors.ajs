@@ -1,0 +1,37 @@
+/*
+ * Fix abstraction colors.ajs
+ */
+
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+console.show();
+console.clear();
+console.log("Fix default colors.ajs"); 
+
+
+var selectedItems = $(selection).filter("element");
+if (selectedItems == null || selectedItems.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}	
+
+var view = cElement_GetView(selectedItems.first());
+if (view == null)
+{
+	window.alert("No view selected. Exiting...");
+	exit();
+}
+
+var abstractionLevel = null;
+selectedItems.each(function(element) {
+	
+	
+	element.fillColor = null; 
+
+});	
+
+
+console.log("Script completed");
+ 

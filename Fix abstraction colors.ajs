@@ -1,0 +1,181 @@
+/*
+ * Fix abstraction colors.ajs
+ */
+
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+console.show();
+console.clear();
+console.log("Fix abstraction colors.ajs"); 
+
+
+var selectedItems = $(selection).filter("element");
+if (selectedItems == null || selectedItems.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}	
+
+var view = cElement_GetView(selectedItems.first());
+if (view == null)
+{
+	window.alert("No view selected. Exiting...");
+	exit();
+}
+
+var abstractionLevel = null;
+selectedItems.each(function(element) {
+	
+	abstractionLevel = cConcept_GetProperty(element.concept, const_prop_abstractionLevel);
+	
+	if (abstractionLevel === const_prop_abstractionLevel_value_undefined)
+		element.fillColor = null; // default color
+	if (abstractionLevel === const_prop_abstractionLevel_value_abb)
+	{
+		element.fillColor = null; // default color
+	}
+	else if (abstractionLevel === const_prop_abstractionLevel_value_sbb) 
+	{
+		
+		// console.log("SBB: " + element.name + " (" + element.type + ")" );
+		
+		if (
+			element.type === "application-component" 
+			|| element.type === "application-collaboration"
+			|| element.type === "application-interface"
+			|| element.type === "application-function" // makes sense?
+			|| element.type === "application-process"
+			|| element.type === "application-interaction"
+			|| element.type === "application-event"
+			|| element.type === "application-service"
+			|| element.type === "data-object"
+		   )
+		{
+			element.fillColor = "#00ffff";
+		}
+		else if (
+			element.type === "business-actor" 
+			|| element.type === "business-role"
+			|| element.type === "business-collaboration"
+			|| element.type === "business-interface"
+			|| element.type === "business-process"
+			|| element.type === "business-function"
+			|| element.type === "business-interaction"
+			|| element.type === "business-event"
+			|| element.type === "business-service"
+			|| element.type === "business-object"
+			|| element.type === "contract"
+			|| element.type === "representation"
+			|| element.type === "product"
+
+			)
+		{
+			element.fillColor = "#ffff80";
+		}
+		else if (
+			element.type === "node"
+			|| element.type === "device"
+			|| element.type === "system-software"
+			|| element.type === "technology-collaboration"
+			|| element.type === "technology-interface"
+			|| element.type === "path"
+			|| element.type === "communication-network"
+			|| element.type === "technology-function"
+			|| element.type === "technology-process"
+			|| element.type === "technology-interaction"
+			|| element.type === "technology-event"
+			|| element.type === "technology-service"
+			|| element.type === "artifact" 
+			)
+		{
+			element.fillColor = "#80ff80";
+		}		
+
+		else if (
+			element.type === "equipment"
+			|| element.type === "facility"
+			|| element.type === "distribution-network"			
+			|| element.type === "material"			
+			)
+		{
+			element.fillColor = "#80ff80";
+		}		
+		
+	}
+	else if (abstractionLevel === const_prop_abstractionLevel_value_instance) 
+	{
+		
+		//console.log("INSTANCE: " + element.name);
+		
+		if (
+			element.type === "application-component" 
+			|| element.type === "application-collaboration"
+			|| element.type === "application-interface"
+			|| element.type === "application-function"
+			|| element.type === "application-process"
+			|| element.type === "application-interaction"
+			|| element.type === "application-event"
+			|| element.type === "application-service"
+			|| element.type === "data-object"
+		   )
+		{			
+			element.fillColor = "#0080ff";
+		}
+		else if (
+			element.type === "business-actor" 
+			|| element.type === "business-role"
+			|| element.type === "business-collaboration"
+			|| element.type === "business-interface"
+			|| element.type === "business-process"
+			|| element.type === "business-function"
+			|| element.type === "business-interaction"
+			|| element.type === "business-event"
+			|| element.type === "business-service"
+			|| element.type === "business-object"
+			|| element.type === "contract"
+			|| element.type === "representation"
+			|| element.type === "product"
+
+			)
+		{
+			element.fillColor = "#ffff00";	
+		}
+		
+		else if (
+			element.type === "node"
+			|| element.type === "device"
+			|| element.type === "system-software"
+			|| element.type === "technology-collaboration"
+			|| element.type === "technology-interface"
+			|| element.type === "path"
+			|| element.type === "communication-network"
+			|| element.type === "technology-function"
+			|| element.type === "technology-process"
+			|| element.type === "technology-interaction"
+			|| element.type === "technology-event"
+			|| element.type === "technology-service"
+			|| element.type === "artifact" 
+			)
+		{
+			element.fillColor = "#00ff00";
+		}
+		
+		else if (
+			element.type === "equipment"
+			|| element.type === "facility"
+			|| element.type === "distribution-network"			
+			|| element.type === "material"			
+			)
+		{
+			element.fillColor = "#00ff00";
+		}	
+
+		
+	}
+
+});	
+
+
+console.log("Script completed");
+ 

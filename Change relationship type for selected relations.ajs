@@ -25,25 +25,51 @@ if (rels.size() < 1)
 	}
 }
 
-if (!window.confirm("Switch between aggecation and composition for selected relationships?") )
+if (window.confirm("Switch between aggecation and composition for selected relationships?") ) {
+	
+
+	rels.each(function(r) {
+			
+	
+		var source = $(r).sourceEnds();
+		source = source.first();	
+		var target = $(r).targetEnds();
+		target = target.first();	
+
+		console.log(source.name +" to " + target.name);
+
+		var newType = "";
+		if (r.type === "composition-relationship")
+			newType = "aggregation-relationship";
+		else if (r.type === "aggregation-relationship")
+			newType = "composition-relationship";
+
+		console.log("Try to change type from "+ r.type + " to " + newType);
+		var c = r.concept;
+		
+		c.type = newType;
+		
+		if (r.type === newType)
+			console.log("Success");
+			
+	});		
+}
+
+var newType = window.prompt("New relationtype?");
+
+if (newType === null || newType === "") {
 	exit();
+}
 
 rels.each(function(r) {
 		
-	
-		
+
 	var source = $(r).sourceEnds();
 	source = source.first();	
 	var target = $(r).targetEnds();
 	target = target.first();	
 
 	console.log(source.name +" to " + target.name);
-
-	var newType = "";
-	if (r.type === "composition-relationship")
-		newType = "aggregation-relationship";
-	else if (r.type === "aggregation-relationship")
-		newType = "composition-relationship";
 
 	console.log("Try to change type from "+ r.type + " to " + newType);
 	var c = r.concept;
@@ -54,3 +80,5 @@ rels.each(function(r) {
 		console.log("Success");
 		
 });		
+
+
