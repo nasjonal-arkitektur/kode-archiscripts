@@ -1,0 +1,35 @@
+load(__DIR__ + "./common/c_Namespace.ajs");
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Model.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("Clipboard paste color");
+
+var selectedItems = $(selection).filter("element");
+if (selectedItems == null || selectedItems.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}	
+
+var view = cElement_GetView(selectedItems.first());
+if (view == null)
+{
+	window.alert("No view selected. Exiting...");
+	exit();
+}
+
+var clipboardString = cClipboard_GetClipboardString();
+
+selectedItems.each(function(element) {
+	
+	
+	element.fillColor = clipboardString; 
+
+});	
+
+
+console.log("Script completed");
+ 
