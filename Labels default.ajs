@@ -12,6 +12,7 @@ console.clear();
 console.log("Started Admin Update labels");
 
 var selectedConcepts = CSelection_GetSelectedConcepts("","");
+//var selectedView = CSelection_GetTheSelectedView(); // in case a view is selected
 
 selectedConcepts.each(function(concept) {
 

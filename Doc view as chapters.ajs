@@ -1,0 +1,85 @@
+load(__DIR__ + "/common/Constants.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+ 
+console.show();
+console.clear();
+console.log("Starting script Doc view as chapters");
+
+
+var docString = "";
+var view = CSelection_GetTheSelectedView();
+var elms = cView_GetElementsInView(view);
+var renderingpath = "";
+
+var templateheader = 
+
+"////" + "\n" +
+"Guide to the below header attributes:" + "\n\n" +
+
+"    lang: en; no" + "\n" +
+"    difi_orig_language: en; no" + "\n" +
+"    difi_translation_status: -; missing; incomplete; OK " + "\n" +
+"    keywords_en: comma separated list of english keywords (no controlled vocabulary); TBD" + "\n" +
+"    keywords_no: comma separated list of Norwegian keywords (no controlled vocabulary); TBD  " + "\n\n" +
+    
+"Note: The _lang_ value may be overridden by a command line parameter." + "\n" +
+"////" + "\n\n" +
+
+":lang: no" + "\n" +
+":difi_orig_language: no" + "\n" +
+":doctitle_en: English Document Title" + "\n" +
+":doctitle_no: " + view.name + "\n" + // Erik: Todo - pick it from the attribute...
+":difi_translation_status: -" + "\n" +
+":keywords_en: TBD" + "\n" +
+":keywords_no: TBD" + "\n" +
+":toclevels: 2" + "\n" +
+":difi_doctype: Basic Book Template" + "\n\n" +
+
+"// The above parameters are processed by scripts included by the following statement" + "\n" +
+"include::../plattform_felles/includes/commonincludes.adoc[]" + "\n\n";
+
+
+docString += templateheader;
+
+docString += "#Generert dokument -  arbeid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#" + "\n\n";
+
+
+////
+// chapter caption
+docString += "= "; // erik: how to evaluate chapter level?
+docString += view.name;
+docString += "\n";
+////
+
+// view description
+docString += "\n";
+docString += view.documentation;
+docString += "\n\n";
+
+
+// image of the archi view
+if ( cModel_GetRenderingRootPath() && cView_GetRelativeRenderPath(view) ) {
+	
+	
+	docString += "." + view.name;
+	renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
+	docString += "\nimage::../" +  cView_GetRelativeRenderPath(view) + "/media/" + view.name + ".png" + "[alt=" + view.name + " image]";
+	// todo: ",link = ..." for link to published web view
+
+}
+
+
+elms.each(function(e) {
+	
+	docString += "\n\n" +  "=== " + e.name + "\n\n" + e.documentation;
+});
+
+
+cClipboard_SetClipboardString(docString);
+
+console.log(docString);
+
+console.log("Script completed");

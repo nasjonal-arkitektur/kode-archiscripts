@@ -114,7 +114,7 @@ var cView_MergeWithDuplicateElementsInView = function(v) {
 }
 
 function cView_GetCurrentLanguage(view) {	
-	return view.prop(const_prop_current_language);
+	return view.prop(const_prop_language);
 }
 
 function cView_SetCurrentLanguage(view, language) {
@@ -161,4 +161,5 @@ function cView_createMissingProperties(view) {
 			
 		cView_CreateMissingProperty(view, const_prop_viewRelativeRenderPath, "");	
 }
+
 

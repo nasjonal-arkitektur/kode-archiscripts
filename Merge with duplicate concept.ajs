@@ -65,7 +65,8 @@ if (others.size() == 1 ) {
 	
 	if (merge) {
 		
-		cConcept_MergeWithMasterConcept(others.first(), selectedOccurence.concept );
+		//cConcept_MergeWithMasterConcept(others.first(), selectedOccurence.concept );
+		cConcept_MergeWithMasterConcept(selectedOccurence.concept, others.first() );
 		window.alert("Merge done");
 	
 	}

@@ -82,8 +82,8 @@ occurences.each(function(selectedOccurence) {
 */
 
 
-		//cConcept_MergeWithMasterConcept(selectedOccurence.concept, others.first());
-		cConcept_MergeWithMasterConcept(others.first(), selectedOccurence.concept);
+		cConcept_MergeWithMasterConcept(selectedOccurence.concept, others.first());
+		//cConcept_MergeWithMasterConcept(others.first(), selectedOccurence.concept);
 
 		
 		

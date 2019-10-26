@@ -463,16 +463,55 @@ function concept_NameForCurrentModelLanguageMissing(concept) {
 
 }
 
+function cConcept_GetCurrentLanguage(concept) {	
+
+	var currLang = concept.prop(const_prop_language);
+	if (!currLang)
+		currLang = cModel_GetCurrentLanguage();
+		
+	return currLang;
+}
+
+function cConcept_EvaluateLanguageOfName(concept) {
+	
+	language = "";
+
+	if (concept.name === cConcept_GetProperty(concept, const_prop_name_en))
+		language = const_prop_language_value_en;
+	
+	else if (concept.name === cConcept_GetProperty(concept, const_prop_name_no))
+		language = const_prop_language_value_no;
+	
+	return language;
+	
+}
+
 function concept_nameEqualsNameOfCurrentLanguage(concept) {
 	
 	result = false;
+
 	
-	if(cModel_GetCurrentLanguage() == const_prop_language_value_no) {
+	if (cConcept_GetCurrentLanguage(concept) == const_prop_language_value_en) {
+		if (concept.name === cConcept_GetProperty(concept, const_prop_name_en))
+			result = true;
+	}
+	
+	
+	if (!result &&  (cConcept_GetCurrentLanguage(concept) == const_prop_language_value_no)) {
+		if (concept.name === cConcept_GetProperty(concept, const_prop_name_no))
+			result = true;
+	}
+	
+	// override by view level setting??????????	
+
+	
+	// override by model level setting
+	if (!result &&  (cModel_GetCurrentLanguage() == const_prop_language_value_no)) {
 		
 		if (concept.name === cConcept_GetProperty(concept, const_prop_name_no))
 			result = true;
 	}
-	else if(cModel_GetCurrentLanguage() == const_prop_language_value_en) {
+	if (!result &&  (cModel_GetCurrentLanguage() == const_prop_language_value_en)) {
 		
 		if (concept.name === cConcept_GetProperty(concept, const_prop_name_en))
 			result = true;
@@ -511,20 +550,30 @@ function cConcept_EvaluateLabel(concept, option_caseForShowingparentConceptType,
 	if (option_caseForShowingLanguage === "always")
 		doShowLanguage = true;
 	else if (option_caseForShowingLanguage === "missingCurrentLanguage")
-		if (concept.name != "")
-			if (!concept_nameEqualsNameOfCurrentLanguage(concept))
+		if (concept.name != "") {
+			if (!concept_nameEqualsNameOfCurrentLanguage(concept))  //unneccessay test? See below...
 			//if (concept_NameForCurrentModelLanguageMissing(concept) )
 				doShowLanguage= true;
-
+		}
 	if (doShowNamespace)
 		label += " [ns:${property:difi:namespace}]";	// const_prop_namespace
 	
 	
 	
-	if (doShowLanguage)
-		label += " [lang:${property:difi:language}]"; // const_prop_language
+	if (doShowLanguage){
+
+		var supposedCurrentLanguage = cConcept_GetCurrentLanguage(concept);
+console.log("supposedCurrentLanguage " + supposedCurrentLanguage);
+		var actualLanguage = cConcept_EvaluateLanguageOfName(concept);
+console.log("actualLanguage " + actualLanguage);		
+		if (actualLanguage != supposedCurrentLanguage) {
+			languageToIndicate = actualLanguage;		
+		
+			//label += " [lang:${property:difi:language}]"; // const_prop_language
+			label += " [lang:" + languageToIndicate + "]";
 	
-		// NOTE: Should have considered the models alternative/default language
+		}
+	}
 			
 	if (doShowType)
 		label += "\n<<${property:dct:type}>>"; // const_prop_dct_type

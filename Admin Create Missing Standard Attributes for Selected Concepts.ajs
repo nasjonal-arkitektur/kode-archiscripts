@@ -23,6 +23,7 @@ selectedFolders.each(function(folder) {
 	cFolder_createMissingProperties(folder);
 });
 
+
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (!selectedConcepts) {
 	console.log("No concepts selected - exiting...");
