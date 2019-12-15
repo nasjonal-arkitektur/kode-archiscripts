@@ -31,7 +31,7 @@ var const_prop_metaLevel_value_real = "real";
 var const_prop_metaLevel_value_undefined = "undefined";
 var const_prop_metaLevel_value_default = const_prop_metaLevel_value_undefined;
 
-var const_prop_abstractionLevel = "difi:abstractionLevel" ; //added 2019-09-04; metamodel, abb, sbb, instance, undefined
+var const_prop_abstractionLevel = "difi:abstractionLevel" ; //added 2019-09-04; abb, sbb, instance, undefined
 var const_prop_abstractionLevel_value_undefined = "undefined";
 var const_prop_abstractionLevel_value_default = const_prop_abstractionLevel_value_undefined;
 var const_prop_abstractionLevel_value_conceptual = "conceptual"; // abb

@@ -649,7 +649,6 @@ function cConcept_CreateMissingProperties(concept) {
 	var caseForShowingConceptType = default_option_caseForShowingConceptType;
 	var caseForShowingLanguage = default_option_caseForShowingLanguage;
 
-	
 	cConcept_CreateMissingProperty(concept, const_prop_label, cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage));
 	
 	// The following necessary? Move to CRelation!!?
@@ -663,7 +662,9 @@ function cConcept_CreateMissingProperties(concept) {
 
 	
 	//
-	cConcept_UpdateLabel(concept);
+	if ( cConcept_GetProperty(concept, const_prop_label) === "" || cConcept_GetProperty(concept, const_prop_label) === null) {
+		cConcept_UpdateLabel(concept);
+	}
 	
 }
 
@@ -814,21 +815,22 @@ function cConcept_ValidateConceptType(concept) {
 }
 
 function cConcept_UpdateLabel(concept, showAbstractionLevel) {
-	 
-	var caseForShowingparentConceptType = default_option_caseForShowingparentConceptType;
-	var caseForShowingname = default_option_caseForShowingname;
-	var caseForShowingNamespace = default_option_caseForShowingNamespace;
-	var caseForShowingConceptType = default_option_caseForShowingConceptType;
-	var caseForShowingLanguage = default_option_caseForShowingLanguage;
 	
-	var evaluatedLabel = cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage);
-	concept.prop(const_prop_label, evaluatedLabel);
-	
-	if (showAbstractionLevel) {
-		concept.prop(const_prop_label, evaluatedLabel + " [" + cConcept_GetProperty(concept, const_prop_abstractionLevel) + "]");
-		//concept.fillColor = "#0000ff"; // blue
-		concept.fillColor = "#ff0000"; // red
-	}
+		var caseForShowingparentConceptType = default_option_caseForShowingparentConceptType;
+		var caseForShowingname = default_option_caseForShowingname;
+		var caseForShowingNamespace = default_option_caseForShowingNamespace;
+		var caseForShowingConceptType = default_option_caseForShowingConceptType;
+		var caseForShowingLanguage = default_option_caseForShowingLanguage;
+		
+		var evaluatedLabel = cConcept_EvaluateLabel(concept, caseForShowingparentConceptType, caseForShowingname, caseForShowingNamespace, caseForShowingConceptType, caseForShowingLanguage);
+		concept.prop(const_prop_label, evaluatedLabel);
+		
+		if (showAbstractionLevel) {
+			concept.prop(const_prop_label, evaluatedLabel + " [" + cConcept_GetProperty(concept, const_prop_abstractionLevel) + "]");
+			//concept.fillColor = "#0000ff"; // blue
+			concept.fillColor = "#ff0000"; // red
+		}
+		 
 }
 
 function cConcept_setLabel(concept, parentConceptType, name, namespace, language, conceptType) {
