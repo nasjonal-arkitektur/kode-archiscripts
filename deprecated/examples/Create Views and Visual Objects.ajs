@@ -42,6 +42,8 @@ console.log("Set viewpoint to - ", archimateView.viewpoint.name);
 
 // Add some objects to the ArchiMate view containing the elements (-1 = default width and height)
 var object1 = archimateView.add(actor, 10, 10, -1, -1);
+var object11 = archimateView.add(actor, 50, 50, -1, -1); // Erik test
+var object12 = archimateView.add(actor, 100, 100, -1, -1); // Erik test
 var object2 = archimateView.add(role, 200, 10, -1, -1);
 
 // Add a visual connection containing the relationship

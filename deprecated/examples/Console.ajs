@@ -49,8 +49,8 @@ console.log("");
 
 // console.printError in red
 try {
-    console.log("This is an error in red: ");
-    console.noMethod();
+    console.print("This is an error in red: ");
+    $.fs.writeFile("/cannotAccess", "");
 }
 catch(err) {
     console.error(err);

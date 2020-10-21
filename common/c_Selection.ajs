@@ -49,6 +49,12 @@ function CSelection_findSubfoldersOfSelectedFolders()  {
 
 }
 
+function CSelection_getSelectedFoldersAndSubfolders()  {
+
+	selectedFolders = $(selection).filter("folder");
+	var folderList = cFolder_GetListOfFoldersAndSubfoldersForAGivenFolderList(selectedFolders);
+	return folderList;
+}
 
 function CSelection_findFolderAndSubfoldersOfSelectedFolders()  {
 

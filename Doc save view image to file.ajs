@@ -17,10 +17,12 @@ console.log("RenderingRootPath " + cModel_GetRenderingRootPath());
 var view = CSelection_GetTheSelectedView();
 console.log("viewRelativeRenderPath " + cView_GetRelativeRenderPath(view));
 
-var renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
-console.log("renderingpath " + renderingpath);
+//var renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
+//console.log("renderingpath " + renderingpath);
 
-var mediaFolder = renderingpath + "\\" + const_mediaFolderName;
+var mediaFolder = cView_GetImagePath(view);
+//mediaFolder = renderingpath + "\\" + const_mediaFolderName;
+
 console.log("mediaFolder " + mediaFolder);
 
 

@@ -9,7 +9,7 @@ load(__DIR__ + "./common/c_Namespace.ajs");
 load(__DIR__ + "./common/c_Selection.ajs");
 load(__DIR__ + "./common/c_Model.ajs");
 load(__DIR__ + "./common/c_Concept.ajs");
-load(__DIR__ + "./tests/c_Test.ajs");
+
 
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
 //CTest_LogObjectListWithType(selectedOccurences);

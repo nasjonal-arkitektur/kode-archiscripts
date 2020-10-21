@@ -1,5 +1,7 @@
 /*
- * Write some html text to a given file and open it in Browser
+ * Statistics
+ * 
+ * Show some stats in a message alert box
  * 
  * (c) 2018 Jean-Baptiste Sarrodie, Phillip Beauvoir
  * 
@@ -15,18 +17,9 @@
  * 
  */
 
-// Choose a file to save to
-var filePath = window.promptSaveFile();
+var msg = "Model name: " + model.name + "\n";
+msg += "Number of ArchiMate elements: " + $('element').size() + "\n";
+msg += "Number of ArchiMate relationships: " + $('relationship').size() + "\n";
+msg += "Number of views: " + $('view').size();
 
-if(filePath != null) {
-    var text = "<html><body>Hello World</body></html>";
-
-    try {
-        $.fs.writeFile(filePath, text);
-    }
-    catch(err) {
-        console.error(err);
-    }
-
-    var browser = Browser.open("file:///" + filePath, "Test");
-}
+window.alert(msg);

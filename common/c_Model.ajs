@@ -51,7 +51,15 @@ function cModel_GetCurrentModelName() {
 }
 
 function cModel_GetRenderingRootPath() {	
-	return model.prop(const_prop_modelRenderingRootPath);
+
+	var path = "";
+
+	if (const_option_antora)
+		path = model.prop(const_prop_antoraComponentsPath);	
+	else
+		path =  model.prop(const_prop_modelRenderingRootPath);
+	
+	return path;
 }
 
 
@@ -368,4 +376,11 @@ function cModel_CreateMissingProperty(model, propName, propValue) {
 function cModel_createMissingProperties() {
 	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_en);	
 	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+	
+	if (const_option_antora)
+		cModel_CreateMissingProperty(model, const_prop_antoraComponentsPath, "Update value according to your local installation");
+	
+	
+	
+	
 }

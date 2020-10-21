@@ -1,30 +1,33 @@
+console.show();
+console.clear();
+
 load(__DIR__ + "./common/c_Namespace.ajs");
 load(__DIR__ + "./common/c_Selection.ajs");
 load(__DIR__ + "./common/c_Model.ajs");
 load(__DIR__ + "./common/c_Concept.ajs");
-load(__DIR__ + "./common/c_Clipboard.ajs");
 
-
-console.show();
-console.clear();
-console.log("Clipboard copy color from selected object");
-
+console.log("List properties of selected concept");
 
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+//CTest_LogObjectListWithType(selectedOccurences);
+
 
 if (selectedOccurences.size() > 1) {
 	window.alert("Several objects selected. Please select only one element or relationship object. Exiting...");
 	exit();
 }
 else if (selectedOccurences.size() < 1) {
-	window.alert("No objects selected. Please select an element. Exiting...");
+	window.alert("No objects selected. Please select an element or relationship object. Exiting...");
 	exit();
 }
 	
 var selectedOccurence = selectedOccurences.first();
 
-var clibBoardString= selectedOccurence.fillColor;
+//console.log("Selected " + selectedOccurence.name);
+var concept = selectedOccurence.concept;
 
-console.log("Selected color: " + clibBoardString);
-
-cClipboard_SetClipboardString(clibBoardString);
+// merge attributes
+var props = concept.prop();
+for (var i = 0; i < props.size(); i++) {
+	console.log(concept.prop( props[i].name) + ": " + concept.prop( props[i].value));
+}

@@ -20,9 +20,29 @@ function cView_GetSelectedElements() {
 
 function cView_GetRelativeRenderPath(view) {
 
-	return view.prop(const_prop_viewRelativeRenderPath);
+	var path = "";
+
+	if (const_option_antora)
+		path = view.prop(const_prop_antoraViewPath);	
+	else
+		path = view.prop(const_prop_viewRelativeRenderPath);
+	
+	return path;
 }
 
+function cView_GetImagePath(view) {
+
+	var path = "";
+	
+	if (const_option_antora) {
+		path = cModel_GetRenderingRootPath() + "\\" + view.prop(const_prop_antoraViewImagePath);
+	}
+		
+	else
+		path = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view) + "\\" + const_mediaFolderName;
+
+	return path;
+}
 
 
 function cView_GetSelectedRelationship() {
@@ -158,8 +178,13 @@ function cView_createMissingProperties(view) {
 			cView_CreateMissingProperty(view, const_prop_description_en, view.documentation );
 		}
 			
-			
-		cView_CreateMissingProperty(view, const_prop_viewRelativeRenderPath, "");	
+		if (const_option_antora)
+		{
+			cView_CreateMissingProperty(view, const_prop_antoraViewPath, "");
+			cView_CreateMissingProperty(view, const_prop_antoraViewImagePath, "");
+		}
+		else
+			cView_CreateMissingProperty(view, const_prop_viewRelativeRenderPath, "");	
 }
 
 

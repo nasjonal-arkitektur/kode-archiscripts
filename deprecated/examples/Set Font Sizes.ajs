@@ -1,5 +1,7 @@
 /*
- * Write some html text to a given file and open it in Browser
+ * Set font sizes
+ * 
+ * Change font sizes of objects in views
  * 
  * (c) 2018 Jean-Baptiste Sarrodie, Phillip Beauvoir
  * 
@@ -13,20 +15,25 @@
  *  - You can't redistribute this script.
  *  - You can't use this script for commercial purposes unless you obtained it from the official Archi distribution channels.
  * 
- */
+ */ 
 
-// Choose a file to save to
-var filePath = window.promptSaveFile();
+var oldFontSize = 12;
+var newFontSize = 9;
 
-if(filePath != null) {
-    var text = "<html><body>Hello World</body></html>";
 
-    try {
-        $.fs.writeFile(filePath, text);
+// Iterate through all views and their child object
+$("view").children().each(function(child) {
+    setFontSize(child);
+});
+
+// if font size == oldFontSize set it to newFontSize
+function setFontSize(child) {
+    if(child.fontSize == oldFontSize) {
+        child.fontSize = newFontSize;
     }
-    catch(err) {
-        console.error(err);
-    }
 
-    var browser = Browser.open("file:///" + filePath, "Test");
+    // children of children
+    $(child).children().each(function(c) {
+        setFontSize(c);
+    });
 }

@@ -1,6 +1,6 @@
 /*
- * Write some html text to a given file and open it in Browser
- * 
+ * Change Concept Type
+ *
  * (c) 2018 Jean-Baptiste Sarrodie, Phillip Beauvoir
  * 
  * This work is licensed under the HUMANS Licence described below.
@@ -14,19 +14,10 @@
  *  - You can't use this script for commercial purposes unless you obtained it from the official Archi distribution channels.
  * 
  */
-
-// Choose a file to save to
-var filePath = window.promptSaveFile();
-
-if(filePath != null) {
-    var text = "<html><body>Hello World</body></html>";
-
-    try {
-        $.fs.writeFile(filePath, text);
-    }
-    catch(err) {
-        console.error(err);
-    }
-
-    var browser = Browser.open("file:///" + filePath, "Test");
-}
+ 
+// Get all Business Actors in the current selection and change the type to Business Role
+// If changing the type breaks any relationship rules an exception is thrown
+selection.filter("business-actor").each(function(e) {
+    e.concept.type = "business-role";
+    e.name += " (changed)";
+});

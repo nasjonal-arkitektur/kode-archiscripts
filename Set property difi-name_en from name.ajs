@@ -16,6 +16,7 @@ if (selectedConcepts == null || selectedConcepts.size() < 1)
 selectedConcepts.each(function(concept) {
 	
 	cConcept_SetProperty(concept, const_prop_name_en, concept.name);
+	cConcept_SetProperty(concept, const_prop_description_en, concept.documentation);
 	cConcept_UpdateLabel(concept);
 	
 });

@@ -28,5 +28,6 @@ if(filePath != null) {
         console.error(err);
     }
 
-    var browser = Browser.open("file:///" + filePath, "Test");
+    var browser = Browser.newInstance();
+    browser.open("file:///" + filePath, "Test");
 }

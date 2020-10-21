@@ -6,9 +6,7 @@ load(__DIR__ + "./common/c_Selection.ajs");
 load(__DIR__ + "./common/c_Model.ajs");
 load(__DIR__ + "./common/c_Clipboard.ajs");
 //load(__DIR__ + "Constants.ajs");
-
-
-load(__DIR__ + "./tests/c_Test.ajs");
+//load(__DIR__ + "./tests/c_Test.ajs");
 
 console.clear();
 console.log("List selected concepts");

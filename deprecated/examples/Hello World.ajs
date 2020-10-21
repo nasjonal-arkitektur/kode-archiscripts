@@ -1,5 +1,7 @@
 /*
- * Write some html text to a given file and open it in Browser
+ * Hello World
+ * 
+ * Open a message window
  * 
  * (c) 2018 Jean-Baptiste Sarrodie, Phillip Beauvoir
  * 
@@ -15,18 +17,8 @@
  * 
  */
 
-// Choose a file to save to
-var filePath = window.promptSaveFile();
+text = "Hello Erik from Archi Scripting!\n\n";
+text += "The quick brown fox jumped over the lazy dog's back. ";
+text += "Now is the time for all good men to come to the aid of their country.";
 
-if(filePath != null) {
-    var text = "<html><body>Hello World</body></html>";
-
-    try {
-        $.fs.writeFile(filePath, text);
-    }
-    catch(err) {
-        console.error(err);
-    }
-
-    var browser = Browser.open("file:///" + filePath, "Test");
-}
+window.alert(text); 	

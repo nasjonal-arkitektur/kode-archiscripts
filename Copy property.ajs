@@ -1,0 +1,21 @@
+ 
+console.log("Copy property starting...");
+
+
+var selectedConcepts = CSelection_GetSelectedConcepts("","");
+/*	
+	var fromProp = "replace-label";
+	var toProp = "label";
+	
+	var num = 0;
+	selectedConcepts.each(function(concept) {
+		if (cConcept_GetProperty(concept, prop) === oldPropValue) {
+			cConcept_SetProperty(concept, prop, newPropValue);
+			num++;
+		}
+			
+	});
+
+	window.alert(num + " labels copied");
+*/	
+console.log("Script in work...");

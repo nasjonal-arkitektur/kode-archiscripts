@@ -1,5 +1,5 @@
 /*
- * Write some html text to a given file and open it in Browser
+ * Open a model from file and print the concepts
  * 
  * (c) 2018 Jean-Baptiste Sarrodie, Phillip Beauvoir
  * 
@@ -14,19 +14,24 @@
  *  - You can't use this script for commercial purposes unless you obtained it from the official Archi distribution channels.
  * 
  */
+ 
+console.show();
 
-// Choose a file to save to
-var filePath = window.promptSaveFile();
+// Ask for the file
+var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: [ "*.archimate" ] });
 
 if(filePath != null) {
-    var text = "<html><body>Hello World</body></html>";
+    // Load the model and set as current model
+    $.model.load(filePath).setAsCurrent();
 
-    try {
-        $.fs.writeFile(filePath, text);
-    }
-    catch(err) {
-        console.error(err);
-    }
+    console.log("Opened model: " + model);
 
-    var browser = Browser.open("file:///" + filePath, "Test");
+    console.log("Concepts in model:");
+    console.log("--------");
+
+    // All concept type and names
+    $("concept").each(function(concept) {
+        console.log(concept.type + ": " + concept.name);
+    });
 }
+
