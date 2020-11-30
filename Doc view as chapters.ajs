@@ -84,6 +84,7 @@ while (index < elms.size() - 1) { //	Erik note: Using while. since I had a probl
 	e = elms[index];
 	var container_done = false;
 
+
 	rels.each(function(r) {
 	
 		if (r.type == "composition-relationship"  && r.source.name == e.concept.name) {
