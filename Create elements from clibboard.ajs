@@ -54,13 +54,28 @@ var y = 200;
 var elementType = "resource";
 var elementType = window.prompt("Archi concept type?", elementType);
 
+/*
 for (i = 0; i < arr.length; i++) {
 	concept= model.createElement(elementType, arr[i]);
 	elm = view.add(concept, x, y, -1, -1);	
 	//elm.documentation = "doc";
 	x += 143; // default width is 133
 }
+*/
 
+for (i = 0; i < arr.length; i++) {
+
+	var line = arr[i];
+	var arr2 = line.split("\t");
+	var name = arr2[0];
+	var descr = arr2[1];
+	
+	concept= model.createElement(elementType, name);
+	concept.documentation = descr;
+	elm = view.add(concept, x, y, -1, -1);	
+	//elm.documentation = "doc";
+	x += 143; // default width is 133
+}
 
 
 

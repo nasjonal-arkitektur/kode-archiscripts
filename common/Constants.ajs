@@ -25,6 +25,10 @@ var const_mediaFolderName = "media"; //added 2019-08-24
 
 var const_prop_notes = "difi:notes";
 
+var const_prop_logo = "digdir:logo";
+var const_prop_logo_value_default = "";
+var const_prop_link1 = "digdir:link1";
+var const_prop_link1_value_default = "";
 var const_prop_metaLevel = "difi:metaLevel" ; //added 2019-09-07; meta, real, undefined
 var const_prop_metaLevel_value_meta = "meta";
 var const_prop_metaLevel_value_real = "real";

@@ -1,0 +1,41 @@
+/*
+ * New Archi Script
+ */
+load(__DIR__ + "/common/Constants.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+ 
+console.show();
+console.clear();
+//console.log("Script: Create subfolder and empty view with same name");
+
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No selected elements - exiting")
+	exit();
+}
+
+
+selectedOccurences.each(function(o) {
+	
+	console.log(o.name );
+	console.log(o.view.name );
+	var view = o.view;
+	var folder = null;
+	$(view).parent().each(function(parent) {
+		folder = parent;
+		//console.log("    " + view.name + " has direct PARENT " + parent.name);	
+	});	
+	
+	var newFolder = folder.createFolder(o.name);
+	var newView = model.createArchimateView(o.name, newFolder);
+
+});
+
+
+
+console.log("Script completed");

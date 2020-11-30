@@ -598,6 +598,9 @@ function cConcept_CreateMissingProperties(concept) {
 	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
 	cConcept_CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);
 	cConcept_CreateMissingProperty(concept, const_prop_abstractionLevel, const_prop_abstractionLevel_value_default);
+
+	cConcept_CreateMissingProperty(concept, const_prop_link1, const_prop_link1_value_default);
+	cConcept_CreateMissingProperty(concept, const_prop_logo, const_prop_logo_value_default);
 		
 
 	cConcept_CreateMissingProperty(concept, const_prop_language, cModel_GetCurrentLanguage() );

@@ -16,6 +16,23 @@ load(__DIR__ + "../common/c_Relation.ajs");
 load(__DIR__ + "../common/c_Viewpoint.ajs");
 
 
+function CSelection_GetTheSelectedFolder() { 
+
+	var selectedFolders = $(selection).filter("folder");
+
+	if(selectedFolders.size() < 1) {
+		window.alert("No folders selected");
+		exit();
+	}
+	else if(selectedFolders.size() > 1) {
+		window.alert("More than one folder selected");
+		exit();
+	}
+
+	var folder = selectedFolders.first();
+	
+	return folder;
+}
 
 function CSelection_findSubfoldersOfSelectedFolders()  {
 

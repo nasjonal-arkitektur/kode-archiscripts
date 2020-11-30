@@ -1,0 +1,28 @@
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("Replace text in element names.ajs...");
+
+
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+var txtToReplace = window.prompt("Specify text to search for in element names: ");
+var newTxt = window.prompt("Specify replacement text: ");
+
+selectedConcepts.each(function(c) {
+	
+	console.log(c.name );
+	
+	var res = c.name.replace(txtToReplace, newTxt);
+	c.name = res;
+
+});
+
+console.log("Script completed.");
