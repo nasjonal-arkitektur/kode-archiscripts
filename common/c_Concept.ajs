@@ -72,7 +72,7 @@ function cConcept_HasProperty(concept, propertyName)
 
 function cConcept_HasRelation(concept, otherRelation)
 {
-console.log("\ncConcept_HasRelation," + concept.name );	
+//console.log("\ncConcept_HasRelation," + concept.name );	
 	var thisConcept = concept.concept; // just to make 100% sure we're dealing with the concept object and not an occurence
 	
 	var result = false;
@@ -91,10 +91,10 @@ console.log("\ncConcept_HasRelation," + concept.name );
 		otherTarget = otherTarget.first();
 
 		if (thisSource.name === otherSource.name && thisTarget.name === otherTarget.name) {
-			console.log(thisSource.name + ": Same source and target");	
+			//console.log(thisSource.name + ": Same source and target");	
 
 			if (r.name === otherRelation.name && r.type === otherRelation.type) {
-				console.log(thisSource.name + ": Same name and type");
+				//console.log(thisSource.name + ": Same name and type");
 				result = true;
 			}
 				

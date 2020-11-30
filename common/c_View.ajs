@@ -96,6 +96,31 @@ var cView_GetElementsInView = function(v) {
 	return resultingItems;
 }
 
+var cView_GetRelationshipsInView = function(v) {
+
+	var resultingItems = null;
+	var viewItems = null;
+	
+	viewItems = $(view).find().filter("relationship");
+
+	viewItems.each(function(item) {	
+	
+	
+		if (resultingItems == null) {
+			resultingItems = $(item);
+		}
+		else {
+			
+			var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+			
+			if (itemInList.size() < 1)
+				resultingItems.add($(item));
+		}
+	});
+	
+	return resultingItems;
+}
+
 var cView_GetOtherConceptsInViewWithSameName = function(vu, elm) {
 
     return $(vu).children().filter("element").filter(function(o) {
