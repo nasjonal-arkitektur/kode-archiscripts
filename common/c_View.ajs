@@ -3,6 +3,8 @@
  */
  
 load(__DIR__ + "../common/c_Folder.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Collection.ajs");
 
 var m_view = null;
 
@@ -212,4 +214,166 @@ function cView_createMissingProperties(view) {
 			cView_CreateMissingProperty(view, const_prop_viewRelativeRenderPath, "");	
 }
 
+function cView_getOutgoingElementRelations(view, element) {
+	var allOutgoingElementRelations = cConcept_getOutgoingRelations(element.concept);
+	var viewOutgoingElementRelations = allOutgoingRelations;
+	
+	
+}
 
+
+
+function cView_asciidocTemplateHeader(view) {
+		
+	var docString = "";
+	var templateheader = 
+	/*
+	"////" + "\n" +
+	"Guide to the below header attributes:" + "\n\n" +
+
+	"    lang: en; no" + "\n" +
+	"    difi_orig_language: en; no" + "\n" +
+	"    difi_translation_status: -; missing; incomplete; OK " + "\n" +
+	"    keywords_en: comma separated list of english keywords (no controlled vocabulary); TBD" + "\n" +
+	"    keywords_no: comma separated list of Norwegian keywords (no controlled vocabulary); TBD  " + "\n\n" +
+		
+	"Note: The _lang_ value may be overridden by a command line parameter." + "\n" +
+	"////" + "\n\n" +
+	*/
+	":lang: no" + "\n" +
+	":difi_orig_language: no" + "\n" +
+	":doctitle_en: English Document Title" + "\n" +
+	":doctitle_no: " + view.name + "\n" + // Erik: Todo - pick it from the attribute...
+	":difi_translation_status: -" + "\n" +
+	":keywords_en: TBD" + "\n" +
+	":keywords_no: TBD" + "\n" +
+	":toclevels: 3" + "\n" +
+	":difi_doctype: Basic Book Template" + "\n\n" +
+	":toc: left" + "\n" +
+	":sectnums:" + "\n";
+
+	/*
+	"// The above parameters are processed by scripts included by the following statement" + "\n" +
+	"include::../plattform_felles/includes/commonincludes.adoc[]" + "\n\n";
+	*/
+
+	docString += templateheader;
+	return docString;
+}
+
+function cView_getTopLevelElementsOf(elms, rels) {
+
+	var topLevelElements = null;
+	
+	elms.each(function(e) {
+
+		var doesCompose = false;
+		var isTopLevel = true;
+
+		rels.each(function(r) {
+		
+			if (r.type == "composition-relationship"  && r.source.name == e.name) {
+				doesCompose = true;
+				console.log(e.name + " does compose");
+				//break;
+			}
+		});
+
+		if (doesCompose) {
+				
+			rels.each(function(r) {
+				if (r.type == "composition-relationship" && r.target.name == e.name) {
+					isTopLevel = false;
+					console.log(e.name + " is NOT TopLevel");
+					//break;
+				}			
+			});			
+		}
+		else
+			isTopLevel = false;
+		
+		if (isTopLevel) {
+			
+			
+			if (topLevelElements == null) {
+				topLevelElements = $(e);
+			}
+			else {
+				topLevelElements.add($(e));
+			}
+			
+		}
+		
+	});
+	
+	console.log("\n" + "Done:");
+	for (i = 0; i < topLevelElements.length; i++) {
+		console.log(topLevelElements[i].name);
+	}	
+	
+	return topLevelElements;
+}
+
+function cView_documentViewAsAsciidocChapters(view) {
+
+	// input: var view = CSelection_GetTheSelectedView();
+
+	var docString = "";
+	docString += cView_asciidocTemplateHeader(view);
+
+
+	// main chapter caption
+	docString += "== "; // erik: how to evaluate chapter level?
+	docString += view.name;
+	docString += "\n";
+	
+	// view description
+	docString += "\n";
+	docString += view.documentation;
+	docString += "\n\n";
+
+
+	// image of the archi view
+	if ( cModel_GetRenderingRootPath() && cView_GetRelativeRenderPath(view) ) {
+		
+		docString += "." + view.name;
+		renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
+		docString += "\nimage::../" +  cView_GetRelativeRenderPath(view) + "/media/" + view.name + ".png" + "[alt=" + view.name + " image]";
+		// todo: ",link = ..." for link to published web view
+	}
+
+	
+	var elms = cView_GetElementsInView(view);
+	var rels = cView_GetRelationshipsInView(view);
+	var renderingpath = "";
+	
+	var cnt = 0;
+	while (elms.size() > 0) {
+
+		console.log("\n" + "Before:");
+		elms.each(function(e) {
+			console.log(e.name);
+		});
+
+		doneElms = cView_getTopLevelElementsOf(elms, rels);
+		elms = elms.not(doneElms);
+		
+		console.log("\n" + "doneElms:");		
+		doneElms.each(function(e) {
+			console.log(e.name);
+		});	
+		
+		
+		console.log("\n" + "After:");		
+		elms.each(function(e) {
+			console.log(e.name);
+		});	
+
+		if (++cnt > 0)
+			exit();
+	
+		
+	}
+	
+	return docString;
+}

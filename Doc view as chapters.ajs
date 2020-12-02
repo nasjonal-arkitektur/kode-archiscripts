@@ -12,6 +12,13 @@ console.clear();
 
 var docString = "";
 var view = CSelection_GetTheSelectedView();
+docString = cView_documentViewAsAsciidocChapters(view);
+cClipboard_SetClipboardString(docString);
+exit();
+
+
+
+
 var elms = cView_GetElementsInView(view);
 var rels = cView_GetRelationshipsInView(view);
 var renderingpath = "";
@@ -94,9 +101,11 @@ while (index < elms.size() - 1) { //	Erik note: Using while. since I had a probl
 				container_done = true;
 			}
 			
-			var outRels = cConcept_getOutgoingRelations(e.concept);
+			var outRels = cConcept_getOutgoingRelations(e);
 					
 			outRels.each(function(r) {
+				
+				
 				var target = $(r).targetEnds();
 				target = target.first();
 				docString += "\n\n" +  "==== " + target.name + "\n\n" + target.documentation;
