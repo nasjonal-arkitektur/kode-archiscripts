@@ -343,6 +343,7 @@ function cView_documentViewAsAsciidocChapters(view) {
 	}
 
 	
+	
 	var elms = cView_GetElementsInView(view);
 	var rels = cView_GetRelationshipsInView(view);
 	var renderingpath = "";
