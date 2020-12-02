@@ -104,7 +104,8 @@ while (index < elms.size() - 1) { //	Erik note: Using while. since I had a probl
 			var outRels = cConcept_getOutgoingRelations(e);
 					
 			outRels.each(function(r) {
-				
+	
+	
 				
 				var target = $(r).targetEnds();
 				target = target.first();
