@@ -261,10 +261,10 @@ function cView_asciidocTemplateHeader(view) {
 	return docString;
 }
 
-function cView_getTopLevelElementsOf(elms, rels) {
+function cView_getTopLevelElementsOf(view, elms, rels) {
 
 	var topLevelElements = null;
-	
+
 	elms.each(function(e) {
 
 		var doesCompose = false;
@@ -286,14 +286,23 @@ function cView_getTopLevelElementsOf(elms, rels) {
 					isTopLevel = false;
 					console.log(e.name + " is NOT TopLevel");
 					//break;
-				}			
-			});			
+				}
+				else {
+					// top level!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					rels = rels.not(r); //????????????????????????????????????????????????????????
+				}
+					
+			});		
 		}
 		else
 			isTopLevel = false;
+
+
 		
 		if (isTopLevel) {
 			
+
+
 			
 			if (topLevelElements == null) {
 				topLevelElements = $(e);
@@ -303,15 +312,72 @@ function cView_getTopLevelElementsOf(elms, rels) {
 			}
 			
 		}
-		
+
+
 	});
 	
-	console.log("\n" + "Done:");
-	for (i = 0; i < topLevelElements.length; i++) {
-		console.log(topLevelElements[i].name);
-	}	
 	
 	return topLevelElements;
+}
+
+
+function cView_getSubElements(view, e, rels) {
+
+//console.log("cView_getSubElements " + e.name);	
+	
+	var subElements = null;
+	rels.each(function(r) {
+
+console.log("cView_getSubElements 1 " + r.target.name);
+		
+		if (r.type == "composition-relationship"  && r.source.id == e.id) {
+			
+		
+			
+			if (subElements == null) {
+				subElements = $(r.target);
+			}
+			else {
+				subElements.add($(r.target));
+			}
+		}
+	});
+	
+	return subElements;
+}
+
+function cView_documentElementHiearchy(view, e, rels, hierarchyLevel) {
+	
+	hierarchyLevel++;
+	var docString = "";
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < hierarchyLevel; i++) {
+		headerString += "=";
+	}
+	
+	docString = headerString + " ";
+	docString += e.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += e.documentation;
+	docString += "\n\n";
+		
+ console.log("5" + e.name);	
+		
+	var subElms = cView_getSubElements(view, e, rels);
+	if (subElms != null) {
+		subElms.each(function(se) {
+			docString += cView_documentElementHiearchy(view, se, rels, hierarchyLevel);
+		});
+	}
+	
+	return docString;
 }
 
 function cView_documentViewAsAsciidocChapters(view) {
@@ -346,34 +412,13 @@ function cView_documentViewAsAsciidocChapters(view) {
 	var elms = cView_GetElementsInView(view);
 	var rels = cView_GetRelationshipsInView(view);
 	var renderingpath = "";
-	
-	var cnt = 0;
-	while (elms.size() > 0) {
 
-		console.log("\n" + "Before:");
-		elms.each(function(e) {
-			console.log(e.name);
-		});
-
-		doneElms = cView_getTopLevelElementsOf(elms, rels);
-		elms = elms.not(doneElms);
+	topLevelElms = cView_getTopLevelElementsOf(view, elms, rels);
+	topLevelElms.each(function(e) {
 		
-		console.log("\n" + "doneElms:");		
-		doneElms.each(function(e) {
-			console.log(e.name);
-		});	
-		
-		
-		console.log("\n" + "After:");		
-		elms.each(function(e) {
-			console.log(e.name);
-		});	
-
-		if (++cnt > 0)
-			exit();
+		docString += cView_documentElementHiearchy(view, e, rels, 1);
+	});	
 	
-		
-	}
-	
+
 	return docString;
 }
