@@ -51,7 +51,7 @@ var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29;
 
 
 // Antora
-var const_option_antora = false;
+var const_option_antora = true;
 var const_prop_antoraComponentsPath = "difi:antoraComponentsPath"; //added 2020-03-15; the local root path for antora components
 var const_prop_antoraViewPath =  "difi:antoraViewPath"; //added 2020-03-15; the path for storing asciidoc documents for the view in question, relative to difi:antoraDocRootPath
 var const_prop_antoraViewImagePath =  "difi:antoraViewImagePath"; //added 2020-03-15; the path for storing images for the view in question, relative to difi:antoraDocRootPath

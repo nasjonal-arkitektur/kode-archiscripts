@@ -24,20 +24,56 @@ function cView_GetRelativeRenderPath(view) {
 
 	var path = "";
 
-	if (const_option_antora)
-		path = view.prop(const_prop_antoraViewPath);	
+	if (const_option_antora) {
+		path = view.prop(const_prop_antoraViewPath);
+		if (path[0] == "\\")
+			path = path.slice(1);
+		if (path[0] == "/")
+			path = path.slice(1);
+		
+	}
 	else
 		path = view.prop(const_prop_viewRelativeRenderPath);
 	
 	return path;
 }
 
+function cView_GetPagesFolder(view) {
+	var path = "";
+
+	path += cModel_GetRenderingRootPath(view);
+
+	if (const_option_antora) {
+		path += "\\" + cView_GetRelativeRenderPath(view) + "\\" + "pages";	
+		
+	}
+	else
+		path += view.prop(const_prop_viewRelativeRenderPath);
+	
+	return path;
+}	
+
+
 function cView_GetImagePath(view) {
+
+	var path = cView_GetImagesFolder(view);
+	path += "\\" + view.name + ".png";
+
+	return path;
+}
+
+
+function cView_GetImagesFolder(view) {
 
 	var path = "";
 	
 	if (const_option_antora) {
-		path = cModel_GetRenderingRootPath() + "\\" + view.prop(const_prop_antoraViewImagePath);
+		
+		
+		if (view.prop(const_prop_antoraViewImagePath))
+			path = cModel_GetRenderingRootPath() + "\\" + view.prop(const_prop_antoraViewImagePath);
+		else 
+			path = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view) + "\\" + "images";
 	}
 		
 	else
@@ -240,17 +276,16 @@ function cView_asciidocTemplateHeader(view) {
 	"Note: The _lang_ value may be overridden by a command line parameter." + "\n" +
 	"////" + "\n\n" +
 	*/
-	":lang: no" + "\n" +
-	":difi_orig_language: no" + "\n" +
-	":doctitle_en: English Document Title" + "\n" +
-	":doctitle_no: " + view.name + "\n" + // Erik: Todo - pick it from the attribute...
-	":difi_translation_status: -" + "\n" +
-	":keywords_en: TBD" + "\n" +
-	":keywords_no: TBD" + "\n" +
-	":toclevels: 3" + "\n" +
-	":difi_doctype: Basic Book Template" + "\n\n" +
+	
+	
+	"= " + view.name + "\n" +
+	":wysiwig_editing: 1" + "\n" +
+	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
+	":imagesdir: ../images" + "\n" +
 	":toc: left" + "\n" +
-	":sectnums:" + "\n";
+	":sectnums:" + "\n" +
+	":toclevels: 3" + "\n" +
+	"endif::[]" + "\n";
 
 	/*
 	"// The above parameters are processed by scripts included by the following statement" + "\n" +
@@ -264,6 +299,9 @@ function cView_asciidocTemplateHeader(view) {
 function cView_getTopLevelElementsOf(view, elms, rels) {
 
 	var topLevelElements = null;
+	
+	
+	// note: need to consider elements with no reations in the view + top level elements with
 
 	elms.each(function(e) {
 
@@ -277,6 +315,8 @@ function cView_getTopLevelElementsOf(view, elms, rels) {
 				console.log(e.name + " does compose");
 				//break;
 			}
+
+				
 		});
 
 		if (doesCompose) {
@@ -388,30 +428,39 @@ function cView_documentViewAsAsciidocChapters(view) {
 	docString += cView_asciidocTemplateHeader(view);
 
 
+
 	// main chapter caption
-	docString += "== "; // erik: how to evaluate chapter level?
+	docString += "\n";
+	docString += "== Oversikt - "; 
 	docString += view.name;
 	docString += "\n";
-	
+
+
 	// view description
 	docString += "\n";
 	docString += view.documentation;
 	docString += "\n\n";
 
 
-	// image of the archi view
-	if ( cModel_GetRenderingRootPath() && cView_GetRelativeRenderPath(view) ) {
-		
+	// save image of the archi view to file
+	cView_saveViewImageToFile(view);
+	
+	//if (cView_GetImagePath(view)) {
 		docString += "." + view.name;
-		renderingpath = cModel_GetRenderingRootPath() + "\\" + cView_GetRelativeRenderPath(view);
-		docString += "\nimage::../" +  cView_GetRelativeRenderPath(view) + "/media/" + view.name + ".png" + "[alt=" + view.name + " image]";
+		
+		if (const_option_antora) {		
+			docString += "\nimage::" +  view.name + ".png" + "[alt=" + view.name + " image]";
+		}
+		
+		//cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+				
 		// todo: ",link = ..." for link to published web view
-	}
+		docString += "\n\n"
+	//}	
 
 	
 	var elms = cView_GetElementsInView(view);
 	var rels = cView_GetRelationshipsInView(view);
-	var renderingpath = "";
 
 	topLevelElms = cView_getTopLevelElementsOf(view, elms, rels);
 	topLevelElms.each(function(e) {
@@ -419,6 +468,34 @@ function cView_documentViewAsAsciidocChapters(view) {
 		docString += cView_documentElementHiearchy(view, e, rels, 1);
 	});	
 	
-
+	cView_saveViewPageToFile(view, docString);
 	return docString;
+}
+
+
+function cView_saveViewPageToFile(view, docString) {
+
+	var fileN =  cView_GetPagesFolder(view) + "\\" + view.name + ".adoc";
+	
+	window.alert("pathAndfileName = " + fileN);
+
+	var fName = window.promptSaveFile( { title: "Save view text", filterExtensions: [ "*.adoc" ], fileName: fileN } );
+
+	if (fName) {
+		$.fs.writeFile(fName, docString);
+	}
+}
+
+function cView_saveViewImageToFile(view) {
+
+	var pathAndfileName =  cView_GetImagePath(view);
+	var bytes = $.model.renderViewAsBase64(view, "PNG");
+
+	window.alert("pathAndfileName = " + pathAndfileName);
+
+	var fileName = window.promptSaveFile( { title: "Save view image", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
+
+	if (fileName) {
+		$.fs.writeFile(fileName, bytes, "BASE64");
+	}
 }
