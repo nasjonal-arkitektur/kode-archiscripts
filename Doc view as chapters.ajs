@@ -11,6 +11,7 @@ console.clear();
 
 console.log("Script starting");
 
+
 var docString = "";
 var view = CSelection_GetTheSelectedView();
 docString = cView_documentViewAsAsciidocChapters(view);

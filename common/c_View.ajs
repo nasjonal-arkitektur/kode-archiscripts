@@ -575,6 +575,7 @@ function cView_documentViewAsAsciidocChapters(view) {
 	docString += "\n\n";
 
 
+
 	// save image of the archi view to file
 	cView_saveViewImageToFile(view);
 	
