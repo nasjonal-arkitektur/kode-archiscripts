@@ -9,10 +9,11 @@ load(__DIR__ + "/common/c_Concept.ajs");
 console.show();
 console.clear();
 
+console.log("Script starting");
 
 var docString = "";
 var view = CSelection_GetTheSelectedView();
 docString = cView_documentViewAsAsciidocChapters(view);
 cClipboard_SetClipboardString(docString);
-console.log(docString);
+//console.log(docString);
 console.log("Script completed");

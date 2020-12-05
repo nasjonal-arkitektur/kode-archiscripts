@@ -296,8 +296,11 @@ function cView_asciidocTemplateHeader(view) {
 	return docString;
 }
 
-function cView_getTopLevelElementsOf(view, elms, rels) {
 
+
+function cView_getTopLevelElementsOf(view) {
+
+	var elms = cView_GetElementsInView(view);
 	var topLevelElements = null;
 	
 	
@@ -306,43 +309,38 @@ function cView_getTopLevelElementsOf(view, elms, rels) {
 	elms.each(function(e) {
 
 		var doesCompose = false;
+		var soleToplevel = true;
 		var isTopLevel = true;
 
-		rels.each(function(r) {
-		
-			if (r.type == "composition-relationship"  && r.source.name == e.name) {
+		var ownViewRels = $(e).rels();
+		ownViewRels.each(function(r) {
+			if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.source.name == e.name) { // TODO: name -> ID!
 				doesCompose = true;
-				console.log(e.name + " does compose");
 				//break;
 			}
-
-				
+			else if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.target.name == e.name) { // TODO: name -> ID!
+				soleToplevel = false;
+			}
+	
 		});
+
 
 		if (doesCompose) {
 				
-			rels.each(function(r) {
+			ownViewRels.each(function(r) {
 				if (r.type == "composition-relationship" && r.target.name == e.name) {
 					isTopLevel = false;
-					console.log(e.name + " is NOT TopLevel");
 					//break;
 				}
-				else {
-					// top level!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					rels = rels.not(r); //????????????????????????????????????????????????????????
-				}
-					
+	
 			});		
 		}
-		else
+		else if (!soleToplevel){
 			isTopLevel = false;
-
+		}
 
 		
 		if (isTopLevel) {
-			
-
-
 			
 			if (topLevelElements == null) {
 				topLevelElements = $(e);
@@ -361,14 +359,95 @@ function cView_getTopLevelElementsOf(view, elms, rels) {
 }
 
 
-function cView_getSubElements(view, e, rels) {
+function old_cView_getTopLevelElementsOf(view, elms, rels) {
+
+	var topLevelElements = null;
+	
+	
+	// note: need to consider elements with no reations in the view + top level elements with
+
+	elms.each(function(e) {
+
+		var doesCompose = false;
+		var soleToplevel = false;
+		var isTopLevel = true;
+
+		var relationsCount = 0;
+
+		rels.each(function(r) {
+
+			if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.source.name == e.name) { // TODO: name -> ID!
+				doesCompose = true;
+				relationsCount++;
+				//break;
+			}
+			/*
+			else if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.target.name == e.name) { // TODO: name -> ID!
+				relationsCount++;
+			}
+			*/
+			else {
+				
+				if (r.source.name == e.name || r.target.name == e.name)
+				
+					relationsCount++;
+				
+			}
+		
+		});
+
+
+		if (doesCompose) {
+				
+			rels.each(function(r) {
+				if (r.type == "composition-relationship" && r.target.name == e.name) {
+					isTopLevel = false;
+					//console.log(e.name + " is NOT TopLevel");
+					//break;
+				}
+				else {
+					// top level!!!
+					rels = rels.not(r); 
+				}
+					
+			});		
+		}
+
+		else if (!soleToplevel){
+			isTopLevel = false;
+		}
+
+
+		
+		if (isTopLevel) {
+			
+			if (topLevelElements == null) {
+				topLevelElements = $(e);
+			}
+			else {
+				topLevelElements.add($(e));
+			}
+			
+		}
+
+
+	});
+	
+	
+	return topLevelElements;
+}
+
+
+function cView_getSubElements(view, e) {
 
 //console.log("cView_getSubElements " + e.name);	
 	
 	var subElements = null;
+	var rels = $(e).rels();
+
 	rels.each(function(r) {
 
-console.log("cView_getSubElements 1 " + r.target.name);
+//console.log("cView_getSubElements 1 " + r.target.name);
 		
 		if (r.type == "composition-relationship"  && r.source.id == e.id) {
 			
@@ -386,7 +465,33 @@ console.log("cView_getSubElements 1 " + r.target.name);
 	return subElements;
 }
 
-function cView_documentElementHiearchy(view, e, rels, hierarchyLevel) {
+
+function old_cView_getSubElements(view, e, rels) {
+
+//console.log("cView_getSubElements " + e.name);	
+	
+	var subElements = null;
+	rels.each(function(r) {
+
+//console.log("cView_getSubElements 1 " + r.target.name);
+		
+		if (r.type == "composition-relationship"  && r.source.id == e.id) {
+			
+		
+			
+			if (subElements == null) {
+				subElements = $(r.target);
+			}
+			else {
+				subElements.add($(r.target));
+			}
+		}
+	});
+	
+	return subElements;
+}
+
+function cView_documentElementHiearchy(view, e, hierarchyLevel) {
 	
 	hierarchyLevel++;
 	var docString = "";
@@ -408,17 +513,45 @@ function cView_documentElementHiearchy(view, e, rels, hierarchyLevel) {
 	docString += e.documentation;
 	docString += "\n\n";
 		
- console.log("5" + e.name);	
-		
-	var subElms = cView_getSubElements(view, e, rels);
+	var subElms = cView_getSubElements(view, e);
 	if (subElms != null) {
 		subElms.each(function(se) {
-			docString += cView_documentElementHiearchy(view, se, rels, hierarchyLevel);
+			docString += cView_documentElementHiearchy(view, se, hierarchyLevel);
 		});
 	}
 	
 	return docString;
 }
+
+
+
+function cView_saveViewPageToFile(view, docString) {
+
+	var fileN =  cView_GetPagesFolder(view) + "\\" + view.name + ".adoc";
+	
+	//window.alert("pathAndfileName = " + fileN);
+
+	var fName = window.promptSaveFile( { title: "Save view text", filterExtensions: [ "*.adoc" ], fileName: fileN } );
+
+	if (fName) {
+		$.fs.writeFile(fName, docString);
+	}
+}
+
+function cView_saveViewImageToFile(view) {
+
+	var pathAndfileName =  cView_GetImagePath(view);
+	var bytes = $.model.renderViewAsBase64(view, "PNG");
+
+	//window.alert("pathAndfileName = " + pathAndfileName);
+
+	var fileName = window.promptSaveFile( { title: "Save view image", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
+
+	if (fileName) {
+		$.fs.writeFile(fileName, bytes, "BASE64");
+	}
+}
+
 
 function cView_documentViewAsAsciidocChapters(view) {
 
@@ -459,43 +592,19 @@ function cView_documentViewAsAsciidocChapters(view) {
 	//}	
 
 	
-	var elms = cView_GetElementsInView(view);
-	var rels = cView_GetRelationshipsInView(view);
+	//var elms = cView_GetElementsInView(view);
+	//var rels = cView_GetRelationshipsInView(view);
 
-	topLevelElms = cView_getTopLevelElementsOf(view, elms, rels);
+	//topLevelElms = cView_getTopLevelElementsOf(view, elms, rels);
+	topLevelElms = cView_getTopLevelElementsOf(view);
 	topLevelElms.each(function(e) {
 		
-		docString += cView_documentElementHiearchy(view, e, rels, 1);
+		docString += cView_documentElementHiearchy(view, e, 1);
 	});	
 	
 	cView_saveViewPageToFile(view, docString);
-	return docString;
-}
-
-
-function cView_saveViewPageToFile(view, docString) {
-
-	var fileN =  cView_GetPagesFolder(view) + "\\" + view.name + ".adoc";
 	
-	window.alert("pathAndfileName = " + fileN);
-
-	var fName = window.promptSaveFile( { title: "Save view text", filterExtensions: [ "*.adoc" ], fileName: fileN } );
-
-	if (fName) {
-		$.fs.writeFile(fName, docString);
-	}
-}
-
-function cView_saveViewImageToFile(view) {
-
-	var pathAndfileName =  cView_GetImagePath(view);
-	var bytes = $.model.renderViewAsBase64(view, "PNG");
-
-	window.alert("pathAndfileName = " + pathAndfileName);
-
-	var fileName = window.promptSaveFile( { title: "Save view image", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
-
-	if (fileName) {
-		$.fs.writeFile(fileName, bytes, "BASE64");
-	}
+	//console.log(docString);
+	
+	return docString;
 }
