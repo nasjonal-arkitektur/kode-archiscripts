@@ -374,8 +374,8 @@ function cModel_CreateMissingProperty(model, propName, propValue) {
 }	
 
 function cModel_createMissingProperties() {
-	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_en);	
-	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_en);
+	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
+	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_no);
 	
 	if (const_option_antora)
 		cModel_CreateMissingProperty(model, const_prop_antoraComponentsPath, "Update value according to your local installation");
