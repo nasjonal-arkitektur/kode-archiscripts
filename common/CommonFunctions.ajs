@@ -87,3 +87,26 @@ var lib_getDuplicatesInlistGivenElementNameNotType = function(name, list) {
 	return allDuplicates;
 	
 }
+
+function lib_SlicePathSlash(path) {
+
+console.log("Unsliced path: " + path);
+
+	path = path.trim();
+
+
+	if (path.endsWith("\\"))
+		path = path.slice(0, -1);
+	if (path.endsWith("/"))
+		path = path.slice(0, -1);
+
+
+	if (path[0] == "\\")
+		path = path.slice(1);
+	if (path[0] == "/")
+		path = path.slice(1);
+
+console.log("Sliced path: " + path);
+
+	return path;
+}

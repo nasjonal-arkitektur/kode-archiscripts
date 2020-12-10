@@ -1,0 +1,45 @@
+"use strict";
+
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.clear();
+
+function SetPropertyForSelectedViews() {
+
+	//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
+	//var selectedConcepts = CSelection_GetSelectedConcepts("","");
+	
+	var selectedConcepts = CSelection_GetAllSelectedViews();
+	
+	if (selectedConcepts === null || selectedConcepts.size() < 1)
+	{
+		window.alert("No concepts selected. Exiting...");
+		exit();
+	}
+
+	var prop = window.prompt("Please specify property name (leave empty to cancel):", "");
+	if (prop === null) {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+
+	var newPropValue = window.prompt("Property value to set(leave empty to cancel)?", "");
+	if (newPropValue === null) {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	
+	var num = 0;
+	selectedConcepts.each(function(concept) {
+		cConcept_SetProperty(concept, prop, newPropValue);
+		num++;
+			
+	});
+
+	window.alert(num + " concepts changed");
+
+}
+
+
+SetPropertyForSelectedViews();	

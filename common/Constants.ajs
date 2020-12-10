@@ -21,6 +21,10 @@ var default_option_caseForShowingLanguage = "missingCurrentLanguage"; //"always"
 var default_option_caseForShowingConceptType = "const_never"; //"extensions" "always" "never"
 
 
+
+var const_prop_narrative_no = "digdir:narrative_no" ; //added 2020-12-06; 
+var const_prop_narrative_en = "digdir:narrative_en" ; //added 2020-12-06; 
+
 var const_mediaFolderName = "media"; //added 2019-08-24
 
 var const_prop_notes = "difi:notes";
