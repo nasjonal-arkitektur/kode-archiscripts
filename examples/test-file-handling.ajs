@@ -1,0 +1,45 @@
+load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+
+console.log("Test file handling");
+
+//var path = require('path')
+//var $.fs = require('$.fs')
+
+function recFindByExt(base,ext,files,result) 
+{
+    files = files || $.fs.readdirSync(base) 
+    result = result || [] 
+
+    files.forEach( 
+        function (file) {
+            var newbase = $.path.join(base,file)
+            if ( $.fs.statSync(newbase).isDirectory() )
+            {
+                result = recFindByExt(newbase,ext,$.fs.readdirSync(newbase),result)
+            }
+            else
+            {
+                if ( file.substr(-1*(ext.length+1)) == '.' + ext )
+                {
+                    result.push(newbase)
+                } 
+            }
+        }
+    )
+    return result
+}
+
+var views = CSelection_GetAllSelectedViews();
+var ext_file_list = null;
+views.each(function(view) {
+
+	ext_file_list = cView_test_recFindByExt('/c/gitlab/digdir/playbook','yml')
+	//cClipboard_SetClipboardString(docString);
+	//console.log(docString);
+	
+});	
