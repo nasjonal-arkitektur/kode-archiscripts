@@ -9,6 +9,11 @@
 
 var m_model = null;
 
+function cModel_SetName(model, name) {
+	
+	model.name = name;
+}
+
 
 function cModel_InitExistingFromFile(filePath) {
 
@@ -40,8 +45,7 @@ function cModel_InitExistingFromArchiObject(archiModel) {
 
 
 function cModel_GetArchiModelObject() {
-	console.log("model.name = " + model.name);
-	//return m_model;
+	
 	return model;
 }
 
@@ -380,7 +384,89 @@ function cModel_createMissingProperties() {
 	if (const_option_antora)
 		cModel_CreateMissingProperty(model, const_prop_antoraComponentsPath, "Update value according to your local installation");
 	
-	
-	
+}
+
+function cModel_deleteUnusedConceptsAndRelationships() {
+
+    $("element").each(function(element) {
+        if($(element).objectRefs().isEmpty()) {
+			console.log("Deleting unused element: " + element.name);
+            element.delete();
+        }
+    });
+
+    $("relationship").each(function(r) {
+        if($(r).objectRefs().isEmpty()) {
+			console.log("Deleting unused relation: " + r.name);
+            r.delete();
+        }
+    });
 	
 }
+
+function cModel_getPath(model) {
+	var filePath = model.getPath();
+	return filePath;
+}
+
+function cModel_save(model, pathAndName) {
+	
+	var filePath = model.getPath();
+	
+	if (pathAndName) {
+		console.log("pathAndName: " + pathAndName);
+		filePath = window.promptSaveFile({ title: "Save Model to given name", fileName: [pathAndName], filterExtensions: [".archimate", "*.xml" ] });
+		if (filePath)
+		{
+			console.log("Saving to filePath: " + filePath);
+			model.save(filePath)
+		}
+		else
+			window.alert("Not saved");
+	}
+	else if (filePath) //already exists
+		model.save();
+	
+	else {
+		filePath = window.promptSaveFile({ title: "Save Model", filterExtensions: [ ".archimate", "*.xml" ] });
+		if (filePath)
+			model.save(filePath);
+	}
+}
+
+function cModel_GetToplevelFolders() {
+	
+	var folders = $(model).children().filter("folder");
+	/*
+	folders.each(function(f) {
+		console.log("Toplevelfolder: " + f.name);
+    });
+	*/
+	return folders;
+
+}
+
+function cModel_GetToplevelViewsFolder() {
+
+	var folders = $(model).children().filter("folder");
+	var theViewsFolder = null;
+	
+	folders.each(function(f) {
+		if (f.name === "Views")
+			theViewsFolder = f;
+    });
+	
+	return theViewsFolder;
+
+	/* Another way: ???
+    return $(model).children().filter("folder").filter(function(f) {
+		return ( (f.name == "Views") );
+    });
+	*/
+}
+
+
+/*
+var myModel = model.load("path/test.archimate");
+myModel.setAsCurrent();
+*/

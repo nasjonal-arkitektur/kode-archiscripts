@@ -1,0 +1,13 @@
+/*
+ * New Archi Script
+ */
+load(__DIR__ + "/common/c_Folder.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+
+console.log("New Archi Script");
+
+
+var folder = CSelection_GetTheSelectedFolder()
+cFolder_exportFolderAsArchiFile(folder);
+
+console.log("Script completed");
