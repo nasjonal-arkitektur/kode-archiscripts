@@ -252,20 +252,45 @@ function cFolder_isTopLevelFolder(folder) {
 		return false;
 }
 
+function cFolder_GetImmediateSubFolders(folder) {
+
+	var folders = $(folder).children().filter("folder");
+	return folders;
+
+
+}
+
 function cFolder_exportFolderAsArchiFile(folder) {
 	
-	
-
-	// delete complement of the selected folders, then deleted unused, then export, then undo deletion
-	
 	// first save the entire current model to a new filename = name of the selected folder
+	var sourceFile = folder.model.getPath();
+
+	
 	var model = folder.model;
 	var expFileName = folder.name + ".archimate";
 	var path = model.path;
 	path = path.substring(0, path.lastIndexOf("\\")); //strip filename from path
+	var origPath = path;
 	//console.log("Model path without filename: " + path);	
 	var expNameAndPath = path + "\\" + expFileName;
 	
+
+
+	//===	
+	console.log("Saving model " + model.name + " to new file: " + expNameAndPath);	
+	//===
+	cModel_save(model, expNameAndPath);
+
+	// open saved, set to current model  and set  model name = folder name, then save again
+	model = $.model.load(expNameAndPath).setAsCurrent(); // Load a model and set it as the current model
+	newModel = model;
+	cModel_SetName(model, folder.name);
+	cModel_save(model);
+	
+	console.log("Loaded model: " + model.name + ", changed model name and saved to file " + expNameAndPath);
+	
+
+
 	
 	//**************
 	var topFolders = cModel_GetToplevelFolders();
@@ -279,77 +304,26 @@ function cFolder_exportFolderAsArchiFile(folder) {
 	}
 
 
-/**
-	var allFolders = $("folder")
-	var ViewsFolder = null;
-	allFolders.each(function(f) {
-	
-		
-		if ($(f).parent().first().id === model.id) {
-			//console.log("Folder: '" + f.name + "' is top level, under model: " + $(f).parent().first().name)
-			if (f.name === "Views")
-				ViewsFolder = f;
-		}
-			
-		
-		if (f.id === folder.id)
-			console.log("Folder: '" + f.name + "' has Folder parent: " + $(f).parent().first().name)
-		//console.log("Folder: " + f.name);
-
-    });
-
-**/
 	if ($(folder).parent().first().id != theViewsFolder.id) // if not already a child of theViewsFolder
 		theViewsFolder.add(folder);
 	//$(f).parent().first().add(folder);
 
-	topViewFolders = cFolder_GetSubfolders(theViewsFolder);
+
+
+	topViewFolders = cFolder_GetImmediateSubFolders(theViewsFolder);
 	topViewFolders.each(function(f) {
 		if (f.id != folder.id)
 			f.delete();
     });
 	
 	
-	//===	
-	console.log("Saving model " + model.name + " to new file: " + expNameAndPath);	
-	//===
-	cModel_save(model, expNameAndPath);
+	cModel_deleteUnusedConceptsAndRelationships(model);
 
-	// open saved, set to current model  and set  model name = folder name, then save again
-	model = $.model.load(expNameAndPath).setAsCurrent(); // Load a model and set it as the current model
-	cModel_SetName(model, folder.name);
-	cModel_save(model);
-	
-	console.log("Loaded model: " + model.name + ", changed model name and saved to file " + expNameAndPath);
-	
-	//exit(); //*******************************************************
-	//***************************************************************
 	
 	
-	
-	// determine folder and subfolders to include
-	var foldersToInclude = cFolder_GetListOfFolderAndSubfoldersForAGivenFolder(folder);
-	
-	// move to top level
-	
-	// delete all other top level folders
-	//var foldersToExclude = cFolderGetComplementFolders(foldersToKeep);
-		
-	
-	var allFolders = $("folder")
-	allFolders.each(function(f) {
-		
-		console.log("Folder: " + f.name + f.parents().first().name)
-
-    });
-	
-	/*
-	folders.each(function(f) {
-		if f.parent???
-		f.delete();
-	
-	});
-	*/
-
-	//cModel_deleteUnusedConceptsAndRelationships(model);
+	console.log("Reloading the source model, since it was closed");
+	model = $.model.load(sourceFile).setAsCurrent(); // Load model and set it as the current model
+	console.log("Finally switch source model (" + expNameAndPath + "), since it was closed");
+	//model = $.model.load(expNameAndPath).setAsCurrent(); // Load a model and set it as the current model
+	newModel.openInUI();
 }
