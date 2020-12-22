@@ -581,6 +581,14 @@ console.log("actualLanguage " + actualLanguage);
 	return label;
 }
 
+function cConcept_RenameProperty(concept, propName, newName) {
+	
+	if (concept.prop(propName) && (propName != newName) ) { // only if the property is used
+		concept.prop(newName, concept.prop(propName)); //create new
+		cConcept_removeProperty(concept, propName); // remove old
+	}
+}
+
 function cConcept_CreateMissingProperty(concept, propName, propValue) {
 
 	if ( cConcept_HasProperty(concept, propName)  ) {
@@ -594,6 +602,8 @@ function cConcept_CreateMissingProperties(concept) {
 
 //cConcept_removeProperty(concept, const_prop_dct_type); // very very temporary!
 	
+	cConcept_CreateMissingProperty(concept, const_prop_id, concept.id);
+		
 	cConcept_CreateMissingProperty(concept, const_prop_metaLevel, const_prop_metaLevel_value_default);
 	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
 	cConcept_CreateMissingProperty(concept, const_prop_namespace, const_prop_namespace_value_default);

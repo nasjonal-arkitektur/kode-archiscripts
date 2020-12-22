@@ -14,3 +14,17 @@ function cRelation_InitExistingFromArchiObj(archiObj) {
 }
 */
 
+
+function cRelation_CreateMissingProperty(relation, propName, propValue) {
+
+	if ( cRelation_HasProperty(relation, propName)  ) {
+		console.log(". Creating missing or empty standard property " + propName + "=" + propValue + " for " + relation.type  + " " + relation.name );
+		relation.prop(propName, propValue);
+	}
+}
+
+function cRelation_CreateMissingProperties(relation) {
+
+	cConcept_CreateMissingProperties(relation); // until further, this works
+	
+}

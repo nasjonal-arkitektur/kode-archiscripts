@@ -224,6 +224,19 @@ function cView_SetCurrentLanguage(view, language) {
 
 }
 
+function cView_removeProperty(view, propName) { 
+
+	view.removeProp(propName);
+}
+
+function cView_RenameProperty(view, propName, newName) {
+	
+	if (view.prop(propName) && (propName != newName) ) { // only if the property is used
+		view.prop(newName, view.prop(propName)); //create new
+		cView_removeProperty(view, propName); // remove old
+	}
+}
+
 function cView_CreateMissingProperty(view, propName, propValue) {
 
 	if ( view.prop(propName) === null ) {
@@ -234,6 +247,8 @@ function cView_CreateMissingProperty(view, propName, propValue) {
 
 function cView_createMissingProperties(view) {
 
+			
+		cView_CreateMissingProperty(view, const_prop_id, view.id);		
 			
 		//view.removeProp(const_prop_default_language); // very very temporary!
 		//view.removeProp(const_prop_current_language); // very very temporary!

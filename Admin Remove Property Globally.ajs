@@ -1,0 +1,65 @@
+	/*
+ * Admin remove property
+ */
+
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Relation.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Folder.ajs");
+ 
+console.clear();
+console.log("Script starting...");
+
+
+function RemovePropertyGlobally(propName) {
+ 
+	// model
+	cModel_removeProperty(model, propName);
+	
+	// views
+	$("view").each(function(view) {
+		cView_removeProperty(view, propName);
+    });
+	
+	// folders
+	$("folder").each(function(folder) {
+		cFolder_removeProperty(folder, propName);
+    });
+	
+	// elements and relations
+	var doItNow = true;
+	if (doItNow){
+		$("concept").each(function(concept) {
+			cConcept_removeProperty(concept, propName);
+		});
+/*
+		$("element").each(function(element) {
+			cConcept_removeProperty(element.concept, propName);
+		});
+		$("relationship").each(function(relation) {
+			cRelation_removeProperty(relation.concept, propName);
+		});
+*/
+
+	}
+	
+	
+}
+
+var propName = window.prompt("Property name to remove (leave empty to cancel)?", "");
+if (!propName) {
+	exit();
+}
+
+var proceed = window.confirm("About to remove property '" + propName + "'." + " Advice: Press cancel if you're not sure;");
+if (!proceed) {
+	window.alert("Cancelled ok");
+	exit();
+}
+
+RemovePropertyGlobally(propName);
+console.log("Script completed.");
+

@@ -5,6 +5,7 @@ load(__DIR__ + "/common/c_Model.ajs");
 load(__DIR__ + "/common/c_Namespace.ajs");
 load(__DIR__ + "./common/Constants.ajs");
 load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Relation.ajs");
 load(__DIR__ + "/common/c_View.ajs");
 load(__DIR__ + "/common/c_Folder.ajs");
 
@@ -27,6 +28,7 @@ function CreateDefaultProperties() {
 	console.clear();
 	console.log("Starting function CreateDefaultProperties");
 	
+
 	// model
 	cModel_createMissingProperties();
 	
@@ -44,7 +46,7 @@ function CreateDefaultProperties() {
     });
 	
 	// elements and relations
-	var doItNow = false;
+	var doItNow = true;
 	if (doItNow){
 		//$("concept").each(function(concept) {
 		//	cConcept_CreateMissingProperties(concept);
@@ -54,7 +56,7 @@ function CreateDefaultProperties() {
 			cConcept_CreateMissingProperties(element.concept);
 		});
 		$("relationship").each(function(relation) {
-			cConcept_CreateMissingProperties(relation.concept);
+			cRelation_CreateMissingProperties(relation.concept);
 		});
 
 

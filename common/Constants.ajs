@@ -5,6 +5,7 @@
 var debug = false;
 var debug2 = true;
 
+var const_prop_undefined = "-";
 
 var const_never = "never";
 var const_always = "always";
@@ -71,6 +72,9 @@ var const_prop_source = "dct:BibliographicResource"; //added 2019-08-20
 var const_title_namespace_prefix = " [ns:";
 var const_title_namespace_postfix = "]";
  
+var const_prop_id = "digdir:id";
+var const_prop_id_default_value = "-";
+
 var const_prop_namespace = "difi:namespace";
 //const_prop_namespace_values = ["-", "eira", "eirabased"];
 var const_prop_namespace_value_default = "-";
@@ -90,7 +94,7 @@ var const_prop_name_no = "difi:name_no";
 var const_prop_name_en = "difi:name_en";
 var const_prop_description_no = "difi:description_no";
 var const_prop_description_en = "difi:description_en";
-var const_prop_description_default = "";
+var const_prop_description_default = "-";
 
 var const_prop_link1_text = "difi:link1-text";
 var const_prop_link1_address = "difi:link1-address";

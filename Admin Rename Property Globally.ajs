@@ -1,0 +1,80 @@
+/*
+ * RenameProperty
+ */
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Relation.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Folder.ajs");
+
+
+console.clear();
+console.log("Starting script RenameProperty");
+
+
+function RenamePropertyGlobally(propName, newName) {
+	
+
+	// model
+	cModel_RenameProperty(model, propName, newName);
+	//cModel_removeProperty(model, propName);
+	
+	// views
+	$("view").each(function(view) {
+		
+		cView_RenameProperty(view, propName, newName);	
+		//cView_removeProperty(view, propName);
+    });
+	
+	// folders
+	$("folder").each(function(folder) {
+		
+		cFolder_RenameProperty(folder, propName, newName);
+		//cFolder_removeProperty(folder, propName);
+
+    });
+	
+	// elements and relations
+	var doItNow = true;
+	if (doItNow){
+		$("concept").each(function(concept) {
+			cConcept_RenameProperty(concept, propName, newName);
+			//cConcept_removeProperty(concept, propName);
+		});
+		
+
+/*
+		$("element").each(function(element) {
+			cConcept_RenameProperty(element.concept, propName, newName);
+		});
+		$("relationship").each(function(relation) {
+			cRelation_RenameProperty(relation.concept, propName, newName);
+		});
+*/
+
+	}
+	
+}
+
+
+var propName = window.prompt("Current property name (leave empty to cancel)?", "");
+if (!propName) {
+	exit();
+}
+var newName = window.prompt("New property name for '"+propName+"' (leave empty to cancel)?", "");
+if (!newName) {
+	exit();
+}
+
+if (newName === propName) { // note that this could mena deletion of the property, so testing for it here
+	window.alert("Given new property name same as curremt property name - nothing to do!")
+	exit();
+}
+
+
+RenamePropertyGlobally(propName, newName);
+
+console.log("Script completed");
+

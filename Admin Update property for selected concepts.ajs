@@ -2,9 +2,8 @@
  * Update property
  */
  
-console.log("Update property");
-
-
+console.clear();
+console.log("Script starting...");
 
 var propName = window.prompt("Which property do you want to add or update (leave empty to cancel)?", "");
 if (propName) {
@@ -13,3 +12,5 @@ if (propName) {
 		$(selection).prop(propName, propValue);
 	}
 }
+
+console.log("Script completed.");

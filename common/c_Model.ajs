@@ -369,6 +369,19 @@ function cModel_createRelationship(relationshipType, name, source, target) {
 	return rel;
 }
 
+function cModel_RenameProperty(model, propName, newName) {
+	
+	if (model.prop(propName) && (propName != newName) ) { // only if the property is used
+		model.prop(newName, model.prop(propName));
+		cModel_removeProperty(model, propName); // remove old
+	}
+}
+
+function cModel_removeProperty(model, propName) { 
+
+	model.removeProp(propName);
+}
+
 function cModel_CreateMissingProperty(model, propName, propValue) {
 
 	if (!model.prop(propName) ) {
@@ -378,6 +391,9 @@ function cModel_CreateMissingProperty(model, propName, propValue) {
 }	
 
 function cModel_createMissingProperties() {
+	
+	cModel_CreateMissingProperty(model, const_prop_id, model.id);		
+	
 	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
 	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_no);
 	

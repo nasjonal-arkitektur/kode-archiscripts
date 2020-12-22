@@ -216,6 +216,22 @@ function cFolder_GetAllItemsUnderGivenFoldersForGivenTypeAndName(givenFolders, i
 	
 }
 
+function cFolder_removeProperty(folder, propName) { 
+
+	folder.removeProp(propName);
+}
+
+
+function cFolder_RenameProperty(folder, propName, newName) {
+	
+	if (folder.prop(propName) && (propName != newName) ) { // only if the property is used
+
+		folder.prop(newName, folder.prop(propName));
+		cFolder_removeProperty(folder, propName); // remove old
+	}
+}
+
+
 function cFolder_CreateMissingProperty(folder, propName, propValue) {
 
 	if ( folder.prop(propName) === null ) {
@@ -226,7 +242,7 @@ function cFolder_CreateMissingProperty(folder, propName, propValue) {
 
 function cFolder_createMissingProperties(folder) {
 
-
+		cFolder_CreateMissingProperty(folder, const_prop_id, folder.id);		
 		
 		cFolder_CreateMissingProperty(folder, const_prop_language, cModel_GetCurrentLanguage() );
 		
