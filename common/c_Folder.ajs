@@ -295,15 +295,15 @@ function cFolder_exportFolderAsArchiFile(folder) {
 	//===	
 	console.log("Saving model " + model.name + " to new file: " + expNameAndPath);	
 	//===
-	cModel_save(model, expNameAndPath);
+	var actualFile = cModel_save(model, expNameAndPath);
 
 	// open saved, set to current model  and set  model name = folder name, then save again
-	model = $.model.load(expNameAndPath).setAsCurrent(); // Load a model and set it as the current model
+	model = $.model.load(actualFile).setAsCurrent(); // Load a model and set it as the current model
 	newModel = model;
 	cModel_SetName(model, folder.name);
 	cModel_save(model);
 	
-	console.log("Loaded model: " + model.name + ", changed model name and saved to file " + expNameAndPath);
+	console.log("Loaded model: " + model.name + ", changed model name and saved to file " + actualFile);
 	
 
 
@@ -339,7 +339,7 @@ function cFolder_exportFolderAsArchiFile(folder) {
 	
 	console.log("Reloading the source model, since it was closed");
 	model = $.model.load(sourceFile).setAsCurrent(); // Load model and set it as the current model
-	console.log("Finally switch source model (" + expNameAndPath + "), since it was closed");
-	//model = $.model.load(expNameAndPath).setAsCurrent(); // Load a model and set it as the current model
+	console.log("Finally switch source model (" + actualFile + "), since it was closed");
+	//model = $.model.load(actualFile).setAsCurrent(); // Load a model and set it as the current model
 	newModel.openInUI();
 }

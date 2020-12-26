@@ -448,6 +448,8 @@ function cModel_save(model, pathAndName) {
 		if (filePath)
 			model.save(filePath);
 	}
+	
+	return filePath;
 }
 
 function cModel_GetToplevelFolders() {
