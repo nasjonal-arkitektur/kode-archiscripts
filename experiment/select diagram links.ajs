@@ -1,0 +1,15 @@
+/*
+ * New Archi Script
+ */
+ 
+console.log("New Archi Script");
+
+
+//  if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model'))) {
+	
+var selectedRefs = $(selection).filter("archimate-diagram-model");
+
+selectedRefs.each(function(r) {
+		console.log("      " + r.name + ", " + r.type + ", " + ", " + " Id = " + r.id);
+});
+	

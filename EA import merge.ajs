@@ -1,0 +1,13 @@
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_Namespace.ajs");
+load(__DIR__ + "./common/Constants.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Relation.ajs");
+load(__DIR__ + "./common/c_View.ajs");
+load(__DIR__ + "./common/c_Folder.ajs");
+
+console.log("Fix EA-import");
+
+cModel_mergeImportedSparxEA(model);
+
+console.log("Script completed");

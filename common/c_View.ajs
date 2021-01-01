@@ -248,7 +248,7 @@ function cView_CreateMissingProperty(view, propName, propValue) {
 function cView_createMissingProperties(view) {
 
 			
-		cView_CreateMissingProperty(view, const_prop_id, view.id);		
+		cView_CreateMissingProperty(view, const_prop_archi_guid, view.id);		
 			
 		//view.removeProp(const_prop_default_language); // very very temporary!
 		//view.removeProp(const_prop_current_language); // very very temporary!
@@ -317,9 +317,10 @@ function cView_asciidocTemplateHeader(view) {
 	":imagesdir: ../images" + "\n" +
 	"endif::[]" + "\n" +
 	":toc: left" + "\n" +
-	":toclevels: 4" + "\n" +
-	":sectnums:" + "\n";
-
+	":toclevels: 7" + "\n" +
+	":sectnums:" + "\n" +
+	":sectnumlevels: 7" + "\n";
+	
 	/*
 	"// The above parameters are processed by scripts included by the following statement" + "\n" +
 	"include::../plattform_felles/includes/commonincludes.adoc[]" + "\n\n";
@@ -428,7 +429,7 @@ function cView_documentElementHiearchy(view, e, hierarchyLevel) {
 	var docString = "";
 
 	if (e.type == "junction")
-		return ""
+		return "";
 
 
 	// element chapter caption
@@ -501,33 +502,27 @@ function cView_saveViewImageToFile(view) {
 }
 
 
-function cView_documentViewAsAsciidocChapters(view) {
+function cView_documentViewAsAsciidocChapters(view, sectionLevel) {
 
 	// input: var view = CSelection_GetTheSelectedView();
 
 	var docString = "";
 	docString += cView_asciidocTemplateHeader(view);
 
-	var optionSectionLevel = 1; 
-	optionSectionLevel = 2; 
-
 	// main chapter caption
 	docString += "\n";
 	
-	if (optionSectionLevel == 1) {
-		docString += "== "; 
-		docString += view.name;
-		docString += "\n";
+	var headerString = "=";
+	var i;
+	for (i = 0; i < sectionLevel; i++) {
+		headerString += "=";
 	}
-	else if (optionSectionLevel == 2) {
-		docString += "== "; 
-		docString += "Generelt";
-		// docString += view.name;
-		docString += "\n";
-		
-		optionSectionLevel = 1; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
-	}
+	docString += headerString + " "; 
+	
+	docString += "Oversikt";
+	// docString += " - " + view.name;
+	docString += "\n";
+
 
 
 	// view description
@@ -565,7 +560,7 @@ function cView_documentViewAsAsciidocChapters(view) {
 	
 	topLevelElms.each(function(e) {
 		
-		docString += cView_documentElementHiearchy(view, e, optionSectionLevel);
+		docString += cView_documentElementHiearchy(view, e, sectionLevel);
 	});	
 	
 	cView_saveViewPageToFile(view, docString);
@@ -576,7 +571,7 @@ function cView_documentViewAsAsciidocChapters(view) {
 }
 
 
-function cView_test_recFindByExt(base,ext,files,result) 
+function cView_test_recFindByExt(base,ext,files,result) // erik: forgot the great plan here?????????????????????
 {
 
 console.log("here");
@@ -607,5 +602,117 @@ exit();
             }
         }
     )
-    return result
+    return result;
 }
+
+
+function cView_fixAssumingJustImportedFromSparxEA(view) {
+	
+	cView_createMissingProperties(view); // if missing, create the archi guid property as well as any other missing properties
+	
+	if (!view.prop(const_prop_sparx_guid) ) // if missing, create the sparx guid from the imported file
+		cView_CreateMissingProperty(view, const_prop_sparx_guid, view.id);
+	else if (view.prop(const_prop_sparx_guid) != view.id)  { // the sparx guid exists, but does it make sense that the value is different from the imported id?
+		window.alert("UNEXPECTED: The imported view.id = " + view.id + " is different from the imported value of " + const_prop_sparx_guid + " = " + view.prop(const_prop_sparx_id) + ". Exiting...");
+		exit();
+	}
+	
+	if ( view.prop(const_prop_sparx_guid) && view.prop(const_prop_sparx_guid) === view.id) { // the sparx guid attribute exists and equals the view.id, as expected
+		if (view.prop(const_prop_archi_guid) ) // if exists (though don't expect it in the imported file from Sparx)
+			view.id = view.prop(const_prop_archi_guid); // restore the original id
+		else {
+			console.log("Warning: Missing property " + const_prop_archi_guid + " for view with " + const_prop_sparx_guid + " = " + view.prop(const_prop_sparx_guid) );
+			
+		}
+	}
+}
+
+function cView_asciidocAutoDoc(view) {
+
+	var topLevelElms = cView_getTopLevelElementsOf(view);
+	
+	
+	topLevelElms.each(function(e) {
+		
+		console.log("Top level element: " + e.name + " (" + e.type + ")" );
+
+		//docString += cView_documentElementHiearchy(view, e, optionSectionLevel);
+
+
+        $(e).children().each(function (viewRefs) {
+			
+			console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ")" );
+
+            if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model'))) {
+
+                // Find the actual linked views
+                var viewsCollection = $('archimate-diagram-model');
+                viewsCollection.add($('sketch-model'));
+				
+				var duplicate = false;
+				var alreadyFound = false;
+                viewsCollection.each(function (linkedView) {
+					
+					//console.log("a View: " + linkedView.name + ": " + linkedView.id);			
+                    // this doesn't cater for duplicate view names, sorry
+                    if (linkedView.name === viewRefs.name) {
+                        //viewList.push([viewRefs, linkedView]);
+						console.log("--viewRefs.name: " + viewRefs.name + ": " + viewRefs.id);
+						if (alreadyFound) {
+							duplicate = true;
+							console.log("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+							window.alert("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+							//exit();
+						}
+						else
+						 alreadyFound = true;
+						
+                    }
+                });
+            }
+
+
+        });
+
+	});	
+
+
+	//window.alert("cView_asciidocAutoDoc: Work in progress");
+	        
+	
+}
+
+function cView_documentElementHiearchy2(view, e, hierarchyLevel) {
+	
+	
+	hierarchyLevel++;
+	var docString = "";
+
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < hierarchyLevel; i++) {
+		headerString += "=";
+	}
+	
+	docString = headerString + " ";
+	docString += e.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += e.documentation;
+	docString += "\n\n";
+		
+	var subElms = cView_getSubElements(view, e);
+	if (subElms != null) {
+		subElms.each(function(se) {
+			docString += cView_documentElementHiearchy2(view, se, hierarchyLevel);
+		});
+	}
+	
+	return docString;
+}
+

@@ -20,10 +20,13 @@ views.each(function(view) {
 
 	console.log("Documenting view " + view.name);
 
-	docString = cView_documentViewAsAsciidocChapters(view,1);
+	docString = cView_asciidocAutoDoc(view);
 	cClipboard_SetClipboardString(docString);
 	//console.log(docString);
 	
 });	
 
 console.log("Script completed");
+console.log("New Archi Script");
+
+

@@ -26,7 +26,7 @@ var const_prop_description_en = "difi:description_en";
 var const_prop_description_default = "-";
 
 // EIRA properties:
-var const_prop_ID = "ID";
+var const_prop_eira_ID = "ID";
 var const_prop_dct_type = "dct:type"; // !!!!!!!!!!!!!!!!!!
 var const_prop_dct_publisher = "dct:publisher";
 var const_prop_dct_modified = "dct:modified";

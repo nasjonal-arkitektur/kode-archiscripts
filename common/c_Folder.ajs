@@ -242,7 +242,7 @@ function cFolder_CreateMissingProperty(folder, propName, propValue) {
 
 function cFolder_createMissingProperties(folder) {
 
-		cFolder_CreateMissingProperty(folder, const_prop_id, folder.id);		
+		cFolder_CreateMissingProperty(folder, const_prop_archi_guid, folder.id);		
 		
 		cFolder_CreateMissingProperty(folder, const_prop_language, cModel_GetCurrentLanguage() );
 		

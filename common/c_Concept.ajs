@@ -602,7 +602,7 @@ function cConcept_CreateMissingProperties(concept) {
 
 //cConcept_removeProperty(concept, const_prop_dct_type); // very very temporary!
 	
-	cConcept_CreateMissingProperty(concept, const_prop_id, concept.id);
+	cConcept_CreateMissingProperty(concept, const_prop_archi_guid, concept.id);
 		
 	cConcept_CreateMissingProperty(concept, const_prop_metaLevel, const_prop_metaLevel_value_default);
 	cConcept_CreateMissingProperty(concept, const_prop_dct_type, const_prop_dctType_archi_prefix + concept.type);
@@ -888,4 +888,23 @@ function cConcept_SetmetaLevel(concept, metaLevel) {
 		concept.prop(const_prop_metaLevel, metaLevel);
 	else 
 		concept.prop(const_prop_metaLevel, const_prop_metaLevel_value_default);
+}
+
+
+function cConcept_fixAssumingJustImportedFromSparxEA(concept) {
+
+	//cConcept_CreateMissingProperty(concept, const_prop_archi_guid, concept.id);	
+	cConcept_CreateMissingProperties(concept); // if missing, create the archi guid property as well as any other missing properties
+	
+	
+	if (!concept.prop(const_prop_sparx_guid) ) // if missisng, create the sparx guid from the imported file
+		cConcept_CreateMissingProperty(concept, const_prop_sparx_guid, concept.id);
+	else if (concept.prop(const_prop_sparx_guid) != concept.id)  { // the sparx guid exists, but does it make sense that the value is different from the imported id?
+		window.alert("UNEXPECTED: The imported concept.id = " + concept.id + " is different from the imported value of " + const_prop_sparx_guid + " = " + concept.prop(const_prop_sparx_id) + ". Exiting...");
+		exit();
+	}
+	
+	if ( concept.prop(const_prop_sparx_guid) && concept.prop(const_prop_sparx_guid) === concept.id)  // the sparx guid attribute exists and equals the concept.id, as expected
+		concept.id = concept.prop(const_prop_archi_guid); // restore the original id
+
 }

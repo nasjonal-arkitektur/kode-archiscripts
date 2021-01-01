@@ -1,11 +1,13 @@
 /*
  * c_Model
  */
-
-//load(__DIR__ + "c_Namespace.ajs");
- 
-//load(__DIR__ + "Constants.ajs");
-//load(__DIR__ + "CommonFunctions.ajs");
+/*
+load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Relation.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Folder.ajs");
+*/
 
 var m_model = null;
 
@@ -392,7 +394,7 @@ function cModel_CreateMissingProperty(model, propName, propValue) {
 
 function cModel_createMissingProperties() {
 	
-	cModel_CreateMissingProperty(model, const_prop_id, model.id);		
+	cModel_CreateMissingProperty(model, const_prop_archi_guid, model.id);		
 	
 	cModel_CreateMissingProperty(model, const_prop_default_language, const_prop_language_value_no);	
 	cModel_CreateMissingProperty(model, const_prop_current_language, const_prop_language_value_no);
@@ -488,3 +490,68 @@ function cModel_GetToplevelViewsFolder() {
 var myModel = model.load("path/test.archimate");
 myModel.setAsCurrent();
 */
+
+
+
+function cModel_fixModelAssumingJustImportedFromSparxEA(model) {
+
+	// Sparx EA will generate its own IDs
+	
+	// For the model, all folders, views and objects, generate modelx:sparxGuid (if not already present, but if present, check that same as id)
+	
+	
+	//if (!model.prop(const_prop_archi_guid) )  // if missing, create the archi guid
+	//cModel_CreateMissingProperty(model, const_prop_archi_guid, model.id);	
+	cModel_createMissingProperties(model); // if missing, create the archi guid property as well as any other missing properties
+
+	
+	if (!model.prop(const_prop_sparx_guid) ) // if missisng, create the sparx guid from the imported file
+		cModel_CreateMissingProperty(model, const_prop_sparx_guid, model.id);
+	else if (model.prop(const_prop_sparx_guid) != model.id)  { // the sparx guid exists, but does it make sense that the value is different from the imported id?
+		window.alert("UNEXPECTED: The imported model.id = " + model.id + " is different from the imported value of " + const_prop_sparx_guid + " = " + model.prop(const_prop_sparx_id) + ". Exiting...");
+		exit();
+	}
+	
+	if ( model.prop(const_prop_sparx_guid) && model.prop(const_prop_sparx_guid) === model.id)  // the sparx guid attribute exists and equals the model.id, as expected
+		model.id = model.prop(const_prop_archi_guid); // restore the original id
+		
+		
+	// views
+	$("view").each(function(view) {
+		
+		cView_fixAssumingJustImportedFromSparxEA(view);	// The id from Sparx, but no properties
+    });
+	
+	// folders
+	$("folder").each(function(folder) {
+		
+		cFolder_createMissingProperties(folder); // easy way out for now, as per 2020 Sparx does not give properties (tagged values) for folders 
+
+    });
+	
+	// elements and relations
+	$("concept").each(function(concept) {
+		cConcept_fixAssumingJustImportedFromSparxEA(concept);
+	});	
+	
+	/*
+	$("element").each(function(element) {
+		cConcept_fixAssumingJustImportedFromSparxEA(element.concept);
+	});
+	$("relationship").each(function(relation) {
+		cRelation_fixAssumingJustImportedFromSparxEA(relation.concept);
+	});
+	*/
+}
+
+function cModel_mergeImportedSparxEA(model) {
+	
+	$("element").each(function(element) {
+		cElement_EAPostImportMerge(element);
+	});
+	//$("relationship").each(function(relation) {
+	//	cRelation_fixAssumingJustImportedFromSparxEA(relation.concept);
+	//});
+
+	
+}
