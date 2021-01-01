@@ -94,3 +94,53 @@ function cElement_GetView(elm) {
 			});
 
 */
+
+
+function cElement_getSubElements(e) {
+
+	var subElements = null;
+	var rels = $(e).rels();
+
+	rels.each(function(r) {
+
+		if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship")  && r.source.id == e.id) {
+			
+			if (subElements == null) {
+				subElements = $(r.target);
+			}
+			else {
+				subElements.add($(r.target));
+			}
+		}
+	});
+	
+	return subElements;
+}
+
+function cElement_getSuperElements(e) {
+
+	var superElements = null;
+	var rels = $(e).rels();
+
+	rels.each(function(r) {
+
+		if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.target.id == e.id) {
+			
+			if (superElements == null) {
+				superElements = $(r.target);
+			}
+			else {
+				superElements.add($(r.target));
+			}
+		}
+	});
+	
+	return superElements;
+}
+
+
+function cElement_EAPostImportMerge(element) {
+
+	
+
+}

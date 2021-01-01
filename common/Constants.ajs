@@ -160,7 +160,9 @@ var const_conceptType_resource__reference_arhitecture = "difi:reference-arhitect
 var const_conceptType_business_object__term = "difi:term";
 
 
-
+var const_conceptType_representation__book = "modelx:book";
+var const_conceptType_representation__section = "modelx:section";
+	
 // risk/security related extensions
 var const_conceptType_grouping__risk_security_domain = "difi:risk-security-domain";
 var const_conceptType_assessment__risk = "difi:risk";
@@ -473,6 +475,10 @@ var ArrayOfValidArchiConceptTypes = [
 */
 
 var ArrayOfValidElementExtensions = [
+
+	const_conceptType_representation__book,
+	const_conceptType_representation__section,
+
 
 	const_conceptType_business_object__term,
 	const_conceptType_resource__reference_arhitecture,

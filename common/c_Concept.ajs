@@ -908,3 +908,26 @@ function cConcept_fixAssumingJustImportedFromSparxEA(concept) {
 		concept.id = concept.prop(const_prop_archi_guid); // restore the original id
 
 }
+
+function cConcept_getSubConcepts(concept) {
+
+	var subConcepts = null;
+
+	var ownRels = $(concept).rels();
+	ownRels.each(function(r) {
+		if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.source.id === concept.id) {
+			
+			if (subConcepts == null) {
+				subConcepts = $(concept);
+			}
+			else {
+				subConcepts.add($(concept));
+			}
+		}
+
+	});
+
+	return subConcepts;
+}
+
+
