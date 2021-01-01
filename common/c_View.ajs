@@ -734,7 +734,20 @@ function cView_asciidocAutoDoc(view, sectionLevel) {
 			//topSection = CDocSection_getNextSection(topSection);
 			console.log("Ordered top level section: " + topSection.name);
 			
-			docString += cView_documentElementHiearchy(view, topSection, sectionLevel);
+			// get hold of the referenced view object
+			var refViewID = topSection.prop("drill down");
+			if (!refViewID) {
+				window.alert("Problem: Missing property 'drill down' for element with name '" + topSection.name + "'. Exiting");
+				exit();
+			}
+			var refView = cModel_GetViewWithId(refViewID);
+			if (!refView) {
+				window.alert("Error: Failed to get view for element with name '" +  topSection.name + "'. Please check 'drill down' value = " + refViewID );
+				exit();
+			}	
+
+			// doc the view!
+			docString += cView_documentElementHiearchy(view, refView, sectionLevel);
 			
 			var outgoingAssociations = $(topSection).outRels("association-relationship");
 			if (outgoingAssociations.size() > 1)
