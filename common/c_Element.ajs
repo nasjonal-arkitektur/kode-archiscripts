@@ -139,8 +139,207 @@ function cElement_getSuperElements(e) {
 }
 
 
+function cElement_documentBook(book, hierarchyLevel) {
+
+	var docString = "";
+
+	console.log("Top level element: " + book.name + " (" + book.type + ":" + book.prop(const_prop_dct_type) + ")" );
+
+	if (book.prop(const_prop_dct_type) != const_conceptType_representation__book) {
+		window.alert("Problem: Expected top level element of dct:type=" +  const_conceptType_representation__book + ". Exiting...");
+		exit();
+	}
+
+	// book header
+	docString += "= " + book.name + "\n\n";  // to-do: SECTIONlEVEL!!!!!		
+
+	// get the views/sections of the book, as represented by Representation objects with property dct:type = modelx:section:
+	var topChapters = null;
+	var bookSubElms = cElement_getSubElements(book);
+
+
+	if (bookSubElms === null) {
+		window.alert("Problem: No sections in book " + book.name + ". Exiting...");
+		exit();
+	}
+	
+	
+	docString += cElement_documentViewRef(book, hierarchyLevel);
+
+
+}
+
+
+function cElement_documentViewRef(section, hierarchyLevel) {
+	
+	var docString = "";
+
+	// doc this referenceView
+	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section)
+		docString += cView_AsciidocAutodoc(refView, hierarchyLevel);
+	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__book)
+		docString += "Book doc TO-DO";
+
+	var sectionLevel = hierarchyLevel++; //??????
+	
+	
+	var topChapters = null;
+	var sectionSubElms = cElement_getSubElements(section);
+	
+	// determine top level sections
+	sectionSubElms.each(function(section) {
+		var superElms = cElement_getSuperElements(section);
+		if (superElms.size() === 1) { // this section only
+			console.log("Top level section (before ordering): " + section.name);
+			if (!topChapters)
+				topChapters = $(section);
+			else
+				topChapters.add($(section));
+		}
+	});
+		
+	
+	// determine which section comes first (assume only one)
+	var firstSection = null;
+	topChapters.each(function(section) {
+		
+		var incomingRels = $(section).inRels("association-relationship").size();
+
+		if (incomingRels == 0) {
+			if (!firstSection)
+				firstSection = section;
+			else {
+				window.alert("Problem: Unable to determine which is the first section of the book; more than one section without incoming associations. Exiting...");
+				exit();
+			}
+			
+		}
+	});
+	
+	// output, with top level sections in proper order
+	var nextSiblingSection = firstSection;
+	while (nextSiblingSection != null) {
+		//nextSiblingSection = CDocSection_getNextSection(nextSiblingSection);
+		console.log("Ordered top level section: " + nextSiblingSection.name);
+		
+		// get hold of the referenced view object
+		var refViewID = nextSiblingSection.prop("drill down");
+		if (!refViewID) {
+			window.alert("Problem: Missing property 'drill down' for element with name '" + nextSiblingSection.name + "'. Exiting");
+			exit();
+		}
+		var refView = cModel_GetViewWithId(refViewID);
+		if (!refView) {
+			window.alert("Error: Failed to get view for element with name '" +  nextSiblingSection.name + "'. Please check 'drill down' value = " + refViewID );
+			exit();
+		}	
+
+	
+		
+		// get next sibling
+		var outgoingAssociations = $(nextSiblingSection).outRels("association-relationship");
+		if (outgoingAssociations.size() > 1)
+			window.alert("Problem: More than one outgoing association for section '" + nextSiblingSection.name + "'. Exiting...");
+		else if (outgoingAssociations.size() === 0)
+			nextSiblingSection = null;
+		else {
+			nextSiblingSection = outgoingAssociations.first().target;
+			
+			// drill down...
+			sectionSubElms.each(function(e) {
+				docString += cElement_documentViewRef(subView, sectionLevel);
+			});
+		}
+	}
+}
+
+
+function cElement_documentElementAsAsciidocSection(e, hierarchyLevel) {
+
+	if (e.type == "junction")
+		return "";
+
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < hierarchyLevel; i++) {
+		headerString += "=";
+	}
+	
+	docString = headerString + " ";
+	docString += e.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += e.documentation;
+	docString += "\n\n";
+}
+
+function ___cElement_documentElementRefHierarchy(section, hierarchyLevel) {
+	
+	hierarchyLevel++;
+	var docString = "";
+	
+
+	// get hold of the referenced view object
+	var refViewID = section.prop("drill down");
+	if (!refViewID) {
+		window.alert("Problem: Missing property 'drill down' for element with name '" + section.name + "'. Exiting");
+		exit();
+	}
+	var e = cModel_GetViewWithId(refViewID);
+	
+	if (!e) {
+		window.alert("Error: Failed to get view for element with name '" +  section.name + "'. Please check 'drill down' value = " + refViewID );
+		exit();
+	}	
+
+
+	if (e.type == "junction")
+		return "";
+
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < hierarchyLevel; i++) {
+		headerString += "=";
+	}
+	
+	docString = headerString + " ";
+	docString += e.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += e.documentation;
+	docString += "\n\n";
+
+
+
+		
+	var subElms = cElement_getSubElements(viewRef);
+	
+	
+	if (subElms != null) {
+		subElms.each(function(se) {
+			docString += cElement_documentElementRefHiearchy(se, hierarchyLevel);
+		});
+	}
+	
+	return docString;
+}
+
+
+
+
 function cElement_EAPostImportMerge(element) {
 
 	
 
 }
+

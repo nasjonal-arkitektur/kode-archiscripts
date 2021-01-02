@@ -20,7 +20,7 @@ views.each(function(view) {
 
 	console.log("Documenting view " + view.name);
 
-	docString = cView_asciidocAutoDoc(view, 1);
+	docString = cView_asciidocAutoDoc2(view, 1);
 	cClipboard_SetClipboardString(docString);
 	//console.log(docString);
 	
