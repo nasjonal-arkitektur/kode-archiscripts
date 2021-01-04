@@ -1,0 +1,21 @@
+﻿console.show();
+console.clear();
+
+console.log("Change type for selected objects");
+
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element or relationship object. Exiting...");
+	exit();
+}
+
+var diagramElement = selectedOccurences.first();
+
+var view1 = $('view').get(0); // Choose first view in the model
+console.log(view1.name);
+//r diagramElement = ...; // Get an element in another View
+var viewRef = diagramElement.createViewReference(view1, 10, 10, -1, -1); // Create and add a view reference

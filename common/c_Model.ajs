@@ -222,7 +222,7 @@ var cModel_FindAllModelElementsWithName = function(elementName) {
 	
 function cModel_GetElementWithId(id) {
 	
-   var elms =  $("concept").filter(function(o) {
+   var elms =  $("element").filter(function(o) {
         return ( (o.id == id) );
     });
 	
@@ -232,7 +232,7 @@ function cModel_GetElementWithId(id) {
 		exit();
 	}
 	else if (elms.size() > 1) {
-		window.alert("More than one element selected");
+		window.alert("cModel_GetElementWithId: More than one element selected");
 		exit();
 	}
 	
@@ -240,15 +240,24 @@ function cModel_GetElementWithId(id) {
 	var elm = elms.first();
 	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
 	return elm;
-			
-	
+
 }
 
 function cModel_GetElementWithName(name) {
 	
-	var elms =  $("concept").filter(function(o) {
+	var elms =  $("element").filter(function(o) {
         return ( (o.name == name)  );
     });
+
+	if (elms.size() < 1) {
+		
+		console.log("cModel_GetElementWithName: No elements with given id = " + id + "! Exiting!");
+		exit();
+	}
+	else if (elms.size() > 1) {
+		window.alert("cModel_GetElementWithName: More than one element selected");
+		exit();
+	}
 	
 	var elm = elms.first();
 	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
@@ -257,6 +266,51 @@ function cModel_GetElementWithName(name) {
 	
 }
 
+function cModel_GetConceptWithId(id) {
+	
+   var elms =  $("concept").filter(function(o) {
+        return ( (o.id == id) );
+    });
+	
+	if (elms.size() < 1) {
+		
+		console.log("cModel_GetConceptWithId: No elements with given id = " + id + "! Exiting!");
+		exit();
+	}
+	else if (elms.size() > 1) {
+		window.alert("cModel_GetConceptWithId: More than one element selected");
+		exit();
+	}
+	
+		
+	var elm = elms.first();
+	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
+	return elm;
+
+}
+
+function cModel_GetConceptWithName(name) {
+	
+	var elms =  $("concept").filter(function(o) {
+        return ( (o.name == name)  );
+    });
+
+	if (elms.size() < 1) {
+		
+		console.log("cModel_GetConceptWithName: No elements with given id = " + id + "! Exiting!");
+		exit();
+	}
+	else if (elms.size() > 1) {
+		window.alert("cModel_GetConceptWithName: More than one element selected");
+		exit();
+	}
+	
+	var elm = elms.first();
+	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
+	return elm;
+			
+	
+}
 
 
 function cModel_GetViewWithId(id) {

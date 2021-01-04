@@ -5,6 +5,7 @@
 load(__DIR__ + "../common/c_Folder.ajs");
 load(__DIR__ + "../common/c_Model.ajs");
 load(__DIR__ + "../common/c_Collection.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
 load(__DIR__ + "../common/CommonFunctions.ajs");
 
 var m_view = null;
@@ -23,6 +24,8 @@ function cView_GetSelectedElements() {
 }
 
 function cView_GetRelativeRenderPath(view) {
+
+window.alert("lib_SlicePathSlash from cView_GetRelativeRenderPath");
 
 	var path = "";
 
@@ -43,6 +46,7 @@ function cView_GetPagesFolder(view) {
 
 
 	if (const_option_antora) {
+		window.alert("lib_SlicePathSlash from cView_GetPagesFolder");
 		path = lib_SlicePathSlash(path);
 		path += "\\" + cView_GetRelativeRenderPath(view) + "\\" + "pages";	
 		
@@ -57,6 +61,7 @@ function cView_GetPagesFolder(view) {
 function cView_GetImagePath(view) {
 
 	var path = cView_GetImagesFolder(view);
+	window.alert("lib_SlicePathSlash from cView_GetImagePath");
 	path = lib_SlicePathSlash(path);
 	path += "\\" + view.name + ".png";
 	
@@ -73,16 +78,23 @@ function cView_GetImagesFolder(view) {
 	
 	if (const_option_antora) {
 		
+		console.log(view.type);
+		err = new Error();
+		console.log(err.stack);
+		window.alert("cView_GetImagesFolder(0)");
 		
 		if (view.prop(const_prop_antoraViewImagePath)) {
 			path = cModel_GetRenderingRootPath();
+			window.alert("lib_SlicePathSlash from cView_GetImagesFolder(1)");
 			path = lib_SlicePathSlash(path);
 			path += "\\" + view.prop(const_prop_antoraViewImagePath);
+			window.alert("lib_SlicePathSlash from cView_GetImagesFolder(2)");			
 			path = lib_SlicePathSlash(path);
 		}
 		else
 		{	
 			path = cModel_GetRenderingRootPath();
+			window.alert("lib_SlicePathSlash from cView_GetImagesFolder(3)");			
 			path = lib_SlicePathSlash(path);
 			path += "\\" + cView_GetRelativeRenderPath(view) + "\\" + "images";
 			console.log("Image path: " + path );	
@@ -333,8 +345,16 @@ function cView_asciidocTemplateHeader(view) {
 
 
 function cView_getTopLevelElementsOf(view) {
+	
 
 	var elms = cView_GetElementsInView(view);
+	
+	if (!elms) {
+		console.log("Error: cView_getTopLevelElementsOf");
+		err = new Error();
+		console.log(err.stack);
+	}	
+	
 	var topLevelElements = null;
 	
 	
@@ -478,6 +498,7 @@ function cView_saveViewImageToFile(view) {
 
 function cView_documentViewAsAsciidocChapters(view, sectionLevel) {
 
+
 	// input: var view = CSelection_GetTheSelectedView();
 
 	var docString = "";
@@ -505,7 +526,7 @@ function cView_documentViewAsAsciidocChapters(view, sectionLevel) {
 	docString += "\n\n";
 
 	// save image of the archi view to file
-	cView_saveViewImageToFile(view);
+//cView_saveViewImageToFile(view);
 	
 	//if (cView_GetImagePath(view)) {
 		docString += "." + view.name;
@@ -898,9 +919,13 @@ function cView_asciidocAutoDoc2(view, sectionLevel) {
 	var topLevelElms = cView_getTopLevelElementsOf(view);
 	
 	
-	topLevelElms.each(function(book) {
+	topLevelElms.each(function(te) {
+		
+		console.log("Documenting " + te.name + ";" + te.prop(const_prop_dct_type) + " " + const_conceptType_representation__book );
 
-		docString += cElement_documentBook(book, sectionLevel);
+		if (te.prop(const_prop_dct_type) === const_conceptType_representation__book)
+			docString += cBook_autodoc(te, sectionLevel);
+		//docString += cElement_documentBook(book, sectionLevel);
 		
 exit();		
 		
@@ -1038,7 +1063,7 @@ function cView_AsciidocAutodoc(view, sectionLevel) {
 	docString += "\n\n";
 
 	// save image of the archi view to file
-	cView_saveViewImageToFile(view);
+	//.................................................cView_saveViewImageToFile(view);   erik: rememebr to set model property for antora path
 	
 	//if (cView_GetImagePath(view)) {
 		docString += "." + view.name;

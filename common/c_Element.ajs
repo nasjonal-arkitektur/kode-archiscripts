@@ -176,7 +176,7 @@ function cElement_documentViewRef(section, hierarchyLevel) {
 
 	// doc this referenceView
 	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section)
-		docString += cView_AsciidocAutodoc(refView, hierarchyLevel);
+		docString += cView_documentViewAsAsciidocChapters(section.prop("drill down"), hierarchyLevel);
 	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__book)
 		docString += "Book doc TO-DO";
 
@@ -247,7 +247,7 @@ function cElement_documentViewRef(section, hierarchyLevel) {
 			
 			// drill down...
 			sectionSubElms.each(function(e) {
-				docString += cElement_documentViewRef(subView, sectionLevel);
+				docString += cElement_documentViewRef(e, sectionLevel);
 			});
 		}
 	}

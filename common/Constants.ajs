@@ -159,7 +159,7 @@ var const_conceptType_association__develops = "difi:developing";
 var const_conceptType_resource__reference_arhitecture = "difi:reference-arhitecture";
 var const_conceptType_business_object__term = "difi:term";
 
-
+var const_conceptType_representation__book = "modelx:library";
 var const_conceptType_representation__book = "modelx:book";
 var const_conceptType_representation__section = "modelx:section";
 	

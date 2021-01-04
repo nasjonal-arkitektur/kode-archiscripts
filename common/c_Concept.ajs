@@ -909,7 +909,9 @@ function cConcept_fixAssumingJustImportedFromSparxEA(concept) {
 
 }
 
-function cConcept_getSubConcepts(concept) {
+function cConcept_getSubConcepts(concpt) {
+	
+	var concept = concpt.concept;  // just to make sure we have the concept and not an element
 
 	var subConcepts = null;
 
@@ -918,16 +920,39 @@ function cConcept_getSubConcepts(concept) {
 		if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.source.id === concept.id) {
 			
 			if (subConcepts == null) {
-				subConcepts = $(concept);
+				subConcepts = $(r.target);
 			}
 			else {
-				subConcepts.add($(concept));
+				subConcepts.add($(r.target));
 			}
 		}
 
 	});
 
 	return subConcepts;
+}
+
+function cConcept_isSubConceptOf(concept, superConcept) {
+	
+	if (concept === superConcept)
+		return false;
+	
+	var concpt = concept.concept;  // just to make sure we have the concept and not an element
+	var superConcpt = superConcept.concept; // just to make sure we have the concept and not an element
+	var result = false;
+	
+	var ownRels = $(concpt).rels();
+	ownRels.each(function(r) {
+		if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.source.id === superConcpt.id) {
+		
+			result = true;
+			return true;
+	
+		}
+
+	});
+
+	return result;
 }
 
 

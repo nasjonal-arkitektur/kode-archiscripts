@@ -54,7 +54,7 @@ var arr = GetClipBoardArray();
 for (i = 0; i < arr.length; i++) {
 	
 	
-	var concept = cModel_GetElementWithId(arr[i]);
+	var concept = cModel_GetConceptWithId(arr[i]);
 	console.log(concept.name);
 	theSelectedView.add(concept, x, y, -1, -1);	
 	
