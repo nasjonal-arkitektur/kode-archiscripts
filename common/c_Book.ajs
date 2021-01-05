@@ -1,9 +1,10 @@
 /*
- * c_Document
+ * c_Book
  */
  
 load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
+load(__DIR__ + "c_BookSection.ajs");
 
 function cBook_autodoc(bookElement, hierarchyLevel) {
 
@@ -19,17 +20,20 @@ function cBook_autodoc(bookElement, hierarchyLevel) {
 
 
 
-	// book header
+	// generate book header
 	docString += "= " + book.name + "\n\n";  // to-do: SECTIONlEVEL!!!!!		
 
-
-	var firstSection = cBook_determineFirstSection(book, hierarchyLevel);
-	console.log("First secton is " + firstSection.name);
+	//determine first section
+	var firstSection = cBook_determineFirstSection(book);
+	console.log("cBook_autodoc: First secton is " + firstSection.name);
+	
+	// starting with the first section, recursively drill down the hierarchy and go to next sibling section
+	docString += cBookSection_autodoc(firstSection, hierarchyLevel);
 
 	//docString += cBookSection_documentViewRef(book, sectionLevel);
 }
 
-function cBook_determineFirstSection(book, hierarchyLevel) {
+function cBook_determineFirstSection(book) {
 	
 
 	
@@ -77,7 +81,7 @@ function cBook_determineFirstSection(book, hierarchyLevel) {
 			});
 
 			if (firstSection) {
-				//console.log("First secton is " + firstSection.name);
+				console.log("cBook_determineFirstSection: First secton is " + firstSection.name);
 				return firstSection;
 				
 			}

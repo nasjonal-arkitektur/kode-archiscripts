@@ -4,3 +4,90 @@
  
 load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
+
+
+function cBookSection_autodoc(section, hierarchyLevel) {
+	
+	// starting with the first section, recursively drill down the hierarchy and go to next sibling section
+	
+	
+	console.log("cBookSection_autodoc, " + section.name + ", level " + hierarchyLevel);
+	
+	//hierarchyLevel++;
+	var docString = "";
+
+	if (section.type == "junction")
+		return "";
+
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < hierarchyLevel; i++) {
+		headerString += "=";
+	}
+	
+	docString = headerString + " ";
+	docString += section.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += section.documentation;
+	docString += "\n\n";
+	
+	
+	// drill down
+	var firstSubSection = cBookSection_determineFirstSubSection(section);
+	if (firstSubSection)
+		docString += cBookSection_autodoc(firstSubSection, hierarchyLevel + 1);	
+	// next at same level
+	var nextSiblingSection = cBookSection_nextSiblingSection(section);
+	if (nextSiblingSection)
+		docString += cBookSection_autodoc(nextSiblingSection, hierarchyLevel);
+	
+
+	return docString;
+}
+
+
+function cBookSection_nextSiblingSection(section) {
+
+	var outgoingAssociationRels = $(section).outRels("association-relationship");
+	
+	//console.log("#outgoingAssociationRels = " + outgoingAssociationRels.size());
+	
+	if (outgoingAssociationRels.size() === 1) {
+		return outgoingAssociationRels.first().target;
+	}
+	else if (outgoingAssociationRels.size() === 0)
+		return null;
+	else {
+		
+		window.alert("Problem: More than one outgoing association relation from section " + section.name + "." );
+	}
+}
+
+function cBookSection_determineFirstSubSection(section) {
+
+	var firstSubSection = null;
+	var incomingAssociationRels = null;
+	
+	var subSections = cElement_getSubElements(section);
+	if (subSections != null) {
+		
+		subSections.each(function(sub) {				
+			var numIncomingAssociationRels = $(sub).inRels("association-relationship").size();
+
+			
+			if (numIncomingAssociationRels == 0) { // i.e. no preceeding chapter at the same hierarchy level
+				firstSubSection = sub;	
+				return firstSubSection;
+			}				
+		});
+	}
+	
+	return firstSubSection; // null = no further subsections
+	
+}
