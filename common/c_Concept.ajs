@@ -934,11 +934,15 @@ function cConcept_getSubConcepts(concpt) {
 
 function cConcept_isSubConceptOf(concept, superConcept) {
 	
-	if (concept === superConcept)
-		return false;
-	
 	var concpt = concept.concept;  // just to make sure we have the concept and not an element
 	var superConcpt = superConcept.concept; // just to make sure we have the concept and not an element
+	
+	if (concpt.id === superConcpt.id)
+		return false;
+
+	//console.log("cConcept_isSubConceptOf, concept = " + concept.name + ", superConcept = " + superConcept.name);
+			
+		
 	var result = false;
 	
 	var ownRels = $(concpt).rels();
