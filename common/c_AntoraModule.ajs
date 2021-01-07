@@ -1,7 +1,9 @@
 ﻿/*
  * c_AntoraModule.ajs
  */
- 
+
+load(__DIR__ + "c_Filesystem.ajs");
+
 function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version) {
 	
 	
@@ -9,17 +11,37 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 	// create a list of all the antora component names
 	// examine the modules subdirs (matching the module name) and make sure there are no duplicate file names for the same components
 	
-	console.log("cAntoraModule_locateModulePath");
+	console.log("function:cAntoraModule_locateModulePath");
+	console.log("---------------------------------------");
 
-	var antoraYmlFiles = cFilesystem_getFilesWithName(antoraRootPath, "antora.yml");
-	for (i = 0; i < antoraYmlFiles.length; i++) {
-	
-		var filename = antoraYmlFiles[i];
-		console.log("cAntoraModule_locateModulePath: " + filename);
-	
+	var dirsWithAnAntoraYmlFile = cFilesystem_getDirsWithFile(antoraRootPath, "antora.yml");
 
+	for (var i = 0; i < dirsWithAnAntoraYmlFile.length; i++) {
+		var modulesPath = dirsWithAnAntoraYmlFile[i];
+		//console.log("cAntoraModule_locateModulePath: " + modulesPath);
+
+		
+		var dirModules = cAntoraModule_getModulesUnderPath(modulesPath + "\\" + "modules");
+		console.log("Modules under " + modulesPath);
+		for (var j = 0; j < dirModules.length; j++) {
+		
+			var dirModule = dirModules[j]; 
+			console.log("    " + dirModule);
+			if (dirModule === moduleName)
+				console.log("located dirModule (not yet checked componentName and version of antora.yml): " + dirModule);
+		}	
+
+		
 	}
 	
+
+}
+
+
+function cAntoraModule_getModulesUnderPath(modulesPath) {
+	//console.log("cAntoraModule_getModulesUnderPath: " + modulesPath);
+	var subDirs = cFilesystem_getSubDirs(modulesPath);
+	return subDirs;
 
 }
 

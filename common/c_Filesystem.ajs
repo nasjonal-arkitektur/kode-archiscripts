@@ -2,9 +2,39 @@
  * c_Filesystem.ajs
  */
 
+function cFilesystem_getSubDirs(dirPath) {
+	
+	
+	//console.log("cFilesystem_getSubDirs(" + dirPath + ")");
+	
+	var resultList = [];
+	
+	var File = Java.type("java.io.File");
+	var dir = new File(dirPath);
 
+	var list = dir.list();
+	if (list == null) {
+		window.alert("Null... empty dir???");
+		console.log("null");
+		exit();
+	}
+	
+	var i;
+	for (i = 0; i < list.length; i++) {
 
-function cFilesystem_getFilesWithName(rootPath, fileName) {
+		var file = new File(dirPath + "\\" + list[i]);
+		if (file.isDirectory()) {
+			if (file.getName() != ".git")
+				resultList.push(file.getName());
+		}
+    }
+	
+	return resultList;
+	
+	
+}
+
+function cFilesystem_getDirsWithFile(rootPath, fileName) {
 
 	var resultList = [];
 
@@ -32,8 +62,9 @@ function cFilesystem_getFilesWithName(rootPath, fileName) {
 		if (!file.isDirectory()) {
 			//console.log("File: " + file.getName());
 			if (file.getName() === fileName) {
-				resultList.push(rootPath + "\\" + fileName);
-				console.log("Added file: " + rootPath + "\\" + fileName + " to list");
+				//resultList.push(rootPath + "\\" + fileName);
+				resultList.push(rootPath);
+				//console.log("Added file: " + rootPath + "\\" + fileName + " to list");
 			}
 		}
     }
@@ -49,7 +80,7 @@ function cFilesystem_getFilesWithName(rootPath, fileName) {
 				var fullPath = rootPath + "\\" + file.getName();
 				//console.log("Drilldown to dir " + fullPath);
 				
-				var subList = cFilesystem_getFilesWithName(fullPath, fileName);
+				var subList = cFilesystem_getDirsWithFile(fullPath, fileName);
 				resultList = resultList.concat(subList);
 				
 			}
@@ -57,7 +88,7 @@ function cFilesystem_getFilesWithName(rootPath, fileName) {
 		}
     }
 	
-	console.log("resultList.length = " + resultList.length);
+	//console.log("resultList.length = " + resultList.length);
 	return resultList; 
 }
 
