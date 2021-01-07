@@ -1,0 +1,122 @@
+﻿/*
+ * c_Filesystem.ajs
+ */
+
+function cFilesystem_writeTextFile(filePath, txt) {
+	console.log("cFilesystem_writeTextFile");
+	$.fs.writeFile(filePath, txt);
+}
+
+function cFilesystem_readTextFile(filePath) {
+
+	console.log("cFilesystem_readTextFile");
+
+	if (!filePath) {
+		window.alert("Error: Empty filePath as input to cFilesystem_readTextFile. Exiting...");
+		exit();
+	}
+		
+		
+	var FileReader = Java.type("java.io.FileReader");
+	var theFile = new FileReader(filePath);
+
+	var txt = "";
+
+	var data = theFile.read();
+	while(data != -1) {
+	  var theCharacter = String.fromCharCode(data);
+	  txt+=theCharacter;
+	  data = theFile.read();
+	}
+	theFile.close();
+	
+	return txt;
+
+}
+
+
+function cFilesystem_listFilesWithExtension(filePath, ext) {
+
+
+	var nioFile = Java.type("java.nio.file.FileVisitResult");
+	
+	
+	var Files = Java.type("java.nio.file.FileVisitResult");
+	
+	Files.walkFileTree(filePath, ext);
+	
+}
+
+
+
+
+function cFilesystem_test_recFindByExt(base,ext,files,result) // erik: just starting to experiment with parsing files in jacascript
+{
+
+	var filePath = "c:\\gitlab\\digdir\\test.txt";
+	if (filePath) {
+	  var FileReader = Java.type("java.io.FileReader");
+	  var theCSVFile = new FileReader(filePath);
+
+	  var theCSV ="";
+
+	  var data = theCSVFile.read();
+	  console.log("> Please Wait...");
+	  while(data != -1) {
+		  var theCharacter = String.fromCharCode(data);
+		  theCSV+=theCharacter;
+		  data = theCSVFile.read();
+	  }
+	  theCSVFile.close();
+	  console.log("> File Loaded");
+	  //theDataFile = Papa.parse(theCSV);
+	  //console.log("> File Parced");
+
+	  //theData = theDataFile.data;
+	  console.log("theCSV:\n" + theCSV);
+	  
+	}
+
+/*
+$.fs.readFile("c:\\gitlab\\digdir\\test.txt", function(err, data) {
+	window.alert(data);
+});
+
+fs.readFile('demofile1.html', function(err, data) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    return res.end();
+  });
+  */
+exit();
+
+$.fs.readdirSync("c:\\gitlab\\digdir");
+
+    files = files || $.fs.readdirSync(base) 
+    result = result || [] 
+
+exit();
+	
+	
+    files = files || $.fs.readdirSync(base) 
+    result = result || [] 
+
+    files.forEach( 
+        function (file) {
+            var newbase = $.path.join(base,file)
+            if ( $.fs.statSync(newbase).isDirectory() )
+            {
+                result = recFindByExt(newbase,ext,$.fs.readdirSync(newbase),result)
+            }
+            else
+            {
+                if ( file.substr(-1*(ext.length+1)) == '.' + ext )
+                {
+                    result.push(newbase)
+                } 
+            }
+        }
+    )
+    return result;
+}
+
