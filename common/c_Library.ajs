@@ -1,6 +1,5 @@
 /*
- * c_Library
+ * New Archi Script
  */
  
-load(__DIR__ + "Constants.ajs");
-load(__DIR__ + "c_Model.ajs");
+console.log("New Archi Script");

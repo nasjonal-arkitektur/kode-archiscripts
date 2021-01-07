@@ -1,0 +1,26 @@
+﻿/*
+ * c_AntoraModule.ajs
+ */
+ 
+function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version) {
+	
+	
+	// get list of all antora.yml files (matching componentName) under the antora components top dir
+	// create a list of all the antora component names
+	// examine the modules subdirs (matching the module name) and make sure there are no duplicate file names for the same components
+	
+	console.log("cAntoraModule_locateModulePath");
+
+	var antoraYmlFiles = cFilesystem_getFilesWithName(antoraRootPath, "antora.yml");
+	for (i = 0; i < antoraYmlFiles.length; i++) {
+	
+		var filename = antoraYmlFiles[i];
+		console.log("cAntoraModule_locateModulePath: " + filename);
+	
+
+	}
+	
+
+}
+
+

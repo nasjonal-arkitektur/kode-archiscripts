@@ -2,6 +2,125 @@
  * c_Filesystem.ajs
  */
 
+
+
+function cFilesystem_getFilesWithName(rootPath, fileName) {
+
+	var resultList = [];
+
+	var File = Java.type("java.io.File");
+	var Path = Java.type("java.io.File");
+	var path = new Path(rootPath);
+
+	if (!path.isDirectory()) {
+		window.alert("Error: " + rootPath + " is not a directory.");
+		exit();
+	}
+	
+	var dir = new File(rootPath);
+	var list = dir.list();
+	if (list == null) {
+		window.alert("Null... empty dir???");
+		console.log("null");
+		exit();
+	}
+	
+	var i;
+	for (i = 0; i < list.length; i++) {
+
+		var file = new File(rootPath + "\\" + list[i]);
+		if (!file.isDirectory()) {
+			//console.log("File: " + file.getName());
+			if (file.getName() === fileName) {
+				resultList.push(rootPath + "\\" + fileName);
+				console.log("Added file: " + rootPath + "\\" + fileName + " to list");
+			}
+		}
+    }
+	
+	for (i = 0; i < list.length; i++) {
+
+		var file = new File(rootPath + "\\" + list[i]);
+		if (file.isDirectory()) {
+			
+			if (file.getName() != ".git") {
+				//console.log("Dir: " + file.getName());
+				
+				var fullPath = rootPath + "\\" + file.getName();
+				//console.log("Drilldown to dir " + fullPath);
+				
+				var subList = cFilesystem_getFilesWithName(fullPath, fileName);
+				resultList = resultList.concat(subList);
+				
+			}
+
+		}
+    }
+	
+	console.log("resultList.length = " + resultList.length);
+	return resultList; 
+}
+
+function cFilesystem_listFiles(filePath) {
+
+	var File = Java.type("java.io.File");
+	//var theFile = new FileReader(filePath);
+	//var File = Java.type("java.io.File");
+	
+	var Path = Java.type("java.io.File");
+	var path = new Path(filePath);
+	//console.log("path.getName = " + path.getName());
+	
+
+
+	if (!path.isDirectory()) {
+		window.alert("Error: " + filePath + " is not a directory.");
+		exit();
+	}
+	
+	var dir = new File(filePath);
+	//console.log("File.getName = " + dir.getName());
+	
+	var list = dir.list();
+	if (list == null) {
+		window.alert("Null... empty dir???");
+		console.log("null");
+		return null;
+	}
+	
+		
+	var i;
+	for (i = 0; i < list.length; i++) {
+
+		var file = new File(filePath + "\\" + list[i]);
+		if (file.isDirectory()) {
+			console.log("Dir: " + file.getName());
+			
+			var fullPath = filePath + "\\" + file.getName();
+			console.log("Drilldown to dir " + fullPath);
+			cFilesystem_listFiles(fullPath );
+			
+			/*
+			if (dirs == null) {
+				dirs = $(file);
+			}
+			else {
+				dirs.add($(file));
+			}
+			*/
+		}
+ 		else {
+			console.log("File: " + file.getName());
+			
+		
+		}
+			
+    }
+	
+	return true; // ??
+}
+
+
 function cFilesystem_writeTextFile(filePath, txt) {
 	console.log("cFilesystem_writeTextFile");
 	$.fs.writeFile(filePath, txt);
@@ -34,16 +153,48 @@ function cFilesystem_readTextFile(filePath) {
 
 }
 
+/*
+ public void iterate(final String dirPath) throws IOException {
+    final DirectoryStream<Path> paths = Files.newDirectoryStream(Paths.get(dirPath));
+    for (final Path path : paths) {
+      if (Files.isDirectory(path)) {
+        System.out.println(path.getFileName());
+      }
+    }
+  }
+*/
+
+function not_cFilesystem_listFiles(filePath) {
+
+	importClass(Packages.java.io.File);
+	
+	var list = File.list(filePath);
+	console.log(list);
+
+	//var dirStr = new Java.type("java.nio.DirectoryStream");	
+	//new FileReader(filePath);
+	
+    //for (Path file: stream) {
+    //    System.out.println(file.getFileName());
+    //}
+
+/*
+    var paths = Files.newDirectoryStream(Paths.get(dirPath));
+    for (final Path path : paths) {
+      if (Files.isDirectory(path)) {
+        console.log(path.getFileName());
+      }
+    }
+*/
+}
+
 
 function cFilesystem_listFilesWithExtension(filePath, ext) {
 
-
 	var nioFile = Java.type("java.nio.file.FileVisitResult");
-	
-	
-	var Files = Java.type("java.nio.file.FileVisitResult");
-	
-	Files.walkFileTree(filePath, ext);
+	var Files = Java.type("java.nio.file.FileVisitResult");	
+	//var result = Files.walkFileTree(filePath, ext);
+	//console.log(result);
 	
 }
 
