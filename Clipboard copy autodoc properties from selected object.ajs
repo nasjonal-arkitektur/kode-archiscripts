@@ -1,0 +1,32 @@
+﻿load(__DIR__ + "./common/c_Namespace.ajs");
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Model.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+
+
+console.show();
+console.clear();
+console.log("Clipboard copy autodoc properties from selected object.ajs");
+
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() > 1) {
+	window.alert("Several objects selected. Please select only one element or relationship object. Exiting...");
+	exit();
+}
+else if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element. Exiting...");
+	exit();
+}
+	
+var selectedOccurence = selectedOccurences.first();
+
+var clibBoardString = cConcept_GetProperty(selectedOccurence.concept, const_prop_antoraComponent) + "\t" +
+						cConcept_GetProperty(selectedOccurence.concept, const_prop_antoraVersion) + "\t" +
+						cConcept_GetProperty(selectedOccurence.concept, const_prop_antoraModule);
+
+console.log("clibBoardString: " + clibBoardString);
+
+cClipboard_SetClipboardString(clibBoardString);

@@ -11,7 +11,7 @@ function cBook_autodoc(bookElement, hierarchyLevel) {
 	var book = bookElement.concept;
 	var docString = "";
 
-	console.log("Top level element: " + book.name + " (" + book.type + ":" + book.prop(const_prop_dct_type) + ")" );
+	console.log("Top level element: " + book.name + " (" +  book.prop(const_prop_dct_type) + ")" );
 
 	if (book.prop(const_prop_dct_type) != const_conceptType_representation__book) {
 		window.alert("Problem: Expected top level element of dct:type=" +  const_conceptType_representation__book + ". Exiting...");
@@ -66,7 +66,7 @@ function cBook_determineFirstSection(book) {
 	bookSections.each(function(section) {
 		
 		if (!determined) {
-			console.log("determine firstSection, considering section  " + section.name);
+			//console.log("determine firstSection, considering section  " + section.name);
 			
 			var incomingAssociationRels = $(section).inRels("association-relationship").size(); // i.e. for now consider only association-relationship, but see below
 
@@ -83,7 +83,7 @@ function cBook_determineFirstSection(book) {
 				});
 
 				if (firstSection) {
-					console.log("cBook_determineFirstSection: First section is " + firstSection.name);
+					//console.log("cBook_determineFirstSection: First section is " + firstSection.name);
 					determined = true;
 					//return firstSection;
 					

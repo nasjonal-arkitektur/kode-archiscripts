@@ -886,10 +886,14 @@ function cView_asciidocAutoDoc2(view, sectionLevel) {
 	
 	topLevelElms.each(function(te) {
 		
-		console.log("Documenting " + te.name + ";" + te.prop(const_prop_dct_type) + " " + const_conceptType_representation__book );
+		console.log("Documenting " + te.name + ";" + te.prop(const_prop_dct_type) );
 
 		if (te.prop(const_prop_dct_type) === const_conceptType_representation__book)
 			docString += cBook_autodoc(te, sectionLevel);
+		else {
+			window.alert("Problem: Found top level type " + te.prop(const_prop_dct_type) + ", but expected " + const_conceptType_representation__book);
+			exit();
+		}
 		//docString += cElement_documentBook(book, sectionLevel);
 		
 exit();		

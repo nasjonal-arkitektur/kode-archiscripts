@@ -57,6 +57,10 @@ var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29;
 
 // Antora
 var const_option_antora = true;
+var const_prop_antoraComponent = "modelx:antora_component";
+var const_prop_antoraVersion = "modelx:antora_version";
+var const_prop_antoraModule = "modelx:antora_module";
+
 var const_prop_antoraComponentsPath = "difi:antoraComponentsPath"; //added 2020-03-15; the local root path for antora components
 var const_prop_antoraViewPath =  "difi:antoraViewPath"; //added 2020-03-15; the path for storing asciidoc documents for the view in question, relative to difi:antoraDocRootPath
 var const_prop_antoraViewImagePath =  "difi:antoraViewImagePath"; //added 2020-03-15; the path for storing images for the view in question, relative to difi:antoraDocRootPath
@@ -72,9 +76,11 @@ var const_prop_source = "dct:BibliographicResource"; //added 2019-08-20
 var const_title_namespace_prefix = " [ns:";
 var const_title_namespace_postfix = "]";
  
-var const_prop_archi_guid = "modelx:guid";
+var const_prop_archi_guid = "modelx:guid"; // consider const_prop_dct_identifier
 var const_prop_sparx_guid = "modelx:sparx_guid";
 var const_prop_default_value = "-";
+
+var const_prop_view_reference = "modelx:view_reference";   
 
 var const_prop_namespace = "difi:namespace";
 //const_prop_namespace_values = ["-", "eira", "eirabased"];
@@ -159,9 +165,10 @@ var const_conceptType_association__develops = "difi:developing";
 var const_conceptType_resource__reference_arhitecture = "difi:reference-arhitecture";
 var const_conceptType_business_object__term = "difi:term";
 
-var const_conceptType_representation__book = "modelx:library";
+var const_conceptType_representation__library = "modelx:library";
 var const_conceptType_representation__book = "modelx:book";
-var const_conceptType_representation__section = "modelx:section";
+var const_conceptType_representation__section = "modelx:section"; // any section
+var const_conceptType_representation__archimateView = "modelx:archimate_view"; // a type of section 
 	
 // risk/security related extensions
 var const_conceptType_grouping__risk_security_domain = "difi:risk-security-domain";

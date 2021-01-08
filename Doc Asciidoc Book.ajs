@@ -12,26 +12,34 @@ load(__DIR__ + "/common/c_AntoraModule.ajs");
 console.show();
 console.clear();
 
+
+/*
 var antoraRootPath = "c:\\gitlab\\digdir\\components";
 var componentName = "architecture-repositorys";
 var version = "master";
-var moduleName = "request-reply";
-var moduePath = cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version);
-exit();
+//var moduleName = "request-reply";
+var moduleName = "unit-autodoc1";
 
 
-var l = cFilesystem_listFiles("c:\\gitlab\\digdir\\components");
+var modulePath = cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version);
+window.alert(modulePath);
+
 exit();
+*/
+
+//var l = cFilesystem_listFiles("c:\\gitlab\\digdir\\components");
+//exit();
 
 //var fileList = cFilesystem_listFilesWithExtension("c:\\gitlab\\digdir", "txt");
 //cFilesystem_walk("c:\\gitlab\\digdir");
-exit();
+//exit();
 
+/*
 cFilesystem_writeTextFile("c:\\gitlab\\digdir\\test.txt", "Hei3");
 var txt = cFilesystem_readTextFile("c:\\gitlab\\digdir\\test.txt");
 console.log(txt);
 exit();
-
+*/
 
 
 

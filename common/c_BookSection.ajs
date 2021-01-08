@@ -10,8 +10,12 @@ function cBookSection_autodoc(section, hierarchyLevel) {
 	
 	// starting with the first section, recursively drill down the hierarchy and go to next sibling section
 	
+	var indent = "";
+	for (var i = 0; i < hierarchyLevel; i++) {
+		indent += "    ";
+	}
 	
-	console.log("cBookSection_autodoc, " + section.name + ", level " + hierarchyLevel);
+	console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  section.prop(const_prop_dct_type) + ")" + ", level " + hierarchyLevel);
 	
 	//hierarchyLevel++;
 	var docString = "";

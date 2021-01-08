@@ -6,6 +6,8 @@ load(__DIR__ + "c_Filesystem.ajs");
 
 function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version) {
 	
+	var result = null;
+	var foundPath = null;
 	
 	// get list of all antora.yml files (matching componentName) under the antora components top dir
 	// create a list of all the antora component names
@@ -22,19 +24,30 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 
 		
 		var dirModules = cAntoraModule_getModulesUnderPath(modulesPath + "\\" + "modules");
-		console.log("Modules under " + modulesPath);
+		//console.log("Modules under " + modulesPath);
 		for (var j = 0; j < dirModules.length; j++) {
 		
 			var dirModule = dirModules[j]; 
-			console.log("    " + dirModule);
-			if (dirModule === moduleName)
-				console.log("located dirModule (not yet checked componentName and version of antora.yml): " + dirModule);
-		}	
+			//console.log("    " + dirModule);
+			if (dirModule === moduleName) {
 
-		
+				var foundPath = modulesPath + "\\" + "modules" + "\\" + moduleName;
+				
+				if (!result) {
+					console.log("Located dirModule (not yet checked componentName and version of antora.yml): " + foundPath);
+					result = foundPath;
+				}
+				else {
+					console.log("Problem: Located more than one module with name = " + moduleName + ", this time in directory " +  foundPath);
+					window.alert("Problem: Located more than one module with name = " + moduleName + "! Not yet supported.Exiting...");
+					exit();
+				}
+
+			}
+		}	
 	}
 	
-
+	return result;
 }
 
 

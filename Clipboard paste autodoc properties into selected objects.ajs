@@ -1,0 +1,66 @@
+﻿load(__DIR__ + "./common/c_Namespace.ajs");
+load(__DIR__ + "./common/c_Selection.ajs");
+load(__DIR__ + "./common/c_Model.ajs");
+load(__DIR__ + "./common/c_Concept.ajs");
+load(__DIR__ + "./common/c_Clipboard.ajs");
+
+
+console.show();
+console.clear();
+console.log("Clipboard paste autodoc properties into selected objects.ajs");
+
+
+function getClipboard() {
+	
+	var Toolkit = Java.type("java.awt.Toolkit");
+	var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	
+
+    //try {
+      if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+
+		return txt;
+        //return txt.trim();
+      }
+    //} catch (Exception e) {
+    //}
+
+    return "";
+}
+  
+var txt = getClipboard();
+console.log(txt);
+
+var selectedConcepts = $(selection).filter("concept");
+
+if(selectedConcepts.size() < 1) {
+	window.alert("No objects selected");
+	exit();
+}
+
+var lines = txt.split("\n");
+
+selectedConcepts.each
+selectedConcepts.each(function(concept) {
+
+	console.log("Setting properties for " + concept.name);
+
+	for (i = 0; i < lines.length; i++) {
+
+		var line = lines[i];
+		var props = line.split("\t");
+		var component = props[0];
+		var version = props[1];
+		var module = props[2]
+		
+		cConcept_SetProperty(concept, const_prop_antoraComponent, component);
+		cConcept_SetProperty(concept, const_prop_antoraVersion, version);
+		cConcept_SetProperty(concept, const_prop_antoraModule, module);		
+	}
+
+});
+			
+console.log("Script completed");
