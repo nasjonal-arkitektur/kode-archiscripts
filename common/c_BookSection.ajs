@@ -9,7 +9,7 @@ load(__DIR__ + "CBookSectionViewRef.ajs");
 
 function cBookSection_autodoc(section, hierarchyLevel) {
 	
-	// starting with the first section, recursively drill down the hierarchy and go to next sibling section
+	// starting with the first section, recursively drilling down the hierarchy and then going to the next sibling section and so on
 	
 	var indent = "";
 	for (var i = 0; i < hierarchyLevel; i++) {
@@ -38,7 +38,7 @@ function cBookSection_autodoc(section, hierarchyLevel) {
 	docString += "\n\n";
 	
 	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section) {
-		// take the description drectly from the representation object
+		// always take the description drectly from the representation object
 		docString += section.documentation;
 
 	}
@@ -56,6 +56,7 @@ function cBookSection_autodoc(section, hierarchyLevel) {
 	var firstSubSection = cBookSection_determineFirstSubSection(section);
 	if (firstSubSection)
 		docString += cBookSection_autodoc(firstSubSection, hierarchyLevel + 1);	
+
 	// next at same level
 	var nextSiblingSection = cBookSection_nextSiblingSection(section);
 	if (nextSiblingSection)
@@ -79,7 +80,7 @@ function cBookSection_nextSiblingSection(section) {
 		return null;
 	else {
 		
-		window.alert("Problem: More than one outgoing association relation from section " + section.name + "." );
+		lib_Error("More than one outgoing association relation from section " + section.name + "." );
 	}
 }
 

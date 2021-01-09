@@ -357,7 +357,7 @@ function cView_getTopLevelElementsOf(view) {
 	var topLevelElements = null;
 	
 	
-	// note: need to consider elements with no reations in the view + top level elements with
+	// note: need to consider elements with no relations in the view + top level elements with
 
 	elms.each(function(e) {
 
@@ -367,11 +367,11 @@ function cView_getTopLevelElementsOf(view) {
 
 		var ownViewRels = $(e).rels();
 		ownViewRels.each(function(r) {
-			if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.source.id === e.id) { // TODO: name -> ID!
+			if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && (r.source.id === e.id)) { 
 				doesCompose = true;
 				//break;
 			}
-			else if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && r.target.id === e.id) { // TODO: name -> ID!
+			else if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && (r.target.id === e.id)) { 
 				soleToplevel = false;
 			}
 	
@@ -876,26 +876,54 @@ function cView_documentElementHiearchy2(view, viewRepresentation, hierarchyLevel
 }
 
 
+function cView_getAutodocBooksInView(view) {
+	
+	var books = null;
+	var elms = cView_GetElementsInView(view);
+	
+	if (!elms) {
+		console.log("Error: cView_getTopLevelElementsOf");
+		err = new Error();
+		console.log(err.stack);
+	}	
+	
+	elms.each(function(e) {
 
+		var isBook = false;
+
+		if (e.prop(const_prop_dct_type) === const_conceptType_representation__book)
+			isBook = true;
+		
+		if (isBook) {
+			
+			if (books == null) {
+				books = $(e);
+			}
+			else {
+				books.add($(e));
+			}
+			
+		}
+
+
+	});
+	
+	
+	return books;
+	
+}
 
 function cView_asciidocAutoDoc2(view, sectionLevel) {
 
 	var docString = "";
-	var topLevelElms = cView_getTopLevelElementsOf(view);
 	
+	var books = cView_getAutodocBooksInView(view);	
+	if (!books)
+		lib_Error("No books in view; i.e. ..");
 	
-	topLevelElms.each(function(te) {
-		
-		//console.log("Documenting " + te.name + ";" + te.prop(const_prop_dct_type) );
 
-		if (te.prop(const_prop_dct_type) === const_conceptType_representation__book)
-			docString += cBook_autodoc(te, sectionLevel);
-		else {
-			window.alert("Problem: Found top level type " + te.prop(const_prop_dct_type) + ", but expected " + const_conceptType_representation__book);
-			exit();
-		}
-		//docString += cElement_documentBook(book, sectionLevel);
-		
+	books.each(function(book) {
+		docString += cBook_autodoc(book, sectionLevel);
 	});
 	
 	return docString;

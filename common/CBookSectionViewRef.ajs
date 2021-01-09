@@ -9,26 +9,84 @@ load(__DIR__ + "c_Model.ajs");
 
 function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
 
+	var docString = "";
+
+
 	// precondition:
 	if (section.prop(const_prop_dct_type) != const_conceptType_representation__archimateView) {
-		window.alert("Error (CBookSectionViewRef_autodoc): " + const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
-		exit();
+		lib_Error(const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
 	}
-	// take the description from the referenced view, if it exists
-	var refViewId = section.prop(const_prop_view_reference);
-	if (!refViewId) {
-		window.alert("Problem: Missing propery " + const_prop_view_reference + " for " + section.name + " with " + const_prop_dct_type + " = " + const_prop_view_reference);
-		exit();
-	}
-	var refView = cModel_GetViewWithId(refViewId);
-	if (refView.documentation)
-		docString += refView.documentation;
-	else
-		docString += section.documentation;
 	
-	// erik ++
+	
+	var refViewId = section.prop(const_prop_view_reference);
+
+	if (!refViewId)
+		lib_Error("Missing propery " + const_prop_view_reference + " for " + section.name + " with " + const_prop_dct_type + " = " + const_prop_view_reference);
+
+	// get hold of the referenced view
+	var refView = cModel_GetViewWithId(refViewId);
+	if (!refView)
+		lib_Error("Failed to find referene view with id = " + refViewId + " for CBookSectionViewRef object with name = " + section.name);
+
+	// take the description from the section object, if not empty, otherwise from the referenced view
+	if (section.documentation)
+		docString += section.documentation;
+	else
+		docString += refView.documentation; 
+		
+
+	docString += "\n\n";
+	docString += "." + section.name;
+	docString += "\nimage::" +  section.name + ".png" + "[alt=" + section.name + " image]";
+		
+	//cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+				
+	// todo: ",link = ..." for link to published web view
+	docString += "\n\n"
+	
+	
 	
 	return docString;
 
 
 }
+
+
+/***
+Idea: Create representation objects from viewrefs - look at this code to understand...
+
+        $(e).children().each(function (viewRefs) {
+			
+			console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ":" + viewRefs.prop(const_prop_dct_type)+ ")" );
+
+            if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model'))) {
+
+                // Find the actual linked views
+                var viewsCollection = $('archimate-diagram-model');
+                viewsCollection.add($('sketch-model'));
+				
+				var duplicate = false;
+				var alreadyFound = false;
+                viewsCollection.each(function (linkedView) {
+					
+					//console.log("a View: " + linkedView.name + ": " + linkedView.id);			
+                    // this doesn't cater for duplicate view names, sorry
+                    if (linkedView.name === viewRefs.name) {
+                        //viewList.push([viewRefs, linkedView]);
+						console.log("--viewRefs.name: " + viewRefs.name + ": " + viewRefs.id);
+						if (alreadyFound) {
+							duplicate = true;
+							console.log("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+							window.alert("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+							//exit();
+						}
+						else
+						 alreadyFound = true;
+						
+                    }
+                });
+            }
+
+
+        });
+**/

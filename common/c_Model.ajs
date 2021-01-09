@@ -330,7 +330,11 @@ function cModel_GetViewWithId(id) {
 	}
 	
 	var view = views.first();
-	console.log("viewname = " + view.name);
+	
+	if (!view)
+		lib_Error("Failed to find view with id = " + id);
+ 	
+	//console.log("viewname = " + view.name);
 	return views.first();
 		
 }

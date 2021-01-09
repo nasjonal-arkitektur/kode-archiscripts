@@ -8,7 +8,6 @@ load(__DIR__ + "c_BookSection.ajs");
 
 function cBook_autodoc(bookElement, sectionLevel) {
 
-	var autodocView =  bookElement.view; //needed?
 	var book = bookElement.concept;
 	var docString = "";
 
@@ -27,8 +26,9 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	var firstSection = cBook_determineFirstSection(book);
 	//console.log("cBook_autodoc: First secton is " + firstSection.name);
 	
-	// starting with the first section, recursively drill down the hierarchy, go to next sibling section and so on
-	docString += cBookSection_autodoc(firstSection, sectionLevel + 1);
+	if (firstSection)
+		// starting with the first section, recursively drill down the hierarchy, go to next sibling section and so on
+		docString += cBookSection_autodoc(firstSection, sectionLevel + 1);
 	
 	return docString;
 }
@@ -83,57 +83,56 @@ function cBook_determineFirstSection(book) {
 
 
 	if (bookSections === null) {
-		window.alert("Problem: No sections in book " + book.name + ". Exiting...");
-		exit();
+		lib_Warning("No sections in book " + book.name);
 	}
-	
-	
+	else {
 
-	// Test output list of all sectons
-	var test_output_all_sections = true;
-	if (test_output_all_sections) {
-		bookSections.each(function(s) {
-			
-			console.log("Book " + book.name + ", section " +  s.name);
+		// Test output list of all sectons
+		var test_output_all_sections = false;
+		if (test_output_all_sections) {
+			bookSections.each(function(s) {
+				
+				console.log("Book " + book.name + ", section " +  s.name);
 
-		});
-	}
-	
-	// determine which section comes first (assume only one)
-
-	bookSections.each(function(section) {
-		
-		if (!determined) {
-			//console.log("determine firstSection, considering section  " + section.name);
-			
-			var incomingAssociationRels = $(section).inRels("association-relationship").size(); // i.e. for now consider only association-relationship, but see below
-
-			
-			if (incomingAssociationRels == 0) { // i.e. no preceeding chapter at the same hierarchy level
-				firstSection = section; // assume, but still need to check...
-					
-				bookSections.each(function(otherSection) {
-					//if (section != otherSection && cConcept_isSubConceptOf(section, otherSection)) {
-					if (cConcept_isSubConceptOf(section, otherSection)) {
-						console.log(section + " is subsection of " + otherSection);
-						firstSection = null;
-					}
-				});
-
-				if (firstSection) {
-					//console.log("cBook_determineFirstSection: First section is " + firstSection.name);
-					determined = true;
-					//return firstSection;
-					
-				}
-
-			}
+			});
 		}
-	});
-	
-	if (!firstSection) {
-		window.alert("Problem: Unable to determine which is the first section of book " + book.name + ". Exiting...");
-		exit();
+		
+		// determine which section comes first (assume only one)
+
+		bookSections.each(function(section) {
+			
+			if (!determined) {
+				//console.log("determine firstSection, considering section  " + section.name);
+				
+				var incomingAssociationRels = $(section).inRels("association-relationship").size(); // i.e. for now consider only association-relationship, but see below
+
+				
+				if (incomingAssociationRels == 0) { // i.e. no preceeding chapter at the same hierarchy level
+					firstSection = section; // assume, but still need to check...
+						
+					bookSections.each(function(otherSection) {
+						//if (section != otherSection && cConcept_isSubConceptOf(section, otherSection)) {
+						if (cConcept_isSubConceptOf(section, otherSection)) {
+							console.log(section + " is subsection of " + otherSection);
+							firstSection = null;
+						}
+					});
+
+					if (firstSection) {
+						//console.log("cBook_determineFirstSection: First section is " + firstSection.name);
+						determined = true;
+						//return firstSection;
+						
+					}
+
+				}
+			}
+		});
+		
+		if (!firstSection) {
+			window.alert("Problem: Unable to determine which is the first section of book " + book.name + ". Exiting...");
+			exit();
+		}
 	}
 	
 	return firstSection;
