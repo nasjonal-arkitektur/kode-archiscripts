@@ -6,8 +6,9 @@ load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
 load(__DIR__ + "c_BookSection.ajs");
 
-function cBook_autodoc(bookElement, hierarchyLevel) {
+function cBook_autodoc(bookElement, sectionLevel) {
 
+	var autodocView =  bookElement.view; //needed?
 	var book = bookElement.concept;
 	var docString = "";
 
@@ -19,18 +20,55 @@ function cBook_autodoc(bookElement, hierarchyLevel) {
 	}
 
 
-
 	// generate book header
-	docString += "= " + book.name + "\n\n";  // to-do: SECTIONlEVEL!!!!!		
+	docString += cBook_bookHeader(book, sectionLevel);
 
 	//determine first section
 	var firstSection = cBook_determineFirstSection(book);
 	//console.log("cBook_autodoc: First secton is " + firstSection.name);
 	
-	// starting with the first section, recursively drill down the hierarchy and go to next sibling section
-	docString += cBookSection_autodoc(firstSection, hierarchyLevel);
+	// starting with the first section, recursively drill down the hierarchy, go to next sibling section and so on
+	docString += cBookSection_autodoc(firstSection, sectionLevel + 1);
+	
+	return docString;
+}
 
-	//docString += cBookSection_documentViewRef(book, sectionLevel);
+function cBook_bookHeader(book, sectionLevel) {
+
+	var docString = "";
+	docString += cBook_asciidocTemplateHeader(book);
+
+	// main chapter caption
+	docString += "\n";
+	
+	var headerString = "=";
+	var i;
+	for (i = 0; i < sectionLevel; i++) {
+		headerString += "=";
+	}
+	docString += headerString + " "; 
+	
+	docString += "Om " + book.name;
+	//docString += "Oversikt";
+	// docString += " - " + book.name;
+	docString += "\n";
+
+
+
+	// book description
+	docString += "\n";
+	docString += book.documentation;
+	docString += "\n\n";
+
+/* not here-----------------------
+	docString += "." + book.name;
+	docString += "\nimage::" +  book.name + ".png" + "[alt=" + book.name + " image]";
+				
+	// todo: ",link = ..." for link to published web view
+	docString += "\n\n";
+*/
+
+	return docString;
 }
 
 function cBook_determineFirstSection(book) {
@@ -103,3 +141,40 @@ function cBook_determineFirstSection(book) {
 		
 }
 
+function cBook_asciidocTemplateHeader(book) {
+		
+	var docString = "";
+	var templateheader = 
+	/*
+	"////" + "\n" +
+	"Guide to the below header attributes:" + "\n\n" +
+
+	"    lang: en; no" + "\n" +
+	"    difi_orig_language: en; no" + "\n" +
+	"    difi_translation_status: -; missing; incomplete; OK " + "\n" +
+	"    keywords_en: comma separated list of english keywords (no controlled vocabulary); TBD" + "\n" +
+	"    keywords_no: comma separated list of Norwegian keywords (no controlled vocabulary); TBD  " + "\n\n" +
+		
+	"Note: The _lang_ value may be overridden by a command line parameter." + "\n" +
+	"////" + "\n\n" +
+	*/
+	
+	
+	"= " + book.name + "\n" +
+	":wysiwig_editing: 1" + "\n" +
+	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
+	":imagesdir: ../images" + "\n" +
+	"endif::[]" + "\n" +
+	":toc: left" + "\n" +
+	":toclevels: 9" + "\n" +
+	":sectnums:" + "\n" +
+	":sectnumlevels: 9" + "\n";
+	
+	/*
+	"// The above parameters are processed by scripts included by the following statement" + "\n" +
+	"include::../plattform_felles/includes/commonincludes.adoc[]" + "\n\n";
+	*/
+
+	docString += templateheader;
+	return docString;
+}

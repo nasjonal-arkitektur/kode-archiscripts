@@ -1,0 +1,34 @@
+﻿
+/*
+ * CBookSectionViewRef
+ */
+ 
+load(__DIR__ + "Constants.ajs");
+load(__DIR__ + "c_Model.ajs");
+
+
+function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
+
+	// precondition:
+	if (section.prop(const_prop_dct_type) != const_conceptType_representation__archimateView) {
+		window.alert("Error (CBookSectionViewRef_autodoc): " + const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
+		exit();
+	}
+	// take the description from the referenced view, if it exists
+	var refViewId = section.prop(const_prop_view_reference);
+	if (!refViewId) {
+		window.alert("Problem: Missing propery " + const_prop_view_reference + " for " + section.name + " with " + const_prop_dct_type + " = " + const_prop_view_reference);
+		exit();
+	}
+	var refView = cModel_GetViewWithId(refViewId);
+	if (refView.documentation)
+		docString += refView.documentation;
+	else
+		docString += section.documentation;
+	
+	// erik ++
+	
+	return docString;
+
+
+}

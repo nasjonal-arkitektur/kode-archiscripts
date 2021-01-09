@@ -4,6 +4,7 @@
  
 load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
+load(__DIR__ + "CBookSectionViewRef.ajs");
 
 
 function cBookSection_autodoc(section, hierarchyLevel) {
@@ -34,11 +35,20 @@ function cBookSection_autodoc(section, hierarchyLevel) {
 	
 	docString = headerString + " ";
 	docString += section.name;
-	docString += "\n";
+	docString += "\n\n";
 	
-	// Element description
-	docString += "\n";
-	docString += section.documentation;
+	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section) {
+		// take the description drectly from the representation object
+		docString += section.documentation;
+
+	}
+	
+	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__archimateView) {
+
+		docString += CBookSectionViewRef_autodoc(section, hierarchyLevel);
+
+	}
+	
 	docString += "\n\n";
 	
 	
@@ -94,4 +104,72 @@ function cBookSection_determineFirstSubSection(section) {
 	
 	return firstSubSection; // null = no further subsections
 	
+}
+
+
+
+function cBookSection_documentViewAsAsciidocChapters(section, view, sectionLevel) {
+
+
+	var docString = "";
+
+	// main chapter caption
+	docString += "\n";
+	
+	var headerString = "=";
+	var i;
+	for (i = 0; i < sectionLevel; i++) {
+		headerString += "=";
+	}
+	docString += headerString + " "; 
+	
+	docString += "Oversikt";
+	// docString += " - " + view.name;
+	docString += "\n";
+
+
+
+	// view description
+	docString += "\n";
+	docString += view.documentation;
+	docString += "\n\n";
+
+	// save image of the archi view to file
+//cView_saveViewImageToFile(view);
+	
+	//if (cView_GetImagePath(view)) {
+		docString += "." + view.name;
+		
+		if (const_option_antora) {		
+			docString += "\nimage::" +  view.name + ".png" + "[alt=" + view.name + " image]";
+		}
+		
+		//cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+				
+		// todo: ",link = ..." for link to published web view
+		docString += "\n\n"
+	//}	
+
+	/*
+	if (optionSectionLevel == 2) {
+		docString += "== "; 
+		docString += "Elementer";
+		docString += "\n";
+	}
+	*/
+
+	//topLevelElms = cView_getTopLevelElementsOf(view, elms, rels);
+	topLevelElms = cView_getTopLevelElementsOf(view);
+	
+	
+	topLevelElms.each(function(e) {
+		
+		docString += cView_documentElementHiearchy(view, e, sectionLevel);
+	});	
+	
+	cView_saveViewPageToFile(view, docString);
+	
+	//console.log(docString);
+	
+	return docString;
 }

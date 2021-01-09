@@ -52,11 +52,11 @@ var docString = "";
 var views = CSelection_GetAllSelectedViews()
 views.each(function(view) {
 
-	console.log("Documenting view " + view.name);
+	console.log("Processing autodoc view " + view.name);
 
 	docString = cView_asciidocAutoDoc2(view, 1);
 	cClipboard_SetClipboardString(docString);
-	//console.log(docString);
+	console.log("\n\n\n\n" + docString);
 	
 });	
 

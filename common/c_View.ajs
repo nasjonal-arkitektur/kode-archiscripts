@@ -886,7 +886,7 @@ function cView_asciidocAutoDoc2(view, sectionLevel) {
 	
 	topLevelElms.each(function(te) {
 		
-		console.log("Documenting " + te.name + ";" + te.prop(const_prop_dct_type) );
+		//console.log("Documenting " + te.name + ";" + te.prop(const_prop_dct_type) );
 
 		if (te.prop(const_prop_dct_type) === const_conceptType_representation__book)
 			docString += cBook_autodoc(te, sectionLevel);
@@ -896,109 +896,9 @@ function cView_asciidocAutoDoc2(view, sectionLevel) {
 		}
 		//docString += cElement_documentBook(book, sectionLevel);
 		
-exit();		
-		
-		docString += "= " + book.name + "\n\n";  // to-do: SECTIONlEVEL!!!!!		
-
-		// get the views/sections of the book, as represented by Representation objects with property dct:type = modelx:section:
-		var topChapters = null;
-		var bookSubElms = cElement_getSubElements(book);
-
-
-		if (bookSubElms === null) {
-			window.alert("Problem: No sections in book " + book.name + ". Exiting...");
-			exit();
-		}
-		
-
-		// determine top level sections
-		bookSubElms.each(function(section) {
-			var superElms = cElement_getSuperElements(section);
-			if (superElms.size() === 1) { // the book only
-				console.log("Top level section (before ordering): " + section.name);
-				if (!topChapters)
-					topChapters = $(section);
-				else
-					topChapters.add($(section));
-			}
-		});
-			
-		
-		// determine which section comes first (assume only one)
-		var firstSection = null;
-		topChapters.each(function(section) {
-			
-			var incomingRels = $(section).inRels("association-relationship").size();
-
-			if (incomingRels == 0) {
-				if (!firstSection)
-					firstSection = section;
-				else {
-					window.alert("Problem: Unable to determine which is the first section of the book; more than one section without incoming associations. Exiting...");
-					exit();
-				}
-				
-			}
-		});
-		
-		// output, with top level sections in proper order
-		var topSection = firstSection;
-		while (topSection != null) {
-			//topSection = CDocSection_getNextSection(topSection);
-			console.log("Ordered top level section: " + topSection.name);
-			
-			// get hold of the referenced view object
-			var refViewID = topSection.prop("drill down");
-			if (!refViewID) {
-				window.alert("Problem: Missing property 'drill down' for element with name '" + topSection.name + "'. Exiting");
-				exit();
-			}
-			var refView = cModel_GetViewWithId(refViewID);
-			if (!refView) {
-				window.alert("Error: Failed to get view for element with name '" +  topSection.name + "'. Please check 'drill down' value = " + refViewID );
-				exit();
-			}	
-
-			// doc the view!
-			docString += cView_documentElementHiearchy2(view, topSection, sectionLevel);
-			
-			var outgoingAssociations = $(topSection).outRels("association-relationship");
-			if (outgoingAssociations.size() > 1)
-				window.alert("Problem: More than one outgoing association for section '" + topSection + "'. Exiting...");
-			else if (outgoingAssociations.size() === 0)
-				topSection = null;
-			else {
-				topSection = outgoingAssociations.first().target;
-			}
-		}
-		
-		console.log("docString:\n" + docString);
+	});
 	
-exit();
-		bookSubElms.each(function(section) {
-			var refViewID = section.prop("drill down");
-			if (!refViewID) {
-				window.alert("Problem: Missing property 'drill down' for element with name '" + section.name + "'. Exiting");
-				exit();
-			}
-			var refView = cModel_GetViewWithId(refViewID);
-			if (!refView) {
-				window.alert("Error: Failed to get view for element with name '" +  section.name + "'. Please check 'drill down' value = " + refViewID );
-				exit();
-			}				
-
-		
-			var viewString = "";
-			//viewString += cView_documentViewAsAsciidocChapters(view, sectionLevel);
-			//docString += cView_documentElementHiearchy(view, e, sectionLevel);
-			console.log("viewString:\n" + viewString);
-			
-		});
-
-
-	});	
-
-	
+	return docString;
 }
 
 
