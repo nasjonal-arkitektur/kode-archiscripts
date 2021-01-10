@@ -5,6 +5,7 @@
  
 load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
+//load(__DIR__ + "c_BookSection.ajs");
 
 
 function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
@@ -17,6 +18,65 @@ function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
 		lib_Error(const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
 	}
 	
+
+	//CBookSectionViewRef_documentElementHiearchy(section, first
+	//docString += cView_documentViewAsAsciidocChapters(refView, hierarchyLevel + 1);
+	docString += CBookSectionViewRef_documentViewAsAsciidocChapters(section, hierarchyLevel + 1);
+	
+	
+	return docString;
+
+
+}
+
+
+
+function CBookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLevel) {
+
+	var refView = CBookSectionViewRef_getReferencedView(section);
+
+	var docString = "";
+	
+	var sectionName = "Oversikt"; //rather than section.name
+	docString += cBookSection_SectionHeading(sectionName, sectionLevel);
+	docString += "\n";
+
+	// take the description from the section object, if not  empty, otherwise from the referenced view
+	if (section.documentation)
+		docString += section.documentation;
+	else
+		docString += refView.documentation;
+	
+	docString += "\n\n";
+	docString += "." + section.name;
+	docString += "\nimage::" +  section.name + ".png" + "[alt=" + section.name + " image]";
+	//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+				
+	// todo: ",link = ..." for link to published web view
+	docString += "\n\n"
+
+
+	lib_log("Skipping cView_saveViewImageToFile for now***************************************");
+	//cView_saveViewImageToFile(view);
+	
+
+	var topLevelElms = cView_getTopLevelElementsOf(refView);
+	
+	
+	topLevelElms.each(function(e) {
+		
+		docString += cView_documentElementHiearchy(refView, e, sectionLevel);
+	});	
+
+	lib_log("Skipping cView_saveViewPageToFile... *****************************");
+	//cView_saveViewPageToFile(view, docString);
+
+
+
+	return docString;
+}
+
+function CBookSectionViewRef_getReferencedView(section) {
 	
 	var refViewId = section.prop(const_prop_view_reference);
 
@@ -28,29 +88,10 @@ function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
 	if (!refView)
 		lib_Error("Failed to find referene view with id = " + refViewId + " for CBookSectionViewRef object with name = " + section.name);
 
-	// take the description from the section object, if not empty, otherwise from the referenced view
-	if (section.documentation)
-		docString += section.documentation;
-	else
-		docString += refView.documentation; 
-		
-
-	docString += "\n\n";
-	docString += "." + section.name;
-	docString += "\nimage::" +  section.name + ".png" + "[alt=" + section.name + " image]";
-		
-	//cView_GetImagePath(view) + "[alt=" + view.name + " image]";
-				
-	// todo: ",link = ..." for link to published web view
-	docString += "\n\n"
-	
-	
-	
-	return docString;
-
+ 
+	return refView;
 
 }
-
 
 /***
 Idea: Create representation objects from viewrefs - look at this code to understand...

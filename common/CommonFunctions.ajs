@@ -126,11 +126,33 @@ function lib_Error(errorTxt) {
 	exit();
 }
 
+function lib_ShowTestmessageAndExit(testMessage){
+	
+	var logTxt = "Showing testmessage and exiting:\n" + testMessage + "\n";
+	console.log(logTxt);
+	//window.alert(logTxt);
+	
+	console.log("Stack trace:");
+	console.log("------------:");	
+	err = new Error();
+	console.log(err.stack);
+	
+	exit();
+}
 
 function lib_Warning(warningTxt) {
 
 	var logTxt = "Warning: " + warningTxt + "\n";
 	console.log(logTxt);
 	window.alert(logTxt);
+}
 
+function lib_log(txt) {
+
+	console.log(txt);
+}
+
+function lib_alert(txt) {
+
+	window.alert(txt);
 }

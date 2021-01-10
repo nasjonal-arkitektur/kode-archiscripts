@@ -7,35 +7,42 @@ load(__DIR__ + "c_Model.ajs");
 load(__DIR__ + "CBookSectionViewRef.ajs");
 
 
-function cBookSection_autodoc(section, hierarchyLevel) {
+function cBookSection_SectionHeading(sectionName, sectionLevel) {
+
+	var headerString = "";
+	headerString += "\n";	
+	
+	var i;
+	for (i = 0; i < sectionLevel; i++) {
+		headerString += "=";
+	}
+	
+	headerString += " ";
+	headerString += sectionName;
+	//headerString += "\n";	
+	return headerString;
+}
+
+function cBookSection_autodoc(section, sectionLevel) {
 	
 	// starting with the first section, recursively drilling down the hierarchy and then going to the next sibling section and so on
 	
+	// log:
 	var indent = "";
-	for (var i = 0; i < hierarchyLevel; i++) {
+	for (var i = 0; i < sectionLevel; i++) {
 		indent += "    ";
 	}
+	console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  section.prop(const_prop_dct_type) + ")" + ", level " + sectionLevel);
 	
-	console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  section.prop(const_prop_dct_type) + ")" + ", level " + hierarchyLevel);
-	
-	//hierarchyLevel++;
+
 	var docString = "";
 
 	if (section.type == "junction")
 		return "";
 
 
-	// element chapter caption
-
-	var headerString = "";
-	var i;
-	for (i = 0; i < hierarchyLevel; i++) {
-		headerString += "=";
-	}
+	docString += cBookSection_SectionHeading(section.name, sectionLevel);
 	
-	docString = headerString + " ";
-	docString += section.name;
-	docString += "\n\n";
 	
 	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section) {
 		// always take the description drectly from the representation object
@@ -45,7 +52,7 @@ function cBookSection_autodoc(section, hierarchyLevel) {
 	
 	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__archimateView) {
 
-		docString += CBookSectionViewRef_autodoc(section, hierarchyLevel);
+		docString += CBookSectionViewRef_autodoc(section, sectionLevel);
 
 	}
 	
@@ -55,12 +62,12 @@ function cBookSection_autodoc(section, hierarchyLevel) {
 	// drill down
 	var firstSubSection = cBookSection_determineFirstSubSection(section);
 	if (firstSubSection)
-		docString += cBookSection_autodoc(firstSubSection, hierarchyLevel + 1);	
+		docString += cBookSection_autodoc(firstSubSection, sectionLevel + 1);	
 
 	// next at same level
 	var nextSiblingSection = cBookSection_nextSiblingSection(section);
 	if (nextSiblingSection)
-		docString += cBookSection_autodoc(nextSiblingSection, hierarchyLevel);
+		docString += cBookSection_autodoc(nextSiblingSection, sectionLevel);
 	
 
 	return docString;

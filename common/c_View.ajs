@@ -564,7 +564,74 @@ function cView_documentViewAsAsciidocChapters(view, sectionLevel) {
 	return docString;
 }
 
+function cView_documentRefViewAsAsciidocChapters(view, sectionLevel) {
 
+
+	// input: var view = CSelection_GetTheSelectedView();
+
+	var docString = "";
+	//----------------------------------docString += cView_asciidocTemplateHeader(view);
+
+	// main chapter caption
+	//----------------------docString += "\n";
+	
+	var headerString = "=";
+	var i;
+	for (i = 0; i < sectionLevel; i++) {
+		headerString += "=";
+	}
+	docString += headerString + " "; 
+	
+	docString += "Oversikt";
+	// docString += " - " + view.name;
+	docString += "\n";
+
+
+
+	// view description
+	docString += "\n";
+	docString += view.documentation;
+	docString += "\n\n";
+
+	// save image of the archi view to file
+//cView_saveViewImageToFile(view);
+	
+	//if (cView_GetImagePath(view)) {
+		docString += "." + view.name;
+		
+		if (const_option_antora) {		
+			docString += "\nimage::" +  view.name + ".png" + "[alt=" + view.name + " image]";
+		}
+		
+		//cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+				
+		// todo: ",link = ..." for link to published web view
+		docString += "\n\n"
+	//}	
+
+	/*
+	if (optionSectionLevel == 2) {
+		docString += "== "; 
+		docString += "Elementer";
+		docString += "\n";
+	}
+	*/
+
+	//topLevelElms = cView_getTopLevelElementsOf(view, elms, rels);
+	topLevelElms = cView_getTopLevelElementsOf(view);
+	
+	
+	topLevelElms.each(function(e) {
+		
+		docString += cView_documentElementHiearchy(view, e, sectionLevel);
+	});	
+	
+	cView_saveViewPageToFile(view, docString);
+	
+	//console.log(docString);
+	
+	return docString;
+}
 
 function cView_fixAssumingJustImportedFromSparxEA(view) {
 	
