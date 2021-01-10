@@ -7,6 +7,7 @@ load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
 //load(__DIR__ + "c_BookSection.ajs");
 
+var option_promptFileSave = false;
 
 function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
 
@@ -18,15 +19,9 @@ function CBookSectionViewRef_autodoc(section, hierarchyLevel) {
 		lib_Error(const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
 	}
 	
-
-	//CBookSectionViewRef_documentElementHiearchy(section, first
-	//docString += cView_documentViewAsAsciidocChapters(refView, hierarchyLevel + 1);
 	docString += CBookSectionViewRef_documentViewAsAsciidocChapters(section, hierarchyLevel + 1);
 	
-	
 	return docString;
-
-
 }
 
 
@@ -55,26 +50,113 @@ function CBookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLeve
 	// todo: ",link = ..." for link to published web view
 	docString += "\n\n"
 
-
-	lib_log("Skipping cView_saveViewImageToFile for now***************************************");
-	//cView_saveViewImageToFile(view);
+	var modulePath = CBookSectionViewRef_determineModulePath(section, refView);
 	
+	// save Image
+	CBookSectionViewRef_saveViewImageToFile(section, refView, modulePath);
+
 
 	var topLevelElms = cView_getTopLevelElementsOf(refView);
 	
 	
-	topLevelElms.each(function(e) {
-		
-		docString += cView_documentElementHiearchy(refView, e, sectionLevel);
+	topLevelElms.each(function(elm) {
+		docString += CBookSectionViewRef_DocumentElementHiearchy(refView, elm, sectionLevel);
 	});	
 
-	lib_log("Skipping cView_saveViewPageToFile... *****************************");
-	//cView_saveViewPageToFile(view, docString);
 
-
+	// save asciidoc text
+	CBookSectionViewRef_saveViewPageToFile(section, docString, modulePath);
 
 	return docString;
 }
+
+function CBookSectionViewRef_saveViewImageToFile(section, refView, modulePath) {
+	
+	var imageDirPath = modulePath + "\\" + "images";
+	var pathAndfileName = imageDirPath + "\\" + section.name + ".png";
+
+	cFilesystem_mkDirIfNotExisting(imageDirPath);
+
+	var bytes = $.model.renderViewAsBase64(refView, "PNG");
+	var fileName = null;
+
+	lib_Log("image pathAndfileName = " + pathAndfileName);
+	
+	if (option_promptFileSave)
+		fileName = window.promptSaveFile( { title: "Save view image", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
+	else
+		fileName = pathAndfileName;
+	
+	if (fileName) {
+		$.fs.writeFile(fileName, bytes, "BASE64");
+	}
+	else {
+		lib_Error("Undetermined fileName in cView_saveViewImageToFile.")
+	}
+	
+}
+
+
+function CBookSectionViewRef_saveViewPageToFile(section, docString, modulePath) {
+
+	var pagesDirPath = modulePath + "\\" + "pages";
+	var pathAndfileName = pagesDirPath + "\\" + section.name + ".adoc";
+
+	cFilesystem_mkDirIfNotExisting(pagesDirPath);
+
+	var fileName = null;
+
+	if (option_promptFileSave)
+		fileName = window.promptSaveFile( { title: "Save view text", filterExtensions: [ "*.adoc" ], fileName: pathAndfileName } );
+	else
+		fileName = pathAndfileName;
+	
+		
+	if (fileName) {
+		$.fs.writeFile(fileName, docString);
+	}
+	else {
+		lib_Error("Undetermined fileName in CBookSectionViewRef_saveViewPageToFile.")
+	}
+}
+
+function CBookSectionViewRef_DocumentElementHiearchy(refView, elm, sectionLevel) {
+	
+	sectionLevel++;
+	var docString = "";
+
+	if (elm.type == "junction")
+		return "";
+
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < sectionLevel; i++) {
+		headerString += "=";
+	}
+	
+	docString = headerString + " ";
+	docString += elm.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += elm.documentation;
+	docString += "\n\n";
+		
+	var subElms = cElement_getSubElements(elm);
+	if (subElms != null) {
+		subElms.each(function(se) {
+			docString += CBookSectionViewRef_DocumentElementHiearchy(refView, se, sectionLevel);
+		});
+	}
+	
+	return docString;
+}
+
+
 
 function CBookSectionViewRef_getReferencedView(section) {
 	
@@ -92,6 +174,29 @@ function CBookSectionViewRef_getReferencedView(section) {
 	return refView;
 
 }
+
+function CBookSectionViewRef_determineModulePath(section, refView) {
+
+	var antoraRootPath = cAntoraModule_GetComponentsRootPath();
+	var componentName = cConcept_GetProperty(section, const_prop_antoraComponent);
+	var version = cConcept_GetProperty(section, const_prop_antoraVersion);
+	var moduleName = cConcept_GetProperty(section, const_prop_antoraModule)
+	
+	if (!antoraRootPath)
+		lib_Error("Missing model property " + const_prop_antoraComponentsPath);
+	if (!componentName)
+		lib_Error("Missing element property " + const_prop_antoraComponent +  " for element '" + section.name + "' with property " + const_prop_dct_type + " = " + const_conceptType_representation__archimateView);
+	if (!moduleName)
+		lib_Error("Missing element property " + const_prop_antoraModule +  " for element '" + section.name + "' with property " + const_prop_dct_type + " = "  + const_conceptType_representation__archimateView);
+	if (!version)
+		lib_Error("Missing element property " + const_prop_antoraVersion +  " for element '" + section.name + "' with property " + const_prop_dct_type + " = " + const_conceptType_representation__archimateView);
+	
+	var modulePath = cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version);
+	
+	return modulePath;
+}
+
+
 
 /***
 Idea: Create representation objects from viewrefs - look at this code to understand...

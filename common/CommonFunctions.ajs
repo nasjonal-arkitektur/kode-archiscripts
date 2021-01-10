@@ -111,6 +111,16 @@ console.log("Sliced path: " + path);
 	return path;
 }
 
+function lib_TestExit() {
+	console.log("Preliminary test exit...");
+	
+	console.log("Stack trace:");
+	console.log("------------:");	
+	err = new Error();
+	console.log(err.stack);
+	
+	exit();
+}
 
 function lib_Error(errorTxt) {
 
@@ -147,12 +157,12 @@ function lib_Warning(warningTxt) {
 	window.alert(logTxt);
 }
 
-function lib_log(txt) {
+function lib_Log(txt) {
 
 	console.log(txt);
 }
 
-function lib_alert(txt) {
+function lib_Alert(txt) {
 
 	window.alert(txt);
 }

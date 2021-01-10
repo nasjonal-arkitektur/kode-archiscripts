@@ -19,7 +19,7 @@ function cBookSection_SectionHeading(sectionName, sectionLevel) {
 	
 	headerString += " ";
 	headerString += sectionName;
-	//headerString += "\n";	
+	headerString += "\n";	
 	return headerString;
 }
 

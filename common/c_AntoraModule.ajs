@@ -4,7 +4,25 @@
 
 load(__DIR__ + "c_Filesystem.ajs");
 
+
+function cAntoraModule_GetComponentsRootPath() {	
+
+	var path = model.prop(const_prop_antoraComponentsPath);	
+	return path;
+}
+
 function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version) {
+	
+	
+	// precondition:
+	if (!componentName)
+		lib_Error("Missing componentName");
+	if (!moduleName)
+		lib_Error("Missing moduleName");
+	if (!version)
+		lib_Error("Missing version");
+	
+	
 	
 	var result = null;
 	var foundPath = null;
@@ -13,8 +31,8 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 	// create a list of all the antora component names
 	// examine the modules subdirs (matching the module name) and make sure there are no duplicate file names for the same components
 	
-	console.log("function:cAntoraModule_locateModulePath");
-	console.log("---------------------------------------");
+	//console.log("function:cAntoraModule_locateModulePath");
+	//console.log("---------------------------------------");
 
 	var dirsWithAnAntoraYmlFile = cFilesystem_getDirsWithFile(antoraRootPath, "antora.yml");
 

@@ -50,6 +50,10 @@ var docString = "";
 // var view = CSelection_GetTheSelectedView();
 
 var views = CSelection_GetAllSelectedViews()
+
+if (!views || views.size() == 0)
+	lib_Error("No views selected");
+
 views.each(function(view) {
 
 	console.log("Processing autodoc view " + view.name);

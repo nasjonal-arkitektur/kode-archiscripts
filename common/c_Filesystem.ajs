@@ -34,6 +34,21 @@ function cFilesystem_getSubDirs(dirPath) {
 	
 }
 
+function cFilesystem_AddSubPath(aPath, aSubPath) {
+	
+	var completePath = aPath + aSubPath;
+	completePath = completePath.replace("\\\\", "\\");
+
+	return completePath;
+}
+
+function cFilesystem_CleanupPath(aPath) {
+	
+	var path = aPath.replace("\\\\", "\\");
+
+	return path;
+}
+
 function cFilesystem_getDirsWithFile(rootPath, fileName) {
 
 	var resultList = [];
@@ -57,14 +72,12 @@ function cFilesystem_getDirsWithFile(rootPath, fileName) {
 	
 	var i;
 	for (i = 0; i < list.length; i++) {
-
-		var file = new File(rootPath + "\\" + list[i]);
+		var path = rootPath + "\\" + list[i];
+		var file = new File(path);
 		if (!file.isDirectory()) {
 			//console.log("File: " + file.getName());
 			if (file.getName() === fileName) {
-				//resultList.push(rootPath + "\\" + fileName);
 				resultList.push(rootPath);
-				//console.log("Added file: " + rootPath + "\\" + fileName + " to list");
 			}
 		}
     }
@@ -78,6 +91,8 @@ function cFilesystem_getDirsWithFile(rootPath, fileName) {
 				//console.log("Dir: " + file.getName());
 				
 				var fullPath = rootPath + "\\" + file.getName();
+				fullPath = cFilesystem_CleanupPath(fullPath);
+
 				//console.log("Drilldown to dir " + fullPath);
 				
 				var subList = cFilesystem_getDirsWithFile(fullPath, fileName);
@@ -149,6 +164,15 @@ function cFilesystem_listFiles(filePath) {
     }
 	
 	return true; // ??
+}
+
+function cFilesystem_mkDirIfNotExisting(dirPath) {
+	console.log("cFilesystem_createDir " + dirPath);
+	var File = Java.type("java.io.File");
+	
+	var f = new File(dirPath); 
+
+	f.mkdir(); // will return null if the dir already exists
 }
 
 
