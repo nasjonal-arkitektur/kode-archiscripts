@@ -1,0 +1,105 @@
+﻿load(__DIR__ + "/common/Constants.ajs");
+load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "/common/c_View.ajs");
+load(__DIR__ + "/common/c_Clipboard.ajs");
+load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "/common/c_Concept.ajs");
+load(__DIR__ + "/common/c_Book.ajs");
+load(__DIR__ + "/common/c_Filesystem.ajs");
+load(__DIR__ + "/common/c_AntoraModule.ajs");
+
+	
+console.show();
+console.clear();
+ 
+console.log("Autodoc utility, convert viewref elements to representation objects.ajs");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element. Exiting...");
+	exit();
+}
+else if (selectedOccurences.size() > 1) {
+	window.alert("More than one object selected. Please select only one element. Exiting...");
+	exit();
+}
+	
+var selectedOccurence = selectedOccurences.first();
+
+var previousElm = null;
+$(selectedOccurence).children().each(function (viewRefs) {
+	
+	console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ")" );
+
+	if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model'))) {
+
+		// Find the actual linked views
+		var viewsCollection = $('archimate-diagram-model');
+		viewsCollection.add($('sketch-model'));
+		
+		var duplicate = false;
+		var alreadyFound = false;
+		viewsCollection.each(function (linkedView) {
+			
+			//console.log("a View: " + linkedView.name + ": " + linkedView.id);			
+			// this doesn't cater for duplicate view names, sorry
+			if (linkedView.name === viewRefs.name) {
+				//viewList.push([viewRefs, linkedView]);
+				console.log("--viewRefs.name: " + viewRefs.name + ": " + viewRefs.id);
+				
+				previousElm = transformViewRef(selectedOccurence, viewRefs, linkedView, previousElm );
+				
+				if (alreadyFound) {
+					duplicate = true;
+					console.log("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+					window.alert("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+					//exit();
+				}
+				else
+				 alreadyFound = true;
+				
+			}
+		});
+	}
+
+
+});
+
+function transformViewRef(parentObj, viewRefObj, viewObj, makeRelationFromElm) {
+
+	var thisView = viewRefObj.view;
+
+	console.log("Transformimg " + viewRefObj.name);
+	var concept= model.createElement("representation", viewRefObj.name);
+	concept.documentation = viewObj.documentation;
+	
+	console.log("viewRefObj.x=" + viewRefObj.bounds.x);
+	console.log("viewRefObj.y=" + viewRefObj.bounds.y);
+	
+	var elm = thisView.add(concept, parentObj.bounds.x + viewRefObj.bounds.x, parentObj.bounds.y + viewRefObj.bounds.y, -1, -1);	
+	viewRefObj.delete();
+	
+	var concept = elm.concept;
+	var parentSection = parentObj.concept;
+	cConcept_SetProperty(concept, const_prop_antoraComponent, cConcept_GetProperty(parentSection, const_prop_antoraComponent));
+	cConcept_SetProperty(concept, const_prop_antoraVersion, cConcept_GetProperty(parentSection, const_prop_antoraVersion));
+	cConcept_SetProperty(concept, const_prop_antoraModule, cConcept_GetProperty(parentSection, const_prop_antoraModule));
+
+	cConcept_SetProperty(concept, const_prop_dct_type, const_conceptType_representation__archimateView);
+
+	cConcept_SetProperty(concept, const_prop_view_reference, viewObj.id);
+	cConcept_SetProperty(concept, "drill down", viewObj.id);	
+	
+
+	var newRelation = null;
+	if (makeRelationFromElm) {
+		newRelation = model.createRelationship("association-relationship", "preceeds", makeRelationFromElm.concept, elm.concept); 
+		console.log(newRelation);
+	}
+	
+	return elm;
+
+}
+
+

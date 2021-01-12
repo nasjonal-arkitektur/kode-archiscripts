@@ -60,7 +60,9 @@ function cBook_autodoc(bookElement, sectionLevel) {
 function cBook_bookHeader(book) {
 
 	var docString = "";
-	docString += cAntoraModule_asciidocTemplateHeader(book.name)
+	docString += cAntoraModule_asciidocTemplateHeader(book.name, cBookSection_getAntoraModule(book), 
+														cBookSection_getAntoraComponent(book), 
+														cBookSection_getAntoraVersion(book));
 	docString += "\n";
 
 	

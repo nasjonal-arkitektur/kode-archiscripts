@@ -30,7 +30,9 @@ function CBookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLeve
 
 	var docString = "";
 	
-	docString += cAntoraModule_asciidocTemplateHeader(section.name);
+	docString += cAntoraModule_asciidocTemplateHeader(section.name, cBookSection_getAntoraModule(section), 
+														cBookSection_getAntoraComponent(section), 
+														cBookSection_getAntoraVersion(section));
 	
 	var refView = CBookSectionViewRef_getReferencedView(section);
 
@@ -48,7 +50,7 @@ function CBookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLeve
 	
 	docString += "\n\n";
 	docString += "." + section.name;
-	docString += "\nimage::" +  section.name + ".png" + "[alt=" + section.name + " image]";
+	docString += "\nimage::" + "{imagepath}" + section.name + ".png" + "[alt=" + section.name + " image]";
 	//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
 				
 	// todo: ",link = ..." for link to published web view

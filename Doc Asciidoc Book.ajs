@@ -49,7 +49,7 @@ console.log("Script starting");
 var docString = "";
 // var view = CSelection_GetTheSelectedView();
 
-var views = CSelection_GetAllSelectedViews()
+var views = CSelection_GetAllSelectedViews();
 
 if (!views || views.size() == 0)
 	lib_Error("No views selected");

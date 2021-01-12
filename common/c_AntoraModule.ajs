@@ -78,9 +78,15 @@ function cAntoraModule_getModulesUnderPath(modulesPath) {
 
 
 
-function cAntoraModule_asciidocTemplateHeader(moduleName) {
-		
+function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, componentName, version) { 
+
+
+	var versionStr = "";
+	if (version)
+		versionStr = version + "@";
+
 	var docString = "";
+
 	var templateheader = 
 	/*
 	"////" + "\n" +
@@ -97,13 +103,17 @@ function cAntoraModule_asciidocTemplateHeader(moduleName) {
 	*/
 	
 	
-	"= " + moduleName + "\n" +
+	"= " + sectionName + "\n" +
 	":wysiwig_editing: 1" + "\n" +
 	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
-	":imagesdir: ../images" + "\n" +
+	//":imagesdir: ../images" + "\n" +
+	":imagepath: ../images/" + "\n" +
+	"endif::[]" + "\n" +
+	"ifeval::[{wysiwig_editing} == 0]" + "\n" +
+	":imagepath: " + versionStr + componentName +":" + moduleName + ":" + "\n" +
 	"endif::[]" + "\n" +
 	":toc: left" + "\n" +
-	":toclevels: 9" + "\n" +
+	":toclevels: 3" + "\n" +
 	":sectnums:" + "\n" +
 	":sectnumlevels: 9" + "\n\n";
 	

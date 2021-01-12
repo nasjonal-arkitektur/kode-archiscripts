@@ -100,6 +100,8 @@ function CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(itemType, 
 }
 
 
+
+
 /**************************************************
 **************************************************/
 
@@ -118,6 +120,9 @@ var CSelection_FindElementsWithNameInList = function(elementName, list) {
 		return ( (o.name == elementName) );
 	});
 }
+
+
+
 
 var CSelection_GetDuplicatesInlistGivenElementNameNotType = function(name, list) {
 
@@ -191,6 +196,8 @@ function CSelection_GetDirectlySelectedViews() {
 	var selectedViews = $(selection).filter("archimate-diagram-model");
 	return selectedViews;
 }
+
+
 
 function CSelection_GetViewsUnderSelectedFoldersAndSubfolders() {
 	
@@ -367,6 +374,9 @@ function CSelection_GetDirectlySelectedRelations() {
 	return selectedRels;
 }
 
+
+
+
 function CSelection_GetTheSelectedView() { 
 
 	var selectedViews = $(selection).filter("view");
@@ -385,4 +395,11 @@ function CSelection_GetTheSelectedView() {
 	//console.log(view.name + " " + view.id);
 	
 	return view;
+}
+
+
+function CSelection_GetDirectlySelectedViewRefElements() {
+
+	var selectedOccurences = $(selection).filter("element"); // rather viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model')
+	return selectedOccurences;
 }
