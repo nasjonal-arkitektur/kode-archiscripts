@@ -52,7 +52,7 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 				var foundPath = modulesPath + "\\" + "modules" + "\\" + moduleName;
 				
 				if (!result) {
-					console.log("Located dirModule (not yet checked componentName and version of antora.yml): " + foundPath);
+					//console.log("Located dirModule (not yet checked componentName and version of antora.yml): " + foundPath);
 					result = foundPath;
 				}
 				else {
@@ -77,3 +77,41 @@ function cAntoraModule_getModulesUnderPath(modulesPath) {
 }
 
 
+
+function cAntoraModule_asciidocTemplateHeader(moduleName) {
+		
+	var docString = "";
+	var templateheader = 
+	/*
+	"////" + "\n" +
+	"Guide to the below header attributes:" + "\n\n" +
+
+	"    lang: en; no" + "\n" +
+	"    difi_orig_language: en; no" + "\n" +
+	"    difi_translation_status: -; missing; incomplete; OK " + "\n" +
+	"    keywords_en: comma separated list of english keywords (no controlled vocabulary); TBD" + "\n" +
+	"    keywords_no: comma separated list of Norwegian keywords (no controlled vocabulary); TBD  " + "\n\n" +
+		
+	"Note: The _lang_ value may be overridden by a command line parameter." + "\n" +
+	"////" + "\n\n" +
+	*/
+	
+	
+	"= " + moduleName + "\n" +
+	":wysiwig_editing: 1" + "\n" +
+	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
+	":imagesdir: ../images" + "\n" +
+	"endif::[]" + "\n" +
+	":toc: left" + "\n" +
+	":toclevels: 9" + "\n" +
+	":sectnums:" + "\n" +
+	":sectnumlevels: 9" + "\n\n";
+	
+	/*
+	"// The above parameters are processed by scripts included by the following statement" + "\n" +
+	"include::../plattform_felles/includes/commonincludes.adoc[]" + "\n\n";
+	*/
+
+	docString += templateheader;
+	return docString;
+}

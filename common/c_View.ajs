@@ -948,11 +948,9 @@ function cView_getAutodocBooksInView(view) {
 	var books = null;
 	var elms = cView_GetElementsInView(view);
 	
-	if (!elms) {
-		console.log("Error: cView_getTopLevelElementsOf");
-		err = new Error();
-		console.log(err.stack);
-	}	
+	if (!elms)
+		lib_Error("Empty view?");
+		
 	
 	elms.each(function(e) {
 

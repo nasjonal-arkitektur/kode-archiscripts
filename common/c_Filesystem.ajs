@@ -167,7 +167,7 @@ function cFilesystem_listFiles(filePath) {
 }
 
 function cFilesystem_mkDirIfNotExisting(dirPath) {
-	console.log("cFilesystem_createDir " + dirPath);
+	//console.log("cFilesystem_createDir " + dirPath);
 	var File = Java.type("java.io.File");
 	
 	var f = new File(dirPath); 
@@ -177,7 +177,7 @@ function cFilesystem_mkDirIfNotExisting(dirPath) {
 
 
 function cFilesystem_writeTextFile(filePath, txt) {
-	console.log("cFilesystem_writeTextFile");
+	//console.log("cFilesystem_writeTextFile");
 	$.fs.writeFile(filePath, txt);
 }
 

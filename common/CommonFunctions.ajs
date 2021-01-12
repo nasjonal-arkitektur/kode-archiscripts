@@ -128,13 +128,27 @@ function lib_Error(errorTxt) {
 	console.log(logTxt);
 	window.alert(logTxt);
 	
-	console.log("Stack trace:");
-	console.log("------------:");	
+	lib_Stackdump();
+	exit();
+
+}
+
+
+function lib_Stackdump() {
+	
+	console.log("Stackdump:");
+	console.log("---------_");	
 	err = new Error();
 	console.log(err.stack);
-	
-	exit();
 }
+
+
+function lib_VerifyNotNull(object) {
+
+	if (!object)
+		lib_Error("Unexpected null-pointer to object");
+}
+
 
 function lib_ShowTestmessageAndExit(testMessage){
 	

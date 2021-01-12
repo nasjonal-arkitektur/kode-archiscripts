@@ -10,6 +10,8 @@ function cBook_autodoc(bookElement, sectionLevel) {
 
 	var book = bookElement.concept;
 	var docString = "";
+	
+	
 
 	console.log("Top level element: " + book.name + " (" +  book.prop(const_prop_dct_type) + ")" );
 
@@ -20,56 +22,77 @@ function cBook_autodoc(bookElement, sectionLevel) {
 
 
 	// generate book header
-	docString += cBook_bookHeader(book, sectionLevel);
+	docString += cBook_bookHeader(book);
+	// Include a first section with the documenation of the book object, ifnot empty
+	docString += cBook_aboutBookChapter(book, sectionLevel);
 
 	//determine first section
 	var firstSection = cBook_determineFirstSection(book);
 	//console.log("cBook_autodoc: First secton is " + firstSection.name);
 	
-	if (firstSection)
+	if (firstSection) {
 		// starting with the first section, recursively drill down the hierarchy, go to next sibling section and so on
-		docString += cBookSection_autodoc(firstSection, sectionLevel + 1);
+		//docString += cBookSection_autodoc(firstSection, sectionLevel);
+		
+		var nextSiblingSection = firstSection;
+		docString += ":leveloffset: +1" + "\n";
+		while (nextSiblingSection) {
+			
+			//docString += "=" + " " + nextSiblingSection.name + "\n"; // note: hardcoded top level sectionLevel!!!!!!!!!!!!!!!!!!!
+			docString += cBookSection_IncludeSubsection(book, nextSiblingSection);
+			
+			cBookSection_autodoc(nextSiblingSection, sectionLevel + 1);	
+			nextSiblingSection = cBookSection_nextSiblingSection(nextSiblingSection);
+			
+			
+		}
+		docString += ":leveloffset: -1" + "\n";
+	}
 	
-	return docString;
+	// save asciidoc text
+	var modulePath = CBookSection_determineModulePath(book);
+	CBookSection_saveViewPageToFile(book, docString, modulePath);	
+	
+	
+	return true; //??
 }
 
-function cBook_bookHeader(book, sectionLevel) {
+function cBook_bookHeader(book) {
 
 	var docString = "";
-	docString += cBook_asciidocTemplateHeader(book);
-
-	// main chapter caption
+	docString += cAntoraModule_asciidocTemplateHeader(book.name)
 	docString += "\n";
+
 	
-	var headerString = "=";
-	var i;
-	for (i = 0; i < sectionLevel; i++) {
-		headerString += "=";
-	}
-	docString += headerString + " "; 
-	
-	docString += "Om " + book.name;
-	//docString += "Oversikt";
-	// docString += " - " + book.name;
-	docString += "\n";
-
-
-
-	// book description
-	docString += "\n";
-	docString += book.documentation;
-	docString += "\n\n";
-
-/* not here-----------------------
-	docString += "." + book.name;
-	docString += "\nimage::" +  book.name + ".png" + "[alt=" + book.name + " image]";
-				
-	// todo: ",link = ..." for link to published web view
-	docString += "\n\n";
-*/
-
 	return docString;
 }
+
+function cBook_aboutBookChapter(book, sectionLevel) {
+	
+	if (book.documentation.length() > 0) {	
+		var headerString = "==";
+		
+		/*
+		var i;
+		for (i = 0; i < sectionLevel; i++) {
+			headerString += "=";
+		}
+		*/	
+		docString += headerString + " "; 
+		
+		docString += "Om " + book.name;
+		//docString += "Oversikt";
+		// docString += " - " + book.name;
+		docString += "\n";
+
+		// book description
+		docString += "\n";
+		docString += book.documentation;
+		docString += "\n\n";
+	}
+	return docString;
+}
+
 
 function cBook_determineFirstSection(book) {
 	
@@ -136,44 +159,7 @@ function cBook_determineFirstSection(book) {
 	}
 	
 	return firstSection;
-
+	
 		
 }
 
-function cBook_asciidocTemplateHeader(book) {
-		
-	var docString = "";
-	var templateheader = 
-	/*
-	"////" + "\n" +
-	"Guide to the below header attributes:" + "\n\n" +
-
-	"    lang: en; no" + "\n" +
-	"    difi_orig_language: en; no" + "\n" +
-	"    difi_translation_status: -; missing; incomplete; OK " + "\n" +
-	"    keywords_en: comma separated list of english keywords (no controlled vocabulary); TBD" + "\n" +
-	"    keywords_no: comma separated list of Norwegian keywords (no controlled vocabulary); TBD  " + "\n\n" +
-		
-	"Note: The _lang_ value may be overridden by a command line parameter." + "\n" +
-	"////" + "\n\n" +
-	*/
-	
-	
-	"= " + book.name + "\n" +
-	":wysiwig_editing: 1" + "\n" +
-	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
-	":imagesdir: ../images" + "\n" +
-	"endif::[]" + "\n" +
-	":toc: left" + "\n" +
-	":toclevels: 9" + "\n" +
-	":sectnums:" + "\n" +
-	":sectnumlevels: 9" + "\n";
-	
-	/*
-	"// The above parameters are processed by scripts included by the following statement" + "\n" +
-	"include::../plattform_felles/includes/commonincludes.adoc[]" + "\n\n";
-	*/
-
-	docString += templateheader;
-	return docString;
-}
