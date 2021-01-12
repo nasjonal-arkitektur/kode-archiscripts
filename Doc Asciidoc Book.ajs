@@ -59,8 +59,8 @@ views.each(function(view) {
 	console.log("Processing autodoc view " + view.name);
 
 	docString = cView_asciidocAutoDoc2(view, 1);
-	cClipboard_SetClipboardString(docString);
-	console.log("\n\n\n\n" + docString);
+	//cClipboard_SetClipboardString(docString);
+	//console.log("\n\n\n\n" + docString);
 	
 });	
 
