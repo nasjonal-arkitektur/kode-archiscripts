@@ -7,6 +7,13 @@ load(__DIR__ + "c_Filesystem.ajs");
 
 function cAntoraModule_GetComponentsRootPath() {	
 
+	if (!model.prop(const_prop_antoraComponentsPath))
+		lib_Error("Missing model property " + const_prop_antoraComponentsPath);
+	
+	else if (!cFilesystem_directoryExists(model.prop(const_prop_antoraComponentsPath)) )
+		lib_Error("Value for property " + const_prop_antoraComponentsPath + " is not a directory");
+	
+
 	var path = model.prop(const_prop_antoraComponentsPath);	
 	return path;
 }

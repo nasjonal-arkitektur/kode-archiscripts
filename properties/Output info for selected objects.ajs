@@ -1,0 +1,31 @@
+/*
+ * Show info for selected objects
+ */
+ 
+
+console.show();
+console.clear();
+console.log("Show info for selected objects");
+ 
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+
+var occurences = CSelection_GetDirectlySelectedOccurences();
+
+console.log("type" + "\t" + "name" + "\t" + "id" + "\t"+ "view" + "\t" + "concept.id");
+
+occurences.each(function(o) {
+	
+	var isConcept = false;
+	if (o.id == o.concept.id)
+		isConcept = true;
+	
+	if (isConcept)
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o) + "\t" + "(is concept)" );
+	else
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o) + "\t" + o.concept.id + o.id + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+	
+	
+	cConcept_GetProperties(o.concept);
+	
+});	

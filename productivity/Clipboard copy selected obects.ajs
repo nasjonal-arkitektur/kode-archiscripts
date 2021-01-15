@@ -1,0 +1,63 @@
+/*
+ * List selected concepts
+ */
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+//load(__DIR__ + "Constants.ajs");
+//load(__DIR__ + "./tests/c_Test.ajs");
+
+console.clear();
+console.log("List selected concepts");
+ 
+var conceptType = window.prompt("Specify Archi type if you want to filter selection based on type (or leave empty and click OK to proceed)", "");
+if (conceptType == null) // means user hit Cancel
+	exit();
+//console.log("conceptType: " , conceptType);
+
+
+var namespace = window.prompt("Specify namespace if you want to filter se	lection based on a given namespace (or leave empty and click OK to proceed)", "");
+if (namespace == null) // means user hit Cancel
+	exit();
+
+
+var list = null;
+list = CSelection_GetSelectedConcepts(conceptType, namespace);
+
+
+
+if (list == null)
+	window.alert("No matching concepts found");
+else {	
+
+    // Use the Java Collections sort routine
+	var Collections = Java.type("java.util.Collections");
+	Collections.sort(list); // note: e.g. e-seal is not sorted correctly 
+    
+	
+	var clibBoardString= "";
+	
+	list.each(function(o) {
+		console.log(o.name + "\t" + o.prop(const_prop_namespace) + "\t" + o.type + "\t" + o.id);
+		
+		clibBoardString += o.id + "\n";
+		
+		
+	});
+	
+	// remove the last "\n"
+	clibBoardString = clibBoardString.substring(0, clibBoardString.length - 1);
+	
+	cClipboard_SetClipboardString(clibBoardString);
+	
+	// test:
+	/*
+	var testit = cClipboard_GetClipboardString();
+	console.log("Testit!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	console.log(testit);
+	*/
+	
+	
+}
+console.log("Script completed");

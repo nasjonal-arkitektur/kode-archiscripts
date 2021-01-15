@@ -253,8 +253,14 @@ function cFilesystem_listFilesWithExtension(filePath, ext) {
 	
 }
 
+function cFilesystem_directoryExists(directoryPath) {
 
-
+	var File = Java.type("java.io.File");
+	var dir = new File(directoryPath);
+	
+	var result = dir.isDirectory();
+	return result;
+}
 
 function cFilesystem_test_recFindByExt(base,ext,files,result) // erik: just starting to experiment with parsing files in jacascript
 {
