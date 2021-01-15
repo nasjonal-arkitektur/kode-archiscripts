@@ -110,9 +110,13 @@ function cBookSection_autodoc(section, sectionLevel) {
 function CBookSection_documentAsAsciidoc(section, sectionLevel) {
 	
 	var docString = "";
+<<<<<<< HEAD
 	docString += cAntoraModule_asciidocTemplateHeader(section.name, cBookSection_getAntoraModule(section), 
 														cBookSection_getAntoraComponent(section), 
 														cBookSection_getAntoraVersion(section));
+=======
+	docString += cAntoraModule_asciidocTemplateHeader(section.name);
+>>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
 
 	// take the description from the section object, if not  empty
 	if (section.documentation) {
@@ -359,7 +363,11 @@ function CBookSection_determineModulePath(section) {
 	var antoraRootPath = cAntoraModule_GetComponentsRootPath();
 	var componentName = cConcept_GetProperty(section, const_prop_antoraComponent);
 	var version = cConcept_GetProperty(section, const_prop_antoraVersion);
+<<<<<<< HEAD
 	var moduleName = cConcept_GetProperty(section, const_prop_antoraModule);
+=======
+	var moduleName = cConcept_GetProperty(section, const_prop_antoraModule)
+>>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
 	
 	if (!antoraRootPath)
 		lib_Error("Missing model property " + const_prop_antoraComponentsPath);

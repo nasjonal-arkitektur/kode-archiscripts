@@ -30,9 +30,13 @@ function CBookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLeve
 
 	var docString = "";
 	
+<<<<<<< HEAD
 	docString += cAntoraModule_asciidocTemplateHeader(section.name, cBookSection_getAntoraModule(section), 
 														cBookSection_getAntoraComponent(section), 
 														cBookSection_getAntoraVersion(section));
+=======
+	docString += cAntoraModule_asciidocTemplateHeader(section.name);
+>>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
 	
 	var refView = CBookSectionViewRef_getReferencedView(section);
 
