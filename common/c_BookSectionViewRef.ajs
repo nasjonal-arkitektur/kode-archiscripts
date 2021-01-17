@@ -1,0 +1,208 @@
+﻿
+/*
+ * c_BookSectionViewRef
+ */
+ 
+load(__DIR__ + "Constants.ajs");
+load(__DIR__ + "c_Model.ajs");
+
+//load(__DIR__ + "c_BookSection.ajs");
+
+
+
+function c_BookSectionViewRef_autodoc(section, hierarchyLevel) {
+
+	var docString = "";
+
+
+	// precondition:
+	if (section.prop(const_prop_dct_type) != const_conceptType_representation__archimateView) {
+		lib_Error(const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
+	}
+	
+	docString += c_BookSectionViewRef_documentViewAsAsciidocChapters(section, hierarchyLevel + 1);
+	
+	return docString;
+}
+
+
+
+function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLevel) {
+
+	var docString = "";
+	
+
+	docString += cAntoraModule_asciidocTemplateHeader(section.name, cBookSection_getAntoraModule(section), 
+														cBookSection_getAntoraComponent(section), 
+														cBookSection_getAntoraVersion(section));
+
+	
+	var refView = c_BookSectionViewRef_getReferencedView(section);
+
+
+	var sectionName = section.name + " - oversikt"; //rather than section.name
+	docString += cBookSection_SectionHeading(sectionName, 2);
+	docString += "\n";
+// erik lib_ShowTestmessageAndExit();
+
+	// take the description from the section object, if not  empty, otherwise from the referenced view
+	if (section.documentation)
+		docString += section.documentation;
+	else
+		docString += refView.documentation;
+	
+	docString += "\n\n";
+	docString += "." + section.name;
+	docString += "\nimage::" + "{imagepath}" + section.name + ".png" + "[alt=" + section.name + " image]";
+	//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+				
+	// todo: ",link = ..." for link to published web view
+	docString += "\n\n"
+
+	var modulePath = CBookSection_determineModulePath(section);
+	
+	// save Image
+	c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath);
+
+
+	var topLevelElms = cView_getTopLevelElementsOf(refView);
+	
+	
+	topLevelElms.each(function(elm) {
+		docString += c_BookSectionViewRef_DocumentElementHiearchy(refView, elm, 1);
+	});	
+
+
+	// save asciidoc text
+	// covered by CBookSection
+	//CBookSection_saveViewPageToFile(section, docString, modulePath);
+
+	return docString;
+}
+
+function c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath) {
+	
+	var imageDirPath = modulePath + "\\" + "images";
+	var pathAndfileName = imageDirPath + "\\" + section.name + ".png";
+
+	cFilesystem_mkDirIfNotExisting(imageDirPath);
+
+	var bytes = $.model.renderViewAsBase64(refView, "PNG");
+	var fileName = null;
+
+	//lib_Log("image pathAndfileName = " + pathAndfileName);
+
+	var option_promptFileSave = false;	
+	if (option_promptFileSave)
+		fileName = window.promptSaveFile( { title: "Save view image", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
+	else
+		fileName = pathAndfileName;
+	
+	if (fileName) {
+		$.fs.writeFile(fileName, bytes, "BASE64");
+	}
+	else {
+		lib_Error("Undetermined fileName!")
+	}
+	
+}
+
+
+
+function c_BookSectionViewRef_DocumentElementHiearchy(refView, elm, sectionLevel) {
+
+	sectionLevel++;
+	var docString = "";
+
+	if (elm.type == "junction")
+		return "";
+
+
+	// element chapter caption
+
+	var headerString = "";
+	var i;
+	for (i = 0; i < sectionLevel; i++)
+		headerString += "=";
+	
+	
+	docString = headerString + " ";
+	docString += elm.name;
+	docString += "\n";
+	
+	// Element description
+	docString += "\n";
+	docString += elm.documentation;
+	docString += "\n\n";
+		
+	var subElms = cElement_getSubElements(elm);
+	if (subElms != null) {
+		subElms.each(function(se) {
+			docString += c_BookSectionViewRef_DocumentElementHiearchy(refView, se, sectionLevel);
+		});
+	}
+	
+	return docString;
+}
+
+
+
+function c_BookSectionViewRef_getReferencedView(section) {
+	
+	var refViewId = section.prop(const_prop_view_reference);
+
+	if (!refViewId)
+		lib_Error("Missing propery " + const_prop_view_reference + " for " + section.name + " with " + const_prop_dct_type + " = " + const_prop_view_reference);
+
+	// get hold of the referenced view
+	var refView = cModel_GetViewWithId(refViewId);
+	if (!refView)
+		lib_Error("Failed to find referene view with id = " + refViewId + " for c_BookSectionViewRef object with name = " + section.name);
+
+ 
+	return refView;
+
+}
+
+
+
+
+
+/***
+Idea: Create representation objects from viewrefs - look at this code to understand...
+
+        $(e).children().each(function (viewRefs) {
+			
+			console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ":" + viewRefs.prop(const_prop_dct_type)+ ")" );
+
+            if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model'))) {
+
+                // Find the actual linked views
+                var viewsCollection = $('archimate-diagram-model');
+                viewsCollection.add($('sketch-model'));
+				
+				var duplicate = false;
+				var alreadyFound = false;
+                viewsCollection.each(function (linkedView) {
+					
+					//console.log("a View: " + linkedView.name + ": " + linkedView.id);			
+                    // this doesn't cater for duplicate view names, sorry
+                    if (linkedView.name === viewRefs.name) {
+                        //viewList.push([viewRefs, linkedView]);
+						console.log("--viewRefs.name: " + viewRefs.name + ": " + viewRefs.id);
+						if (alreadyFound) {
+							duplicate = true;
+							console.log("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+							window.alert("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+							//exit();
+						}
+						else
+						 alreadyFound = true;
+						
+                    }
+                });
+            }
+
+
+        });
+**/

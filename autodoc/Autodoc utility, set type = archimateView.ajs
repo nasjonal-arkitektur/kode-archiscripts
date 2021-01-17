@@ -1,0 +1,20 @@
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.show();
+console.clear();
+ 
+console.log("Autodoc utility, set type=archimateView.ajs");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element. Exiting...");
+	exit();
+}
+
+selectedOccurences.each(function (elm) {
+	elm.concept.prop(const_prop_dct_type, const_conceptType_representation__archimateView);
+});
+
+console.log("Script completed");

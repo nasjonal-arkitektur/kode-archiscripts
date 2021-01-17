@@ -1,0 +1,146 @@
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
+load(__DIR__ + "../common/c_Filesystem.ajs");
+load(__DIR__ + "../common/c_AntoraModule.ajs");
+
+console.show();
+console.clear();
+console.log("Create representation elements from clibboard.ajs");
+
+
+function getClipboard() {
+	
+	var Toolkit = Java.type("java.awt.Toolkit");
+	var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	
+
+    //try {
+      if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+
+		return txt;
+        //return txt.trim();
+      }
+    //} catch (Exception e) {
+    //}
+
+    return "";
+}
+  
+var txt = getClipboard();
+console.log(txt);
+
+var selectedViews = $(selection).filter("archimate-diagram-model");
+var selectedOccurences = null;
+var parentObj = null;
+
+if(selectedViews.size() < 1) {
+
+	var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+	if (selectedOccurences.size() < 1) {
+		window.alert("No view or object selected. Exiting...");
+		exit();
+	}
+	else if (selectedOccurences.size() > 1) {
+		window.alert("More than one object selected. Please select only one view or one element. Exiting...");
+		exit();
+	}
+	
+	parentObj = selectedOccurences.first();
+	console.log("parentObj: " + parentObj.name);
+
+}
+else if(selectedViews.size() > 1) {
+	window.alert("More than one view selected");
+	exit();
+}
+
+
+var view = null;
+if (selectedViews.size() === 1)
+	view = selectedViews.first();
+else if (parentObj)
+	view = parentObj.view;
+else
+	lib_Error("Unexpected parentObj == null");
+
+
+
+var arr = txt.split("\n");
+var concept = null;
+var elm = null;
+var x = 20;
+var y = 40;
+
+if (parentObj){
+	//console.log("Adjusting x, y from parentObj.bounds");
+	
+	x += parentObj.bounds.x;
+	y += parentObj.bounds.y;
+	
+	
+	// drill up the hierarchy to add relative x and y cordinates
+	// Note: For now, only one level up!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	var grandParent = cView_GetContainingElementIfExists(view, parentObj);
+	if (grandParent ) {
+		console.log("grandParent = " + grandParent.name);
+		x += grandParent.bounds.x;
+		y += grandParent.bounds.y;
+	}
+
+
+}
+	
+
+
+var elementType = "representation";
+//elementType = window.prompt("Archi concept type?", elementType);
+
+/*
+for (i = 0; i < arr.length; i++) {
+	concept= model.createElement(elementType, arr[i]);
+	elm = view.add(concept, x, y, -1, -1);	
+	//elm.documentation = "doc";
+	x += 143; // default width is 133
+}
+*/
+
+var previousElm = null;
+var relationLabel = ""; //preceeds
+var rLabel = "";
+
+for (i = 0; i < arr.length; i++) {
+
+	var line = arr[i];
+	var arr2 = line.split("\t");
+	var name = arr2[0];
+	var descr = arr2[1];
+	
+	concept= model.createElement(elementType, name);
+	concept.documentation = descr;
+	
+	
+	elm = view.add(concept, x, y, -1, -1);
+
+	if (previousElm) {
+		var newRelation = model.createRelationship("association-relationship", relationLabel, previousElm.concept, elm.concept); 
+		view.add(newRelation, previousElm, elm);
+		//console.log(newRelation);
+	}
+	previousElm = elm;
+	//elm.documentation = "doc";
+	x += 153; // default width is 133
+	
+	if (parentObj) {
+		var aggrRelation = model.createRelationship("aggregation-relationship", rLabel, parentObj.concept, elm.concept); 
+		view.add(aggrRelation, parentObj, elm);
+	}
+}
