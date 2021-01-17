@@ -2,10 +2,10 @@
  * c_View
  */
  
-load(__DIR__ + "../common/c_Folder.ajs");
-load(__DIR__ + "../common/c_Model.ajs");
-load(__DIR__ + "../common/c_Collection.ajs");
-load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "c_Folder.ajs");
+load(__DIR__ + "c_Model.ajs");
+load(__DIR__ + "c_Collection.ajs");
+load(__DIR__ + "CommonFunctions.ajs");
 
 var m_view = null;
 var option_promptFileSave = true;
@@ -1063,4 +1063,35 @@ function cView_AsciidocAutodoc(view, sectionLevel) {
 	
 	return docString;
 	
+}
+
+function cView_GetContainingElementIfExists(view, anElement) {
+
+	var elms = cView_GetElementsInView(view);
+	var foundParent = null;
+	
+	if (!elms)
+		lib_error("No elements in view!");
+		
+	elms.each(function(e) {
+
+		if (e.id != anElement.id) {
+
+			//var concept = e.concept;
+			var eRels = $(e).rels();
+			//var conceptRels = $(concept).rels();
+			
+			eRels.each(function(r) {
+
+				if ((r.type == "composition-relationship"  || r.type == "aggregation-relationship") && (r.target.id === anElement.id)) { 
+					if (foundParent)
+						lib_Error("Found more than one containing object of " + anElement.name);
+					foundParent = r.source;
+					console.log("foundParent = " + foundParent.name);
+				}
+			});
+		}
+	});
+	
+	return foundParent;
 }

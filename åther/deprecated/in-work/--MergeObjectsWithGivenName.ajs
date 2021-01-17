@@ -3,7 +3,7 @@
  */
 
  
-load(__DIR__ + "CommonFunctions.ajs");
+load(__DIR__ + "../CommonFunctions.ajs");
 
 console.clear();
 

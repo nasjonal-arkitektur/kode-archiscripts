@@ -1,15 +1,15 @@
 /*
  * MergeViewConceptsWithSameName.ajs
  */
-load(__DIR__ + "/common/Constants.ajs");
+load(__DIR__ + "../common/Constants.ajs");
 
-load(__DIR__ + "/common/CommonFunctions.ajs");
-load(__DIR__ + "/common/c_Model.ajs");
-load(__DIR__ + "/common/c_Folder.ajs");
-load(__DIR__ + "/common/c_View.ajs");
-load(__DIR__ + "/common/c_Element.ajs");
-//load(__DIR__ + "/common/c_Relation.ajs");
-//load(__DIR__ + "/common/_Viewpoint.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Folder.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Element.ajs");
+//load(__DIR__ + "../common/c_Relation.ajs");
+//load(__DIR__ + "../common/_Viewpoint.ajs");
 
 console.clear();
 console.log("MergeViewConceptsWithSameName");

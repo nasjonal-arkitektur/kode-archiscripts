@@ -1,7 +1,7 @@
 
-load(__DIR__ + "/common/c_Namespace.ajs");
-load(__DIR__ + "/common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
 
 console.log("Running script Set property difi:name_en from name");
 

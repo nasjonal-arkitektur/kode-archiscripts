@@ -2,8 +2,8 @@
  * New Archi Script
  */
  
-load(__DIR__ + "/common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
 
 console.log("Remove linefeeds from documentation for selected concepts");
 

@@ -4,7 +4,7 @@
  
 load(__DIR__ + "Constants.ajs");
 load(__DIR__ + "c_Model.ajs");
-load(__DIR__ + "CBookSectionViewRef.ajs");
+load(__DIR__ + "c_BookSectionViewRef.ajs");
 
 var option_promptFileSave = false;
 
@@ -56,7 +56,7 @@ function cBookSection_autodoc(section, sectionLevel) {
 	
 	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__archimateView) {
 
-		docString += CBookSectionViewRef_autodoc(section, sectionLevel);
+		docString += c_BookSectionViewRef_autodoc(section, sectionLevel);
 
 	}
 	else 
@@ -110,13 +110,11 @@ function cBookSection_autodoc(section, sectionLevel) {
 function CBookSection_documentAsAsciidoc(section, sectionLevel) {
 	
 	var docString = "";
-<<<<<<< HEAD
+
 	docString += cAntoraModule_asciidocTemplateHeader(section.name, cBookSection_getAntoraModule(section), 
 														cBookSection_getAntoraComponent(section), 
 														cBookSection_getAntoraVersion(section));
-=======
-	docString += cAntoraModule_asciidocTemplateHeader(section.name);
->>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
+
 
 	// take the description from the section object, if not  empty
 	if (section.documentation) {
@@ -354,7 +352,7 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath) {
 		$.fs.writeFile(fileName, docString);
 	}
 	else {
-		lib_Error("Undetermined fileName in CBookSectionViewRef_saveViewPageToFile.")
+		lib_Error("Undetermined fileName in c_BookSectionViewRef_saveViewPageToFile.")
 	}
 }
 
@@ -363,11 +361,8 @@ function CBookSection_determineModulePath(section) {
 	var antoraRootPath = cAntoraModule_GetComponentsRootPath();
 	var componentName = cConcept_GetProperty(section, const_prop_antoraComponent);
 	var version = cConcept_GetProperty(section, const_prop_antoraVersion);
-<<<<<<< HEAD
 	var moduleName = cConcept_GetProperty(section, const_prop_antoraModule);
-=======
-	var moduleName = cConcept_GetProperty(section, const_prop_antoraModule)
->>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
+
 	
 	if (!antoraRootPath)
 		lib_Error("Missing model property " + const_prop_antoraComponentsPath);

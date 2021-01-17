@@ -4,7 +4,7 @@
  
 load(__DIR__ + "../common/Constants.ajs");
 load(__DIR__ + "../common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
 
 
 

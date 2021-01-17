@@ -2,11 +2,11 @@
  * c_Model
  */
 /*
-load(__DIR__ + "../common/Constants.ajs");
-load(__DIR__ + "../common/c_Concept.ajs");
-load(__DIR__ + "../common/c_Relation.ajs");
-load(__DIR__ + "../common/c_View.ajs");
-load(__DIR__ + "../common/c_Folder.ajs");
+load(__DIR__ + "Constants.ajs");
+load(__DIR__ + "c_Concept.ajs");
+load(__DIR__ + "c_Relation.ajs");
+load(__DIR__ + "c_View.ajs");
+load(__DIR__ + "c_Folder.ajs");
 */
 
 var m_model = null;

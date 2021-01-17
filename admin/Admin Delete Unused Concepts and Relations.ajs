@@ -1,7 +1,7 @@
 /*
  * deleteUnusedElements
  */
-load(__DIR__ + "/common/c_Model.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
 
 console.clear();
 console.log("Script starting...");

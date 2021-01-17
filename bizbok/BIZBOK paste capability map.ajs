@@ -2,8 +2,8 @@
  * BIZBOK paste CAPABILITIES
  */
  
-load(__DIR__ + "/common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
 load(__DIR__ + "../common/c_Clipboard.ajs");
 
 console.show();

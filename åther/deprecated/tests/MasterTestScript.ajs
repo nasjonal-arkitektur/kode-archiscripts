@@ -16,7 +16,7 @@ load(__DIR__ + "../common/c_Viewpoint.ajs");
 
 load(__DIR__ + "../common/c_selection.ajs");
 
-load(__DIR__ + "c_Test.ajs");
+load(__DIR__ + "../c_Test.ajs");
 
 
 var testnum = 0;

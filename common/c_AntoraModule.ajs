@@ -85,7 +85,7 @@ function cAntoraModule_getModulesUnderPath(modulesPath) {
 
 
 
-<<<<<<< HEAD
+
 function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, componentName, version) { 
 
 
@@ -95,11 +95,6 @@ function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, component
 
 	var docString = "";
 
-=======
-function cAntoraModule_asciidocTemplateHeader(moduleName) {
-		
-	var docString = "";
->>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
 	var templateheader = 
 	/*
 	"////" + "\n" +
@@ -115,8 +110,6 @@ function cAntoraModule_asciidocTemplateHeader(moduleName) {
 	"////" + "\n\n" +
 	*/
 	
-	
-<<<<<<< HEAD
 	"= " + sectionName + "\n" +
 	":wysiwig_editing: 1" + "\n" +
 	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
@@ -128,15 +121,6 @@ function cAntoraModule_asciidocTemplateHeader(moduleName) {
 	"endif::[]" + "\n" +
 	":toc: left" + "\n" +
 	":toclevels: 3" + "\n" +
-=======
-	"= " + moduleName + "\n" +
-	":wysiwig_editing: 1" + "\n" +
-	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
-	":imagesdir: ../images" + "\n" +
-	"endif::[]" + "\n" +
-	":toc: left" + "\n" +
-	":toclevels: 9" + "\n" +
->>>>>>> d0544354149bd53aa8c4ea024daaaf1472940a37
 	":sectnums:" + "\n" +
 	":sectnumlevels: 9" + "\n\n";
 	

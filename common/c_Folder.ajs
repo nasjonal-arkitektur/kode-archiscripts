@@ -2,8 +2,8 @@
  * c_Folder
  */
 
-load(__DIR__ + "../common/c_Collection.ajs");
-load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "c_Collection.ajs");
+load(__DIR__ + "c_Model.ajs");
 
  
 //var m_folderName = null;

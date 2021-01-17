@@ -2,13 +2,13 @@
  * MergeViewConceptsWithSameName.ajs
  */
 
-load(__DIR__ + "CommonFunctions.ajs");
-load(__DIR__ + "c_Model.ajs");
-load(__DIR__ + "c_Folder.ajs");
-load(__DIR__ + "c_View.ajs");
-load(__DIR__ + "c_Element.ajs");
-load(__DIR__ + "c_Relation.ajs");
-load(__DIR__ + "c_Viewpoint.ajs");
+load(__DIR__ + "../CommonFunctions.ajs");
+load(__DIR__ + "../c_Model.ajs");
+load(__DIR__ + "../c_Folder.ajs");
+load(__DIR__ + "../c_View.ajs");
+load(__DIR__ + "../c_Element.ajs");
+load(__DIR__ + "../c_Relation.ajs");
+load(__DIR__ + "../c_Viewpoint.ajs");
 
 console.clear();
 console.log("MergeViewConceptsWithSameName");

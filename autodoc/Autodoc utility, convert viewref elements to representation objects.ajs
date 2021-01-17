@@ -1,14 +1,14 @@
-﻿load(__DIR__ + "/common/Constants.ajs");
-load(__DIR__ + "/common/c_Model.ajs");
-load(__DIR__ + "/common/c_View.ajs");
-load(__DIR__ + "/common/c_Clipboard.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
-load(__DIR__ + "/common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Book.ajs");
-load(__DIR__ + "/common/c_Filesystem.ajs");
-load(__DIR__ + "/common/c_AntoraModule.ajs");
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
+load(__DIR__ + "../common/c_Filesystem.ajs");
+load(__DIR__ + "../common/c_AntoraModule.ajs");
 
-	
+
 console.show();
 console.clear();
  
@@ -80,6 +80,13 @@ function transformViewRef(parentObj, viewRefObj, viewObj, makeRelationFromElm) {
 	var elm = thisView.add(concept, parentObj.bounds.x + viewRefObj.bounds.x, parentObj.bounds.y + viewRefObj.bounds.y, -1, -1);	
 	viewRefObj.delete();
 	
+	var parentRelation = null;
+	var aggregatesLabel = ""; //aggregates
+	parentRelation = model.createRelationship("aggregation-relationship", aggregatesLabel, parentObj.concept, concept); 
+	//Skip the following statement?
+	thisView.add(parentRelation, parentObj, elm);	
+	
+	
 	var concept = elm.concept;
 	var parentSection = parentObj.concept;
 	cConcept_SetProperty(concept, const_prop_antoraComponent, cConcept_GetProperty(parentSection, const_prop_antoraComponent));
@@ -93,9 +100,13 @@ function transformViewRef(parentObj, viewRefObj, viewObj, makeRelationFromElm) {
 	
 
 	var newRelation = null;
+	var relationLabel = ""; //preceeds
 	if (makeRelationFromElm) {
-		newRelation = model.createRelationship("association-relationship", "preceeds", makeRelationFromElm.concept, elm.concept); 
+		newRelation = model.createRelationship("association-relationship", relationLabel, makeRelationFromElm.concept, elm.concept); 
+		//newRelation.prop("directed", 1);
 		console.log(newRelation);
+		thisView.add(newRelation, makeRelationFromElm, elm);
+		
 	}
 	
 	return elm;

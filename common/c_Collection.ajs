@@ -3,7 +3,7 @@
  */
  
 
-load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "Constants.ajs");
 
 
 var cCollection_GetDuplicateItems = function(coll, obj) {

@@ -1,9 +1,9 @@
 /*
  * New Archi Script
  */
-load(__DIR__ + "/common/c_Namespace.ajs");
-load(__DIR__ + "/common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
 
 console.log("Set english name property instead of the norwegian one, as the name is actually the english one (yet to be tramslated)");
 

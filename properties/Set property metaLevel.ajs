@@ -1,6 +1,6 @@
-load(__DIR__ + "/common/c_Namespace.ajs");
-load(__DIR__ + "/common/c_Concept.ajs");
-load(__DIR__ + "/common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
 
 console.log("Set property metaLevel starting...");
 
