@@ -1,4 +1,6 @@
 ﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 
 console.show();
@@ -14,7 +16,39 @@ if (selectedOccurences.size() < 1) {
 }
 
 selectedOccurences.each(function (elm) {
+	lib_Log("Processing " + elm.name);
 	elm.concept.prop(const_prop_dct_type, const_conceptType_representation__archimateView);
+	
+	var view = cModel_GetViewWithName(elm.name);
+	if (view) {
+		
+		// if view with exact same name as the representation object exists, then use this for the "drill down", possibly overwriting a previous value
+
+		cConcept_SetProperty(elm.concept, const_prop_view_reference, view.id);
+		cConcept_SetProperty(elm.concept, "drill down", view.id);			
+	}
+	else {
+		//lib_Error("Failed to find view with name = " + elm.name);	
+		
+		// if view with exact same name as the representation object does not exists, it may be ok if the "drill down" has already been set... 
+
+		if (elm.concept.prop(const_prop_view_reference)) {
+			
+			// check that the view with this id exists:
+			if (!cModel_GetViewWithId(elm.concept.prop(const_prop_view_reference))) {
+				lib_Error("Property " +  const_prop_view_reference + " of element " + elm.name  + " does not match any existing view");
+			}
+			else {
+				lib_Log("    NOTE: Keeping previous property value for " + const_prop_view_reference 
+				+ ". Note: View and representation object names differ (which is ok if you want the asciidoc section heading to differ from the view name");
+			}
+		}
+		else
+			lib_Error("Failed to find view for element = " + elm.name);	
+		
+	}
+	
+	
 });
 
 console.log("Script completed");

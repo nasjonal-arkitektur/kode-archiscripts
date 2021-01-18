@@ -340,6 +340,31 @@ function cModel_GetViewWithId(id) {
 		
 }
 
+function cModel_GetViewWithName(name) {
+
+    var views =  $("view").filter(function(o) {
+        return ( (o.name == name) );
+    });
+	
+	if (views.size < 1) {
+		
+		lib_Error("No views with given id");
+		exit();
+	}
+	else if (views.size() > 1) {
+		lib_Error("More than one view name = " + name);
+	}
+	
+	var view = views.first();
+	
+	//if (!view)
+	//	lib_Error("Failed to find view with name = " + name);
+ 	
+	//console.log("viewname = " + view.name);
+	return view;
+		
+}
+
 var cModel_OtherConceptsWithSameNameandType = function(occurence, caseSensitive, namespaceSensitive) {
 
 	
