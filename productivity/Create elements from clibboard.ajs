@@ -51,7 +51,7 @@ var elm = null;
 var x = 10;
 var y = 200;
 
-var elementType = "resource";
+var elementType = "representation";
 var elementType = window.prompt("Archi concept type?", elementType);
 
 /*

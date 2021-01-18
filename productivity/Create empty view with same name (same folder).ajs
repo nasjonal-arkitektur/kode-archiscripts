@@ -1,7 +1,4 @@
-/*
- * New Archi Script
- */
-load(__DIR__ + "../common/Constants.ajs");
+﻿load(__DIR__ + "../common/Constants.ajs");
 load(__DIR__ + "../common/c_Model.ajs");
 load(__DIR__ + "../common/c_Concept.ajs");
 load(__DIR__ + "../common/c_View.ajs");
@@ -10,7 +7,7 @@ load(__DIR__ + "../common/c_Selection.ajs");
  
 console.show();
 console.clear();
-console.log("Script: Create subfolder and empty view with same name");
+console.log("Script: Create empty view with same name (same folder)");
 
 
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
@@ -22,38 +19,36 @@ if (selectedOccurences.size() < 1) {
 
 selectedOccurences.each(function(o) {
 	
-	console.log(o.name );
-	console.log(o.view.name );
+	//console.log(o.name );
 	var view = o.view;
-	var folder = null;
-	$(view).parent().each(function(parent) {
-		folder = parent;
-		//console.log("    " + view.name + " has direct PARENT " + parent.name);	
-	});	
+	var folder = $(view).parent().first();
+	//console.log("Folder = " + folder.name );
 	
-	var newFolder = folder.createFolder(o.name);
-	var newView = model.createArchimateView(o.name, newFolder);
 	
+	
+	//var newFolder = folder.createFolder(o.name);
+	var newView = model.createArchimateView(o.name, folder);
 	if (!newView)
 		lib_Error("Failed to createArchimateView with name '" + o.name + "' in folder '" + folder.name + "'");
 	var x = 20;
 	var y = 40; 
-
+	
 	var elm = newView.add(o.concept, x, y, -1, -1);
 	if (!elm)
 		lib_Error("Failed to add concept to newView");
 	
-	console.log("Added view '" + newView.name + "'");	
+	console.log("Added view '" + newView.name + "'");
 	
-		// set drill down properties	
+	// set drill down properties	
 	cConcept_SetProperty(o.concept, const_prop_view_reference, newView.id);
 	cConcept_SetProperty(o.concept, "drill down", newView.id);
 
 });
 
-if (selectedOccurences.size() == 1)
-	window.alert("Added " + selectedOccurences.size() + " folder and view");
-else 
-	window.alert("Added " + selectedOccurences.size() + " folders and views");
+	if (selectedOccurences.size() == 1)
+		window.alert("Added " + selectedOccurences.size() + " view");
+	else 
+		window.alert("Added " + selectedOccurences.size() + " views");
+
 
 console.log("Script completed");

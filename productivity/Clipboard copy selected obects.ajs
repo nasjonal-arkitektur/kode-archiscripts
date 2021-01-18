@@ -17,7 +17,7 @@ if (conceptType == null) // means user hit Cancel
 //console.log("conceptType: " , conceptType);
 
 
-var namespace = window.prompt("Specify namespace if you want to filter se	lection based on a given namespace (or leave empty and click OK to proceed)", "");
+var namespace = window.prompt("Specify namespace if you want to filter selection based on a given namespace (or leave empty and click OK to proceed)", "");
 if (namespace == null) // means user hit Cancel
 	exit();
 

@@ -78,7 +78,7 @@ var arr = txt.split("\n");
 var concept = null;
 var elm = null;
 var x = 20;
-var y = 40;
+var y = 40; // fine for representation objects, but too much for some others like e.g. grouping
 
 if (parentObj){
 	//console.log("Adjusting x, y from parentObj.bounds");
@@ -139,8 +139,26 @@ for (i = 0; i < arr.length; i++) {
 	//elm.documentation = "doc";
 	x += 153; // default width is 133
 	
+	cConcept_SetProperty(elm.concept, const_prop_dct_type, const_conceptType_representation__section); //assumption!!!!!!!!!!???
+	
 	if (parentObj) {
 		var aggrRelation = model.createRelationship("aggregation-relationship", rLabel, parentObj.concept, elm.concept); 
 		view.add(aggrRelation, parentObj, elm);
+		
+		if (cConcept_GetProperty(parentObj.concept, const_prop_antoraComponent))
+			cConcept_SetProperty(elm.concept, const_prop_antoraComponent, cConcept_GetProperty(parentObj.concept, const_prop_antoraComponent));
+		else 
+			lib_Error("Missing property " + const_prop_antoraComponent + " of " + parentObj.concept.name);
+		
+		if (cConcept_GetProperty(parentObj.concept, const_prop_antoraVersion))
+			cConcept_SetProperty(elm.concept, const_prop_antoraVersion, cConcept_GetProperty(parentObj.concept, const_prop_antoraVersion));
+		else
+			lib_Error("Missing property " + const_prop_antoraVersion + " of " + parentObj.concept.name);
+			
+		if (cConcept_GetProperty(parentObj.concept, const_prop_antoraModule))
+			cConcept_SetProperty(elm.concept, const_prop_antoraModule, cConcept_GetProperty(parentObj.concept, const_prop_antoraModule));	
+		else
+			lib_Error("Missing property " + const_prop_antoraModule + " of " + parentObj.concept.name);			
+		
 	}
 }
