@@ -150,7 +150,7 @@ function lib_VerifyNotNull(object) {
 }
 
 
-function lib_ShowTestmessageAndExit(testMessage){
+function lib_TestExit(testMessage){
 	
 	var logTxt = "Showing testmessage and exiting:\n" + testMessage + "\n";
 	console.log(logTxt);

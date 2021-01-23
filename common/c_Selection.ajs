@@ -402,3 +402,9 @@ function CSelection_GetDirectlySelectedViewRefElements() {
 	var selectedOccurences = $(selection).filter("element"); // rather viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model')
 	return selectedOccurences;
 }
+
+function CSelection_GetDirectlySelectedElements() {
+
+	var selectedOccurences = $(selection).filter("element");
+	return selectedOccurences;
+}

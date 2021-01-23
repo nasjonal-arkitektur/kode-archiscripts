@@ -12,6 +12,9 @@ load(__DIR__ + "c_Model.ajs");
 
 function c_BookSectionViewRef_autodoc(section, hierarchyLevel) {
 
+//if (section.name === "Muliggjørende kapabiliteter")
+//	lib_TestExit("section: " + section);
+
 	var docString = "";
 
 
@@ -43,7 +46,7 @@ function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLev
 	var sectionName = section.name + " - oversikt"; //rather than section.name
 	docString += cBookSection_SectionHeading(sectionName, 2);
 	docString += "\n";
-// erik lib_ShowTestmessageAndExit();
+// erik lib_TestExit();
 
 	// take the description from the section object, if not  empty, otherwise from the referenced view
 	if (section.documentation)

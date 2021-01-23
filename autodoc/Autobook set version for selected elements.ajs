@@ -1,0 +1,35 @@
+﻿"use strict";
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.clear();
+console.log("Autobook set version for selected elements");
+
+
+//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
+var selectedConcepts = CSelection_GetSelectedConcepts("","");
+
+if (selectedConcepts === null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+var newPropValue = window.prompt("Version?", "");
+if (newPropValue === null || newPropValue === "") {
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+var num = 0;
+selectedConcepts.each(function(concept) {
+	cConcept_SetProperty(concept, const_prop_antoraVersion, newPropValue);
+	num++;
+	
+});
+
+
+console.log(num + " elements updated");
+window.alert(num + " elements updated");
+console.log("Script completed");

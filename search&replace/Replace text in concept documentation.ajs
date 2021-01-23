@@ -1,0 +1,28 @@
+﻿load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.log("Replace text in concept documentation.ajs...");
+
+
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+var txtToReplace = window.prompt("Specify text to search for (documentation): ");
+var newTxt = window.prompt("Specify replacement text (documentation): ");
+
+selectedConcepts.each(function(c) {
+	
+	console.log(c.name );
+	
+	var res = c.documentation.replace(txtToReplace, newTxt);
+	c.documentation = res;
+
+});
+
+console.log("Script completed.");

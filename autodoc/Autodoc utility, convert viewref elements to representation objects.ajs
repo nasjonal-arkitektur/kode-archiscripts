@@ -12,7 +12,7 @@ load(__DIR__ + "../common/c_AntoraModule.ajs");
 console.show();
 console.clear();
  
-console.log("Autodoc utility, convert viewref elements to representation objects.ajs");
+console.log("Autobook utility, convert viewref elements to representation objects.ajs");
 
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
 

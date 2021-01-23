@@ -89,7 +89,7 @@ function cBookSection_autodoc(section, sectionLevel) {
 		
 		}
 		docString += ":leveloffset: -1" + "\n";
-//lib_ShowTestmessageAndExit(docString);	
+//lib_TestExit(docString);	
 	}
 		
 /**
@@ -103,7 +103,7 @@ function cBookSection_autodoc(section, sectionLevel) {
 	// save asciidoc text
 	var modulePath = CBookSection_determineModulePath(section);
 	CBookSection_saveViewPageToFile(section, docString, modulePath);	
-//lib_ShowTestmessageAndExit(docString);
+//lib_TestExit(docString);
 	return docString;
 }
 
@@ -118,8 +118,12 @@ function CBookSection_documentAsAsciidoc(section, sectionLevel) {
 
 	// take the description from the section object, if not  empty
 	if (section.documentation) {
-		var sectionName = "Om " + section.name;
-		docString += cBookSection_SectionHeading(sectionName, 2);
+		
+		var option_addIntroHeader = false;
+		if (option_addIntroHeader) {
+			var sectionName = "Om " + section.name;
+			docString += cBookSection_SectionHeading(sectionName, 2);
+		}
 		docString += section.documentation;	
 	}
 

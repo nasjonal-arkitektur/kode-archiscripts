@@ -23,6 +23,13 @@ function cBook_autodoc(bookElement, sectionLevel) {
 
 	// generate book header
 	docString += cBook_bookHeader(book);
+	
+	// front cover
+	if (book.prop(const_prop_book_front_cover_image) ) { 
+		docString += "\n" + "image:" + const_imagepath_variable + book.prop(const_prop_book_front_cover_image) + "[]" + "\n\n";
+	}
+	
+	
 	// Include a first section with the documenation of the book object, ifnot empty
 	docString += cBook_aboutBookChapter(book, sectionLevel);
 
@@ -49,6 +56,12 @@ function cBook_autodoc(bookElement, sectionLevel) {
 		docString += ":leveloffset: -1" + "\n";
 	}
 	
+	// back cover
+	if (book.prop(const_prop_book_back_cover_image) ) {
+		docString += "\n" + "image:" + const_imagepath_variable + book.prop(const_prop_book_back_cover_image) + "[]"+ "\n";
+	}
+	
+	
 	// save asciidoc text
 	var modulePath = CBookSection_determineModulePath(book);
 	CBookSection_saveViewPageToFile(book, docString, modulePath);	
@@ -74,8 +87,10 @@ function cBook_bookHeader(book) {
 
 function cBook_aboutBookChapter(book, sectionLevel) {
 	
+	var docString ="";
+		
 	if (book.documentation.length() > 0) {	
-		var headerString = "==";
+		var headerString = "\n" + "==";
 		
 		/*
 		var i;
@@ -95,6 +110,7 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 		docString += book.documentation;
 		docString += "\n\n";
 	}
+	
 	return docString;
 }
 

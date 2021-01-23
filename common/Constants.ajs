@@ -30,6 +30,13 @@ var const_mediaFolderName = "media"; //added 2019-08-24
 
 var const_prop_notes = "difi:notes";
 
+var const_prop_book_front_cover_image = "modelx:book_front_cover_image";
+var const_prop_book_back_cover_image = "modelx:book_back_cover_image";
+var const_imagepath_variable = "{imagepath}";
+var const_option_section_suppress_heading = "modelx:option_section_suppress_heading";
+
+var const_prop_image1 = "digdir:image1";
+var const_prop_image1_value_default = "";
 var const_prop_logo = "digdir:logo";
 var const_prop_logo_value_default = "";
 var const_prop_link1 = "digdir:link1";

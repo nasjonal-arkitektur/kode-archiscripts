@@ -1031,7 +1031,7 @@ function cView_AsciidocAutodoc(view, sectionLevel) {
 		docString += "." + view.name;
 		
 		if (const_option_antora) {		
-			docString += "\nimage::" +  view.name + ".png" + "[alt=" + view.name + " image]";
+			docString += "\nimage::" +  view.name + ".png" + "[link=" + "https://www.vg.no/" + ", " + "alt=" + view.name + " image]";
 		}
 		
 		//cView_GetImagePath(view) + "[alt=" + view.name + " image]";

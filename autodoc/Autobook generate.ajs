@@ -4,6 +4,7 @@ load(__DIR__ + "../common/c_View.ajs");
 load(__DIR__ + "../common/c_Clipboard.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Element.ajs");
 load(__DIR__ + "../common/c_Book.ajs");
 load(__DIR__ + "../common/c_Filesystem.ajs");
 load(__DIR__ + "../common/c_AntoraModule.ajs");
@@ -51,18 +52,27 @@ var docString = "";
 
 var views = CSelection_GetAllSelectedViews();
 
-if (!views || views.size() == 0)
-	lib_Error("No views selected");
+if (!views || views.size() == 0) {
 
-views.each(function(view) {
+	var book = CSelection_GetDirectlySelectedElements();
+	if (!book)
+		lib_Error("No book selected");
+		
+	docString += cBook_autodoc(book, 1);
 
-	console.log("Processing autodoc view " + view.name);
+}
 
-	docString = cView_asciidocAutoDoc2(view, 1);
-	//cClipboard_SetClipboardString(docString);
-	//console.log("\n\n\n\n" + docString);
-	
-});	
+else {
+	views.each(function(view) {
+
+		console.log("Processing autodoc view " + view.name);
+
+		docString = cView_asciidocAutoDoc2(view, 1);
+		//cClipboard_SetClipboardString(docString);
+		//console.log("\n\n\n\n" + docString);
+		
+	});	
+}
 
 console.log("Script completed");
 
