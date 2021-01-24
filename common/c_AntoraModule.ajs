@@ -83,8 +83,21 @@ function cAntoraModule_getModulesUnderPath(modulesPath) {
 
 }
 
+function cAntoraModule_imagePathString(sectionName, moduleName, componentName, version) { 
 
+	var versionStr = "";
+	if (version)
+		versionStr = version + "@";
 
+	var docString = "";
+	
+	docString += "\n" +
+	"ifeval::[{wysiwig_editing} == 0]" + "\n" +
+	":imagepath: " + versionStr + componentName +":" + moduleName + ":" + "\n" +
+	"endif::[]" + "\n";
+	
+	return docString;
+}
 
 function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, componentName, version) { 
 
@@ -120,7 +133,7 @@ function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, component
 	":imagepath: " + versionStr + componentName +":" + moduleName + ":" + "\n" +
 	"endif::[]" + "\n" +
 	":toc: left" + "\n" +
-	":toclevels: 3" + "\n" +
+	":toclevels: 4" + "\n" +
 	":sectnums:" + "\n" +
 	":sectnumlevels: 9" + "\n\n";
 	

@@ -174,7 +174,7 @@ function cBookSection_determineFirstSubSection(section) {
 
 
 
-function cBookSection_documentSectionAsAsciidocChapters(section, view, sectionLevel) {
+function cBookSection_documentSectionAsAsciidocChapters(section, view, sectionLevel) {  // deprecated??
 
 
 	var docString = "";
@@ -196,9 +196,11 @@ function cBookSection_documentSectionAsAsciidocChapters(section, view, sectionLe
 
 
 	// view description
-	docString += "\n";
-	docString += view.documentation;
-	docString += "\n\n";
+	if (view.documentation && view.documentation.length() > 0) {
+		docString += "\n";
+		docString += view.documentation;
+		docString += "\n\n";
+	}
 
 	// save image of the archi view to file
 //cView_saveViewImageToFile(view);

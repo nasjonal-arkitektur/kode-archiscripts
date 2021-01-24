@@ -124,8 +124,12 @@ for (i = 0; i < arr.length; i++) {
 	var name = arr2[0];
 	var descr = arr2[1];
 	
+	if(!name)
+		log_Error("Missing name?");
+	
 	concept= model.createElement(elementType, name);
-	concept.documentation = descr;
+	if (descr)
+		concept.documentation = descr;
 	
 	
 	elm = view.add(concept, x, y, -1, -1);

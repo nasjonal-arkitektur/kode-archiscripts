@@ -54,9 +54,11 @@ var views = CSelection_GetAllSelectedViews();
 
 if (!views || views.size() == 0) {
 
-	var book = CSelection_GetDirectlySelectedElements();
+	var book = CSelection_GetDirectlySelectedElements().first();
 	if (!book)
-		lib_Error("No book selected");
+		lib_Error("No view or element selected");
+
+	console.log("Selected element: " + book.name);
 		
 	docString += cBook_autodoc(book, 1);
 

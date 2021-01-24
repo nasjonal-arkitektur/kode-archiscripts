@@ -2,9 +2,11 @@
 load(__DIR__ + "../common/c_Concept.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 
-console.log("Replace text in concept documentation.ajs...");
-
-
+console.show();
+console.clear();
+console.log("Replace text in concept documentation. ");
+console.log("Searching...");
+console.log("\n");
 
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
@@ -13,16 +15,26 @@ if (selectedConcepts == null || selectedConcepts.size() < 1)
 	exit();
 }
 
-var txtToReplace = window.prompt("Specify text to search for (documentation): ");
-var newTxt = window.prompt("Specify replacement text (documentation): ");
+var conceptType = window.prompt("Specify conceptType (set blank or Cancel for all types): ", "representation");
 
+var txtToReplace = window.prompt("Specify text to search for (documentation): ");
+var newTxt = null;
+if (txtToReplace)
+	newTxt = window.prompt("Specify replacement text (documentation): ");
+else
+	exit();
+
+var i = 0;
 selectedConcepts.each(function(c) {
+
+	if (!conceptType || conceptType.length() < 1 || (c.type === conceptType)) {
+		i++;
+		console.log(c.name );
 	
-	console.log(c.name );
-	
-	var res = c.documentation.replace(txtToReplace, newTxt);
-	c.documentation = res;
+		var res = c.documentation.replace(txtToReplace, newTxt);
+		c.documentation = res;
+	}
 
 });
 
-console.log("Script completed.");
+console.log(i + " replacements made. " + "Script completed.");

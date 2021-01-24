@@ -8,9 +8,12 @@ load(__DIR__ + "c_BookSection.ajs");
 
 function cBook_autodoc(bookElement, sectionLevel) {
 
+	if (!bookElement)
+		lib_Error("No element selected?");
+
+
 	var book = bookElement.concept;
 	var docString = "";
-	
 	
 
 	console.log("Top level element: " + book.name + " (" +  book.prop(const_prop_dct_type) + ")" );
@@ -30,7 +33,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	}
 	
 	
-	// Include a first section with the documenation of the book object, ifnot empty
+	// Include a first section with the documenation of the book object, if not empty
 	docString += cBook_aboutBookChapter(book, sectionLevel);
 
 	//determine first section
@@ -58,7 +61,13 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	
 	// back cover
 	if (book.prop(const_prop_book_back_cover_image) ) {
-		docString += "\n" + "image:" + const_imagepath_variable + book.prop(const_prop_book_back_cover_image) + "[]"+ "\n";
+		
+		// {imagepath} variable may need to be reset poroperly here
+		docString += cAntoraModule_imagePathString(book.name, cBookSection_getAntoraModule(book), 
+															 cBookSection_getAntoraComponent(book), 
+															 cBookSection_getAntoraVersion(book));
+															 
+		docString += "\n" + "image:" + const_imagepath_variable + book.prop(const_prop_book_back_cover_image) + "[]"+ "\n\n";
 	}
 	
 	

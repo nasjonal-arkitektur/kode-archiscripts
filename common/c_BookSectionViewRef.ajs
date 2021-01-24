@@ -23,14 +23,22 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel) {
 		lib_Error(const_prop_dct_type + " != " + const_conceptType_representation__archimateView);
 	}
 	
-	docString += c_BookSectionViewRef_documentViewAsAsciidocChapters(section, hierarchyLevel + 1);
+	var optionDocViewAsTable = true;
+	
+	
+	docString +=c_BookSectionViewRef_documentViewNarrative(section);
+	
+	if (optionDocViewAsTable)
+		docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section); //erik: temporary solution
+	else
+		docString += c_BookSectionViewRef_documentViewAsAsciidocChapters(section, hierarchyLevel + 1);
+
 	
 	return docString;
 }
 
 
-
-function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLevel) {
+function c_BookSectionViewRef_documentViewNarrative(section) {
 
 	var docString = "";
 	
@@ -42,16 +50,18 @@ function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLev
 	
 	var refView = c_BookSectionViewRef_getReferencedView(section);
 
+	var anOption = false;
+	if (anOption) {
+		var sectionName = section.name + " - oversikt1"; //rather than section.name
+		docString += cBookSection_SectionHeading(sectionName, 2);
+		docString += "\n";
+	}
 
-	var sectionName = section.name + " - oversikt"; //rather than section.name
-	docString += cBookSection_SectionHeading(sectionName, 2);
-	docString += "\n";
-// erik lib_TestExit();
 
 	// take the description from the section object, if not  empty, otherwise from the referenced view
 	if (section.documentation)
 		docString += section.documentation;
-	else
+	else if (refView.documentation)
 		docString += refView.documentation;
 	
 	docString += "\n\n";
@@ -68,17 +78,53 @@ function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLev
 	c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath);
 
 
+	//var topLevelElms = cView_getTopLevelElementsOf(refView);
+	
+	return docString
+
+}
+
+function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
+
+	var docString = "";
+	var refView = c_BookSectionViewRef_getReferencedView(section);
+	
+	docString += "\n\n";
+	//docString += "[cols =\"1,1,3\", options=\"header\"]";
+	docString += "[cols =\"1,3\", options=\"header\"]";
+	docString += "\n.Elementer i view for " + section.name ;
+	docString += "\n|===";
+
+	// docString += "\n\n" + "| " + "Element" + "\n" + "| " + "Type" +  "\n" + "| " + "Beskrivelse";
+	docString += "\n\n" + "| " + "Element" +  "\n" + "| " + "Beskrivelse";
+
+
+	var elms = cView_GetElementsInView(refView);
+	elms.each(function(e) {
+		
+		if (e.name && e.name.length() > 0) {
+			//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
+			//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+			docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+		}
+		
+	});
+
+	docString += "\n\n|===";
+	return docString;
+}
+
+function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLevel) {
+
+	var docString = "";
+	var refView = c_BookSectionViewRef_getReferencedView(section);	
+	
 	var topLevelElms = cView_getTopLevelElementsOf(refView);
 	
 	
 	topLevelElms.each(function(elm) {
 		docString += c_BookSectionViewRef_DocumentElementHiearchy(refView, elm, 1);
 	});	
-
-
-	// save asciidoc text
-	// covered by CBookSection
-	//CBookSection_saveViewPageToFile(section, docString, modulePath);
 
 	return docString;
 }
