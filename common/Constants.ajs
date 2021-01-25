@@ -68,6 +68,10 @@ var const_prop_antoraComponent = "modelx:antora_component";
 var const_prop_antoraVersion = "modelx:antora_version";
 var const_prop_antoraModule = "modelx:antora_module";
 
+
+var const_prop_antoraUdateScript = "modelx:antora_update_script";
+var const_prop_antorauUdateScript_value_default = "C:\antora\\modelx-no\\modelx-no-playbook\\update.sh";
+
 var const_prop_antoraComponentsPath = "difi:antoraComponentsPath"; //added 2020-03-15; the local root path for antora components
 var const_prop_antoraViewPath =  "difi:antoraViewPath"; //added 2020-03-15; the path for storing asciidoc documents for the view in question, relative to difi:antoraDocRootPath
 var const_prop_antoraViewImagePath =  "difi:antoraViewImagePath"; //added 2020-03-15; the path for storing images for the view in question, relative to difi:antoraDocRootPath

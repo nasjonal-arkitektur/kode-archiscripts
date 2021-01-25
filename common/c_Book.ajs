@@ -76,6 +76,28 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	CBookSection_saveViewPageToFile(book, docString, modulePath);	
 	
 	
+	
+	// run custom antora update script
+	
+	var updateScriptPath = cBook_GetAntoraUpdateScriptPath(book); // e.g. "C:\\antora\\modelx-no\\modelx-no-playbook\\update.sh";
+	var cmdLineApp = "C:\\Program Files\\Git\\git-bash.exe";
+
+	//var dirPath = window.promptOpenDirectory({ title: "Open Folder", "/defaultPath" });
+	//var dirPath = window.promptOpenDirectory({ title: "Open Folder", playBookDir });
+	//lib_TestExit(dirPath);
+
+	//$.child_process.exec(cmdLineApp, playBookDir + "\\" + updateScriptFileName);
+	$.child_process.exec(cmdLineApp, updateScriptPath);
+
+	
+	//var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: ["*.archimate", "default.archimate"] });
+	var webBrowserApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+	$.child_process.exec(webBrowserApp, "C:\\antora\\modelx-no\\output\\github-pages\\modelx-no.github.io\\index.html");
+
+
+
+	
+	
 	return true; //??
 }
 
@@ -193,3 +215,12 @@ function cBook_determineFirstSection(book) {
 		
 }
 
+
+function cBook_GetAntoraUpdateScriptPath(book) {	
+
+	if (!book.prop(const_prop_antoraUdateScript))
+		lib_Error("Missing book property " + const_prop_antoraUdateScript);
+
+	var path = book.prop(const_prop_antoraUdateScript);
+	return path;
+}

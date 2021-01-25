@@ -1,4 +1,5 @@
 load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
 load(__DIR__ + "../common/c_Model.ajs");
 load(__DIR__ + "../common/c_View.ajs");
 load(__DIR__ + "../common/c_Clipboard.ajs");
@@ -9,9 +10,13 @@ load(__DIR__ + "../common/c_Book.ajs");
 load(__DIR__ + "../common/c_Filesystem.ajs");
 load(__DIR__ + "../common/c_AntoraModule.ajs");
 
+
 	
 console.show();
 console.clear();
+
+//var path = cFilesystem_CleanupPath("C:\\dir1\dir2");
+//lib_TestExit("Testing... path = " + path);
 
 
 /*
@@ -75,6 +80,24 @@ else {
 		
 	});	
 }
+
+
+/*
+var playBookDir = "C:\\antora\\modelx-no\\modelx-no-playbook";
+var updateScriptFileName = "update.sh";
+var cmdLineApp = "C:\\Program Files\\Git\\git-bash.exe";
+
+//var dirPath = window.promptOpenDirectory({ title: "Open Folder", "/defaultPath" });
+//var dirPath = window.promptOpenDirectory({ title: "Open Folder", playBookDir });
+//lib_TestExit(dirPath);
+
+$.child_process.exec(cmdLineApp, playBookDir + "\\" + updateScriptFileName);
+
+//var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: ["*.archimate", "default.archimate"] });
+var webBrowserApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+$.child_process.exec(webBrowserApp, "C:\\antora\\modelx-no\\output\\github-pages\\modelx-no.github.io\\index.html");
+*/
+
 
 console.log("Script completed");
 
