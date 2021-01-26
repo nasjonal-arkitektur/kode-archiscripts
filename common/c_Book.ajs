@@ -89,10 +89,14 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	//$.child_process.exec(cmdLineApp, playBookDir + "\\" + updateScriptFileName);
 	$.child_process.exec(cmdLineApp, updateScriptPath);
 
+	var result = window.confirm("Update script running... Click OK here when completed in order to see the resulting site...");
+	if (result) {
+		//var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: ["*.archimate", "default.archimate"] });
+		var webBrowserApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+		//$.child_process.exec(webBrowserApp, "C:\\antora\\modelx-no\\output\\github-pages\\modelx-no.github.io\\index.html");
+		$.child_process.exec(webBrowserApp, "https://modelx-no.github.io");	
+	}
 	
-	//var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: ["*.archimate", "default.archimate"] });
-	var webBrowserApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-	$.child_process.exec(webBrowserApp, "C:\\antora\\modelx-no\\output\\github-pages\\modelx-no.github.io\\index.html");
 
 
 

@@ -100,15 +100,65 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 
 
 	var elms = cView_GetElementsInView(refView);
-	elms.each(function(e) {
+	
+	var optionSort = false;
+	if (optionSort) {
+		var elmArray = [];
 		
-		if (e.name && e.name.length() > 0) {
-			//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
-			//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-			docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
-		}
+		var i = 0;
+		elms.each(function(e) {
+			//elmArray.push(e);
+			elmArray[i] = e;
+			i++;
+			
+		});
 		
-	});
+		
+		//elmArray.sort();
+		/*
+		elmArray.sort(function (name1, name2) {
+            return name2[0].name[0] - name1[0].name[0];
+        });
+		*/
+		elmArray.sort(function (top, bottom) {
+            return top.bounds.y - bottom.bounds.y;
+        });
+		elmArray.sort(function (left, right) {
+            return left.bounds.x - right.bounds.x;
+        });
+/*		
+		elmArray.sort(function (left, right) {
+            return left[0].bounds.x - right[0].bounds.x;
+        });
+		elmArray.sort(function (top, bottom) {
+            return top[0].bounds.y - bottom[0].bounds.y;
+        });
+*/
+		
+
+	
+        // now go through the sorted elmArray
+        for (var k = 0; k < elmArray.length; k++) {
+
+            var e = elmArray[k];
+			if (e.name && e.name.length() > 0) {
+				docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+			}
+        }		
+		
+	}
+	else {
+	
+		elms.each(function(e) {
+			
+			if (e.name && e.name.length() > 0) {
+				//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
+				//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+				docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+			}
+			
+		});
+	}
 
 	docString += "\n\n|===";
 	return docString;

@@ -67,6 +67,10 @@ var const_option_antora = true;
 var const_prop_antoraComponent = "modelx:antora_component";
 var const_prop_antoraVersion = "modelx:antora_version";
 var const_prop_antoraModule = "modelx:antora_module";
+var const_prop_antoraSectionHeader = "modelx:antora_section_header";
+var const_prop_antoraSectionHeader_value_yes
+var const_prop_antoraSectionHeader_value_no;
+var const_prop_antoraSectionHeader_value_default = const_prop_antoraSectionHeader_value_yes;
 
 
 var const_prop_antoraUdateScript = "modelx:antora_update_script";
