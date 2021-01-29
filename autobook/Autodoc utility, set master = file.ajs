@@ -1,0 +1,25 @@
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+
+console.show();
+console.clear();
+ 
+console.log("Autodoc utility, set view master = file");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element. Exiting...");
+	exit();
+}
+
+		
+selectedOccurences.each(function (elm) {
+	elm.concept.prop(const_prop_antoraMaster, const_prop_antoraMaster_value_file);
+});
+
+console.log("Script completed");

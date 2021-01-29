@@ -72,6 +72,10 @@ var const_prop_antoraSectionHeader_value_yes
 var const_prop_antoraSectionHeader_value_no;
 var const_prop_antoraSectionHeader_value_default = const_prop_antoraSectionHeader_value_yes;
 
+var const_prop_antoraMaster = "modelx:antora_master";
+var const_prop_antoraMaster_value_view = "view";
+var const_prop_antoraMaster_value_file = "file";
+var const_prop_antoraMaster_value_default = const_prop_antoraMaster_value_view;
 
 var const_prop_antoraUdateScript = "modelx:antora_update_script";
 var const_prop_antorauUdateScript_value_default = "C:\antora\\modelx-no\\modelx-no-playbook\\update.sh";
@@ -79,6 +83,10 @@ var const_prop_antorauUdateScript_value_default = "C:\antora\\modelx-no\\modelx-
 var const_prop_antoraComponentsPath = "difi:antoraComponentsPath"; //added 2020-03-15; the local root path for antora components
 var const_prop_antoraViewPath =  "difi:antoraViewPath"; //added 2020-03-15; the path for storing asciidoc documents for the view in question, relative to difi:antoraDocRootPath
 var const_prop_antoraViewImagePath =  "difi:antoraViewImagePath"; //added 2020-03-15; the path for storing images for the view in question, relative to difi:antoraDocRootPath
+
+
+
+
 // pre-Antora
 var const_prop_modelRenderingRootPath = "difi:docRootPath"; //added 2019-08-24; the local root path of asciidoc documents
 var const_prop_viewRelativeRenderPath =  "difi:docViewPath"; //added 2019-08-24; the path for storing asciidoc documents for the view in question, relative to difi:docRootPath
