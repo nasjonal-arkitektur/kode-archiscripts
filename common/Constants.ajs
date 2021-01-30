@@ -30,10 +30,6 @@ var const_mediaFolderName = "media"; //added 2019-08-24
 
 var const_prop_notes = "difi:notes";
 
-var const_prop_book_front_cover_image = "modelx:book_front_cover_image";
-var const_prop_book_back_cover_image = "modelx:book_back_cover_image";
-var const_imagepath_variable = "{imagepath}";
-var const_option_section_suppress_heading = "modelx:option_section_suppress_heading";
 
 var const_prop_image1 = "digdir:image1";
 var const_prop_image1_value_default = "";
@@ -64,6 +60,24 @@ var const_prop_parentConcept = "difi:parentConcept" ; //added 2019-08-29;
 
 // Antora
 var const_option_antora = true;
+var const_imagepath_variable = "{imagepath}";
+var const_option_section_suppress_heading = "modelx:option_section_suppress_heading";
+
+// model props
+var const_prop_web_browser =  "modelx:web_browser_app";
+var const_prop_web_browser_value_default =  "E.g. C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+var const_prop_cmd_line_app =  "modelx:cmd_line_app";
+var const_prop_cmd_line_app_value_default =  "E.g. C:\\Program Files\\Git\\git-bash.exe";
+
+//book props	
+var const_prop_book_front_cover_image = "modelx:book_front_cover_image";
+var const_prop_book_front_cover_image_value_default = "Front cover image, e.g. image1.jpeg";
+var const_prop_book_back_cover_image = "modelx:book_back_cover_image";
+var const_prop_book_back_cover_image_value_default = "Front cover image, e.g. image11.png";
+
+var const_prop_site_url =  "modelx:site_url";
+var const_prop_site_url_value_default =  "url of web site for publishing a generated autobook; e.g. https://modelx-no.github.io/";
+
 var const_prop_antoraComponent = "modelx:antora_component";
 var const_prop_antoraVersion = "modelx:antora_version";
 var const_prop_antoraModule = "modelx:antora_module";
@@ -77,6 +91,7 @@ var const_prop_antoraMaster_value_view = "view";
 var const_prop_antoraMaster_value_file = "file";
 var const_prop_antoraMaster_value_default = const_prop_antoraMaster_value_view;
 
+
 var const_prop_antoraUdateScript = "modelx:antora_update_script";
 var const_prop_antorauUdateScript_value_default = "C:\antora\\modelx-no\\modelx-no-playbook\\update.sh";
 
@@ -84,8 +99,10 @@ var const_prop_antoraComponentsPath = "difi:antoraComponentsPath"; //added 2020-
 var const_prop_antoraViewPath =  "difi:antoraViewPath"; //added 2020-03-15; the path for storing asciidoc documents for the view in question, relative to difi:antoraDocRootPath
 var const_prop_antoraViewImagePath =  "difi:antoraViewImagePath"; //added 2020-03-15; the path for storing images for the view in question, relative to difi:antoraDocRootPath
 
-
-
+var const_author_name = "modelx:author_name";
+var const_author_name_value_default = "";
+var const_author_email = "modelx:author_email";
+var const_author_email_value_default = "";
 
 // pre-Antora
 var const_prop_modelRenderingRootPath = "difi:docRootPath"; //added 2019-08-24; the local root path of asciidoc documents

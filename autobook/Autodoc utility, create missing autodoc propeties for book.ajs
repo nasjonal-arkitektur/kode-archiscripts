@@ -1,6 +1,7 @@
 ﻿load(__DIR__ + "../common/Constants.ajs");
 load(__DIR__ + "../common/c_Model.ajs");
 load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
 load(__DIR__ + "../common/c_Clipboard.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 load(__DIR__ + "../common/c_Concept.ajs");
@@ -8,12 +9,13 @@ load(__DIR__ + "../common/c_Concept.ajs");
 console.show();
 console.clear();
  
-console.log("Autodoc utility, set type=book.ajs");
+console.log("Autodoc utility, create missing autodoc properties for book");
 
 var book = CSelection_GetDirectlySelectedElements().first();
 if (!book)
 	lib_Error("No view or element selected");
 
+CBook_CreateMissingAutobookProperties(book);
 
 
 console.log("Script completed");

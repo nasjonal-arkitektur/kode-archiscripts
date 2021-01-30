@@ -80,30 +80,38 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	// run custom antora update script
 	
 	var updateScriptPath = cBook_GetAntoraUpdateScriptPath(book); // e.g. "C:\\antora\\modelx-no\\modelx-no-playbook\\update.sh";
-	var cmdLineApp = "C:\\Program Files\\Git\\git-bash.exe";
+	var cmdLineApp = cModel_GetCmdLineApp(model); //e.g "C:\\Program Files\\Git\\git-bash.exe";
+
 
 	//var dirPath = window.promptOpenDirectory({ title: "Open Folder", "/defaultPath" });
 	//var dirPath = window.promptOpenDirectory({ title: "Open Folder", playBookDir });
 	//lib_TestExit(dirPath);
 
-	//$.child_process.exec(cmdLineApp, playBookDir + "\\" + updateScriptFileName);
 	$.child_process.exec(cmdLineApp, updateScriptPath);
 
-	var result = window.confirm("Update script running... Click OK here when completed in order to see the resulting site...");
+	var result = window.confirm("Update script running... Click OK here when completed in order to see the resulting site (it may take a minute or so for the wiki to update)");
 	if (result) {
-		//var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: ["*.archimate", "default.archimate"] });
-		var webBrowserApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-		//$.child_process.exec(webBrowserApp, "C:\\antora\\modelx-no\\output\\github-pages\\modelx-no.github.io\\index.html");
-		$.child_process.exec(webBrowserApp, "https://modelx-no.github.io");	
+		var webBrowserApp = cModel_GetWebBrowser(model); // e.g."C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+		
+		var siteUrl = cBook_GetAntoraSiteUrl(book); // e.g. "https://modelx-no.github.io"
+		
+		if (!webBrowserApp)
+			lib_Warning("Model property for web browser app (" + const_prop_web_browser + ") not set, so not automatically opening url in web browser");
+		else {
+			
+			if (!siteUrl) {
+				lib_Warning("Missing property " + const_prop_site_url + ", so not automatically opening url in web browser");
+			}
+			else {
+				$.child_process.exec(webBrowserApp, siteUrl);	
+			}			
+		}
 	}
-	
-
-
-
-	
 	
 	return true; //??
 }
+
+
 
 function cBook_bookHeader(book) {
 
@@ -123,9 +131,40 @@ function cBook_bookHeader(book) {
 function cBook_aboutBookChapter(book, sectionLevel) {
 	
 	var docString ="";
-		
+
+	//docString += headerString + " "; 
+	
+	//docString += "Om " + book.name;
+	//docString += "Oversikt";
+	// docString += " - " + book.name;
+	docString += "\n";
+
+	// author
+	if (book.prop(const_author_name) ) {
+		docString += "\n";
+		docString += book.prop(const_author_name);
+
+		if (book.prop(const_author_email)) {
+			docString += "; email: " + book.prop(const_author_email);
+		}
+		docString += "\n";			
+	}
+	if (book.prop(const_author_email) && !book.prop(const_author_name) ) {
+		docString += "\n";
+		docString += book.prop(const_author_email);
+		docString += "\n";			
+	}
+	
+	// time
+	var d = new Date();
+	//docString += d.getFullYear() + "." + d.getMonth()+1 + "." + d.getDate() + " " + d.getHours() + ":" + d.getMinutes();
+	//docString += "\n\n";
+	docString += d.toString();
+	
+	
 	if (book.documentation.length() > 0) {	
-		var headerString = "\n" + "==";
+		//var headerString = "\n" + "==";
+		//var headerString = "\n" + "";
 		
 		/*
 		var i;
@@ -133,15 +172,9 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 			headerString += "=";
 		}
 		*/	
-		docString += headerString + " "; 
-		
-		docString += "Om " + book.name;
-		//docString += "Oversikt";
-		// docString += " - " + book.name;
-		docString += "\n";
 
 		// book description
-		docString += "\n";
+		docString += "\n\n";
 		docString += book.documentation;
 		docString += "\n\n";
 	}
@@ -227,4 +260,40 @@ function cBook_GetAntoraUpdateScriptPath(book) {
 
 	var path = book.prop(const_prop_antoraUdateScript);
 	return path;
+}
+
+function cBook_GetAntoraSiteUrl(book) {	
+
+	//if (!book.prop(const_prop_site_url))
+	//	lib_Warning("Missing book property " + const_prop_site_url + " - so skipping copy to site");
+
+	var path = book.prop(const_prop_site_url);
+	return path;
+}
+
+
+
+function CBook_CreateMissingAutobookProperties(book) {
+	
+	
+	if (book.prop(const_prop_dct_type) != const_conceptType_representation__book) {
+		window.alert(book.name + " is not a book; property " + const_prop_dct_type + "should be set to " + const_conceptType_representation__book +  "for books. Exiting...");
+		exit();
+	}	
+
+	cConcept_CreateMissingProperty(book, const_prop_site_url, const_prop_site_url_value_default);
+	cConcept_CreateMissingProperty(book, const_prop_antoraUdateScript, const_prop_antorauUdateScript_value_default);
+	cConcept_CreateMissingProperty(book, const_prop_book_front_cover_image, const_prop_site_url_value_default);
+	cConcept_CreateMissingProperty(book, const_prop_book_back_cover_image, const_prop_book_back_cover_image_value_default);
+	cConcept_CreateMissingProperty(book, const_author_name, const_author_name_value_default);
+	cConcept_CreateMissingProperty(book, const_author_email, const_author_email_value_default);
+	
+
+	CModel_CreateMissingAutobookProperties(model);
+	
+	var topLevelbookSections = cConcept_getSubConcepts(book); // topLevelbookSections for now, but should do ALL sections!
+	topLevelbookSections.each(function(section) {
+		cBookSection_CreateMissingAutobookProperties(section);
+	});	
+	
 }

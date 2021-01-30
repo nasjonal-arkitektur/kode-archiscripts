@@ -1,0 +1,66 @@
+﻿"use strict";
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+
+console.clear();
+lib_Log("Find concepts with property.ajs");
+
+function FindConceptsWithProperty() {
+
+	//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
+	var selectedConcepts = CSelection_GetSelectedConcepts("","");
+	
+	if (selectedConcepts === null || selectedConcepts.size() < 1)
+	{
+		window.alert("No concepts selected. Exiting...");
+		exit();
+	}
+
+	var prop = window.prompt("Please specify property name (leave empty to cancel):", "");
+	if (prop === null || prop === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	/*
+	var oldPropValue = window.prompt("Value to replace for property '"+prop+"' (leave empty to cancel)?", "");
+	if (oldPropValue === null || oldPropValue === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	var newPropValue = window.prompt("Value to set instead of '"+oldPropValue+"' (leave empty to cancel)?", "");
+	if (newPropValue === null || newPropValue === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	
+	var num = 0;
+	selectedConcepts.each(function(concept) {
+		if (cConcept_GetProperty(concept, prop) === oldPropValue) {
+			cConcept_SetProperty(concept, prop, newPropValue);
+			num++;
+		}
+			
+	});
+
+	window.alert(num + " substitutions done");
+	*/
+	
+	var num = 0;
+	selectedConcepts.each(function(concept) {
+
+		if (cConcept_GetProperty(concept, prop)) {
+			lib_Log(concept.name + " has " + prop + " = " + cConcept_GetProperty(concept, prop));
+			num++;
+		}
+			
+	});
+	window.alert(num + " concepts found");
+}
+
+
+FindConceptsWithProperty();	
+
+lib_Log("Script completed");

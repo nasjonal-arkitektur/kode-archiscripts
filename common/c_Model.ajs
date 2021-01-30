@@ -639,3 +639,26 @@ function cModel_mergeImportedSparxEA(model) {
 
 	
 }
+
+
+function cModel_GetWebBrowser(model) {	
+
+	var app = model.prop(const_prop_web_browser);
+	//if (!app)
+	//	lib_Warning("Missing model property " + const_prop_web_browser);
+	return app;
+}
+
+function cModel_GetCmdLineApp(model) {	
+
+	var app = model.prop(const_prop_cmd_line_app);
+	if (!app)
+		lib_Error("Missing model property " + const_prop_cmd_line_app);
+	return app;
+}
+
+function CModel_CreateMissingAutobookProperties(model) {
+	
+	cModel_CreateMissingProperty(model, const_prop_web_browser, const_prop_web_browser_value_default);
+	cModel_CreateMissingProperty(model, const_prop_cmd_line_app, const_prop_cmd_line_app_value_default);	
+}

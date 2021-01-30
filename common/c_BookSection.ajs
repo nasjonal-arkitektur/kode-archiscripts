@@ -49,6 +49,7 @@ function cBookSection_autodoc(section, sectionLevel) {
 	var docString = "";
 
 
+
 	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section) {
 
 		docString += CBookSection_documentAsAsciidoc(section, sectionLevel);
@@ -102,7 +103,14 @@ function cBookSection_autodoc(section, sectionLevel) {
 
 	// save asciidoc text
 	var modulePath = CBookSection_determineModulePath(section);
-	CBookSection_saveViewPageToFile(section, docString, modulePath);	
+
+	var doSave = true;
+	var master = cConcept_GetProperty(section, const_prop_antoraMaster);
+	if (master && master === const_prop_antoraMaster_value_file)
+		doSave = false;
+	
+	if (doSave)
+		CBookSection_saveViewPageToFile(section, docString, modulePath);	
 //lib_TestExit(docString);
 	return docString;
 }
@@ -238,7 +246,14 @@ function cBookSection_documentSectionAsAsciidocChapters(section, view, sectionLe
 	
 	// save asciidoc text
 	var modulePath = CBookSection_determineModulePath(section);
-	CBookSection_saveViewPageToFile(section, docString, modulePath);
+	
+	var doSave = true;
+	var master = cConcept_GetProperty(section, const_prop_antoraMaster);
+	if (master && master === const_prop_antoraMaster_value_file)
+		doSave = false;
+	
+	if (doSave)
+		CBookSection_saveViewPageToFile(section, docString, modulePath);
 	
 	//console.log(docString);
 	
@@ -404,4 +419,10 @@ function cBookSection_IncludeSubsection(section, subSection) {
 	docString += "include::" + versionStr + component + ":" + module + ":page$" + cBookSection_sectionFileName(subSection) + "[]" + "\n";
 		
 	return 	docString;
+}
+
+function cBookSection_CreateMissingAutobookProperties(section) {
+	
+	cConcept_CreateMissingProperty(section, const_author_name, const_author_name_value_default);
+	cConcept_CreateMissingProperty(section, const_author_email, const_author_email_value_default);
 }
