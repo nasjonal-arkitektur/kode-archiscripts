@@ -147,7 +147,7 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 	
 	// author
 	if (book.prop(const_author_name) ) {
-		docString += "\n";
+		docString += "\n\n";
 		docString += book.prop(const_author_name);
 
 		if (book.prop(const_author_email)) {
