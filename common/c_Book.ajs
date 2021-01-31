@@ -139,13 +139,19 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 	// docString += " - " + book.name;
 	docString += "\n";
 
+	// time
+	var d = new Date();
+	//docString += d.getFullYear() + "." + d.getMonth()+1 + "." + d.getDate() + " " + d.getHours() + ":" + d.getMinutes();
+	//docString += "\n\n";
+	docString += d.toString();
+	
 	// author
 	if (book.prop(const_author_name) ) {
 		docString += "\n";
 		docString += book.prop(const_author_name);
 
 		if (book.prop(const_author_email)) {
-			docString += "; email: " + book.prop(const_author_email);
+			docString += " 	" + book.prop(const_author_email);
 		}
 		docString += "\n";			
 	}
@@ -155,12 +161,7 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 		docString += "\n";			
 	}
 	
-	// time
-	var d = new Date();
-	//docString += d.getFullYear() + "." + d.getMonth()+1 + "." + d.getDate() + " " + d.getHours() + ":" + d.getMinutes();
-	//docString += "\n\n";
-	docString += d.toString();
-	
+
 	
 	if (book.documentation.length() > 0) {	
 		//var headerString = "\n" + "==";

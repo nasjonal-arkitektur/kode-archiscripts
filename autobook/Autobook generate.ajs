@@ -15,40 +15,6 @@ load(__DIR__ + "../common/c_AntoraModule.ajs");
 console.show();
 console.clear();
 
-//var path = cFilesystem_CleanupPath("C:\\dir1\dir2");
-//lib_TestExit("Testing... path = " + path);
-
-
-/*
-var antoraRootPath = "c:\\gitlab\\digdir\\components";
-var componentName = "architecture-repositorys";
-var version = "master";
-//var moduleName = "request-reply";
-var moduleName = "unit-autodoc1";
-
-
-var modulePath = cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version);
-window.alert(modulePath);
-
-exit();
-*/
-
-//var l = cFilesystem_listFiles("c:\\gitlab\\digdir\\components");
-//exit();
-
-//var fileList = cFilesystem_listFilesWithExtension("c:\\gitlab\\digdir", "txt");
-//cFilesystem_walk("c:\\gitlab\\digdir");
-//exit();
-
-/*
-cFilesystem_writeTextFile("c:\\gitlab\\digdir\\test.txt", "Hei3");
-var txt = cFilesystem_readTextFile("c:\\gitlab\\digdir\\test.txt");
-console.log(txt);
-exit();
-*/
-
-
-
 console.log("Script starting");
 
 
@@ -73,31 +39,10 @@ else {
 	views.each(function(view) {
 
 		console.log("Processing autodoc view " + view.name);
-
 		docString = cView_asciidocAutoDoc2(view, 1);
-		//cClipboard_SetClipboardString(docString);
-		//console.log("\n\n\n\n" + docString);
 		
 	});	
 }
-
-
-/*
-var playBookDir = "C:\\antora\\modelx-no\\modelx-no-playbook";
-var updateScriptFileName = "update.sh";
-var cmdLineApp = "C:\\Program Files\\Git\\git-bash.exe";
-
-//var dirPath = window.promptOpenDirectory({ title: "Open Folder", "/defaultPath" });
-//var dirPath = window.promptOpenDirectory({ title: "Open Folder", playBookDir });
-//lib_TestExit(dirPath);
-
-$.child_process.exec(cmdLineApp, playBookDir + "\\" + updateScriptFileName);
-
-//var filePath = window.promptOpenFile({ title: "Open Model", filterExtensions: ["*.archimate", "default.archimate"] });
-var webBrowserApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-$.child_process.exec(webBrowserApp, "C:\\antora\\modelx-no\\output\\github-pages\\modelx-no.github.io\\index.html");
-*/
-
 
 console.log("Script completed");
 

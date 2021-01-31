@@ -332,6 +332,8 @@ function cBookSection_getAntoraModule(section) {
 
 function CBookSection_saveSectionPageToFile(section, docString, modulePath) {
 
+lib_Error("function CBookSection_saveSectionPageToFile to be deleted!?");
+
 	var pagesDirPath = modulePath + "\\" + "pages";
 	var pathAndfileName = pagesDirPath + "\\" + section.name + ".adoc";
 
@@ -356,6 +358,9 @@ function CBookSection_saveSectionPageToFile(section, docString, modulePath) {
 
 function CBookSection_saveViewPageToFile(section, docString, modulePath) {
 
+	if (!docString)
+		lib_Error("Attemted to save empty string for Section " + section);
+
 	var pagesDirPath = modulePath + "\\" + "pages";
 	var pathAndfileName = pagesDirPath + "\\" + section.name + ".adoc";
 
@@ -367,14 +372,38 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath) {
 		fileName = window.promptSaveFile( { title: "Save view text", filterExtensions: [ "*.adoc" ], fileName: pathAndfileName } );
 	else
 		fileName = pathAndfileName;
+
+	if (!fileName)
+		lib_Error("Undetermined fileName in c_BookSectionViewRef_saveViewPageToFile.")
+	
+	var previousContent = null;
+	var doWrite = true;
+	if (cFilesystem_fileExists(fileName) )
+	{
+		
+		lib_Log("File " + fileName + " exists");
+		
+		previousContent = cFilesystem_readTextFile(fileName);
+		
+		
+		//if (CBookSection_MatchingStrings(docString, previousContent)) {
+		if (false) {
+			doWrite = false;
+			
+			lib_Log(fileName + " did not change!" );
+
+		}
+	}
 	
 		
-	if (fileName) {
+	if (doWrite) {
+		
+		
+		lib_Log("Writing file " + fileName);
+		
 		$.fs.writeFile(fileName, docString);
 	}
-	else {
-		lib_Error("Undetermined fileName in c_BookSectionViewRef_saveViewPageToFile.")
-	}
+
 }
 
 function CBookSection_determineModulePath(section) {
@@ -425,4 +454,40 @@ function cBookSection_CreateMissingAutobookProperties(section) {
 	
 	cConcept_CreateMissingProperty(section, const_author_name, const_author_name_value_default);
 	cConcept_CreateMissingProperty(section, const_author_email, const_author_email_value_default);
+}
+
+function CBookSection_MatchingStrings(normalString, htmlString) {
+
+	//only Norwegian æøå and ÆØÅ - pending the proper way...
+
+	var result = false;
+
+
+
+	var str1 = normalString;
+	str1 = str1.replace(/æ/g, "Ã¦");
+	str1 = str1.replace(/ø/g, "Ã¸");
+	str1 = str1.replace(/å/g, "Ã¥");
+	str1 = str1.replace(/Æ/g, "Ã†");
+	str1 = str1.replace(/Ø/g, "Ã˜ ");
+	str1 = str1.replace(/Å/g, "Ã…");
+
+
+	//var str1 = encodeURIComponent(normalString);
+	var str2 = htmlString;
+	if (str1 === str2)
+		result = true;
+		
+
+	else {
+		
+		lib_Log("\n\n" + "str1, length=" + str1.length() + ":" + str1);
+		lib_Log("\n\nstr2, length=" + str2.length() + ":" + str2);
+		lib_TestExit("Exiting!");
+
+	}
+		
+
+	return result;
+
 }

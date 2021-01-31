@@ -204,26 +204,32 @@ function cFilesystem_writeTextFile(filePath, txt) {
 function cFilesystem_readTextFile(filePath) {
 
 	console.log("cFilesystem_readTextFile");
+	
+	var txt = null;
 
 	if (!filePath) {
-		window.alert("Error: Empty filePath as input to cFilesystem_readTextFile. Exiting...");
-		exit();
+		//lib_ErrorExit("Empty filePath as input to cFilesystem_readTextFile");
+		lib_Log("Empty filePath as input to cFilesystem_readTextFile");
+
+	}
+	else if (!cFilesystem_fileExists(filePath) )
+		lib_Log("The file " + filePath + " does not exist");
+	else {
+		
+		var FileReader = Java.type("java.io.FileReader");
+		var theFile = new FileReader(filePath);
+		
+		txt = "";
+
+		var data = theFile.read();
+		while(data != -1) {
+		  var theCharacter = String.fromCharCode(data);
+		  txt+=theCharacter;
+		  data = theFile.read();
+		}
+		theFile.close();
 	}
 		
-		
-	var FileReader = Java.type("java.io.FileReader");
-	var theFile = new FileReader(filePath);
-
-	var txt = "";
-
-	var data = theFile.read();
-	while(data != -1) {
-	  var theCharacter = String.fromCharCode(data);
-	  txt+=theCharacter;
-	  data = theFile.read();
-	}
-	theFile.close();
-	
 	return txt;
 
 }
@@ -280,6 +286,36 @@ function cFilesystem_directoryExists(directoryPath) {
 	
 	var result = dir.isDirectory();
 	return result;
+}
+
+function cFilesystem_fileExists(filePath) {
+
+	var File = Java.type("java.io.File");
+	var f = new File(filePath);
+
+	var result = f.exists() && !f.isDirectory();
+	return result;
+}
+
+function cFilesystem_whichIsNewer(file1, file2)
+{
+	
+	// Erik 2001.01.30: Not yet tested
+	
+	var File = Java.type("java.io.File");
+	
+	var f1 = new File(file1); 
+	var f2 = new File(file2); 
+
+	f1Mod = new Date(f1.lastModified);
+	console.log("f1Mod: " + f1Mod);
+	f2Mod = new Date(f2.lastModified);
+	console.log("f2Mod: " + f2Mod);
+	
+	if (f1Mod < f2Mod)
+		return 1;
+	else
+		return 2;
 }
 
 function cFilesystem_test_recFindByExt(base,ext,files,result) // erik: just starting to experiment with parsing files in jacascript
@@ -351,4 +387,9 @@ exit();
     )
     return result;
 }
+
+
+
+
+
 
