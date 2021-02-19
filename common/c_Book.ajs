@@ -137,18 +137,17 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 	//docString += "Om " + book.name;
 	//docString += "Oversikt";
 	// docString += " - " + book.name;
-	docString += "\n";
 
+	
+	docString += "----" + "\n";
+	
 	// time
 	var d = new Date();
 	//docString += d.getFullYear() + "." + d.getMonth()+1 + "." + d.getDate() + " " + d.getHours() + ":" + d.getMinutes();
-	//docString += "\n\n";
-	docString += d.toString();
-	docString += "\n";
+	docString += d.toString() +  "\n";
 	
 	// author
 	if (book.prop(const_author_name) ) {
-		docString += "\n";
 		docString += book.prop(const_author_name);
 
 		if (book.prop(const_author_email)) {
@@ -157,11 +156,10 @@ function cBook_aboutBookChapter(book, sectionLevel) {
 		docString += "\n";			
 	}
 	if (book.prop(const_author_email) && !book.prop(const_author_name) ) {
-		docString += "\n";
 		docString += book.prop(const_author_email);
 		docString += "\n";			
 	}
-	
+	docString += "----" + "\n";	
 
 	
 	if (book.documentation.length() > 0) {	
@@ -284,6 +282,16 @@ function CBook_CreateMissingAutobookProperties(book) {
 		exit();
 	}	
 
+
+
+
+	cConcept_CreateMissingProperty(book, const_prop_antoraVersion, const_prop_antoraVersion_value_default);
+	cConcept_CreateMissingProperty(book, const_prop_antoraComponent, const_prop_antoraComponent_value_default);
+	cConcept_CreateMissingProperty(book, const_prop_antoraModule, const_prop_antoraModule_value_default);
+
+
+	cConcept_CreateMissingProperty(book, const_prop_site_url, const_prop_site_url_value_default);
+
 	cConcept_CreateMissingProperty(book, const_prop_site_url, const_prop_site_url_value_default);
 	cConcept_CreateMissingProperty(book, const_prop_antoraUdateScript, const_prop_antorauUdateScript_value_default);
 	cConcept_CreateMissingProperty(book, const_prop_book_front_cover_image, const_prop_site_url_value_default);
@@ -295,8 +303,9 @@ function CBook_CreateMissingAutobookProperties(book) {
 	CModel_CreateMissingAutobookProperties(model);
 	
 	var topLevelbookSections = cConcept_getSubConcepts(book); // topLevelbookSections for now, but should do ALL sections!
-	topLevelbookSections.each(function(section) {
-		cBookSection_CreateMissingAutobookProperties(section);
-	});	
-	
+	if (topLevelbookSections){
+		topLevelbookSections.each(function(section) {
+			cBookSection_CreateMissingAutobookProperties(section);
+		});	
+	}
 }

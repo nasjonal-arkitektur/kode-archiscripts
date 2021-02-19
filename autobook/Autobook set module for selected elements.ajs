@@ -4,7 +4,7 @@ load(__DIR__ + "../common/c_Namespace.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 
 console.clear();
-console.log("Autobook set component for selected elements");
+console.log("Autobook set module for selected elements");
 
 
 //var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
@@ -16,7 +16,7 @@ if (selectedConcepts === null || selectedConcepts.size() < 1)
 	exit();
 }
 
-var newPropValue = window.prompt("Component name?", "");
+var newPropValue = window.prompt("Module name?", "");
 if (newPropValue === null || newPropValue === "") {
 	window.alert("Cancelled - exiting...");	
 	exit();
@@ -24,7 +24,7 @@ if (newPropValue === null || newPropValue === "") {
 
 var num = 0;
 selectedConcepts.each(function(concept) {
-	cConcept_SetProperty(concept, const_prop_antoraComponent, newPropValue);
+	cConcept_SetProperty(concept, const_prop_antoraModule, newPropValue);
 	num++;
 	
 });
@@ -33,3 +33,4 @@ selectedConcepts.each(function(concept) {
 console.log(num + " elements updated");
 window.alert(num + " elements updated");
 console.log("Script completed");
+

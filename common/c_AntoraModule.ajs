@@ -124,6 +124,7 @@ function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, component
 	*/
 	
 	"= " + sectionName + "\n" +
+	//":doctitle: " + sectionName + "\n" +
 	":wysiwig_editing: 1" + "\n" +
 	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
 	//":imagesdir: ../images" + "\n" +

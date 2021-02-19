@@ -417,11 +417,11 @@ function CBookSection_determineModulePath(section) {
 	if (!antoraRootPath)
 		lib_Error("Missing model property " + const_prop_antoraComponentsPath);
 	if (!componentName)
-		lib_Error("Missing element property " + const_prop_antoraComponent +  " for element \++" + section.name + " with property " + const_prop_dct_type + " = " + const_conceptType_representation__archimateView);
+		lib_Error("Missing element property " + const_prop_antoraComponent +  " for element '" + section.name + "' with property " + const_prop_dct_type + " = " + section.prop(const_prop_dct_type));
 	if (!moduleName)
-		lib_Error("Missing element property " + const_prop_antoraModule +  " for element " + section.name + " with property " + const_prop_dct_type + " = "  + const_conceptType_representation__archimateView);
+		lib_Error("Missing element property " + const_prop_antoraModule +  " for element " + section.name + " with property " + const_prop_dct_type + " = "  + section.prop(const_prop_dct_type));
 	if (!version)
-		lib_Error("Missing element property " + const_prop_antoraVersion +  " for element " + section.name + " with property " + const_prop_dct_type + " = " + const_conceptType_representation__archimateView);
+		lib_Error("Missing element property " + const_prop_antoraVersion +  " for element " + section.name + " with property " + const_prop_dct_type + " = " + section.prop(const_prop_dct_type));
 	
 	var modulePath = cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version);
 	
@@ -454,6 +454,10 @@ function cBookSection_CreateMissingAutobookProperties(section) {
 	
 	cConcept_CreateMissingProperty(section, const_author_name, const_author_name_value_default);
 	cConcept_CreateMissingProperty(section, const_author_email, const_author_email_value_default);
+	
+	cConcept_CreateMissingProperty(section, const_prop_antoraVersion, const_prop_antoraVersion_value_default);
+	cConcept_CreateMissingProperty(section, const_prop_antoraComponent, const_prop_antoraComponent_value_default);
+	cConcept_CreateMissingProperty(section, const_prop_antoraModule, const_prop_antoraModule_value_default);
 }
 
 function CBookSection_MatchingStrings(normalString, htmlString) {
