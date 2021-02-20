@@ -141,8 +141,11 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
         for (var k = 0; k < elmArray.length; k++) {
 
             var e = elmArray[k];
-			if (e.name && e.name.length() > 0) {
-				docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+			
+			if (c_BookSectionViewRef_ShouldShowElement(e) ) {
+			//if (e.name && e.name.length() > 0) {
+				//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+				docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
 			}
         }		
 		
@@ -151,10 +154,11 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 	
 		elms.each(function(e) {
 			
-			if (e.name && e.name.length() > 0) {
+			//if (e.name && e.name.length() > 0) {
+			if (c_BookSectionViewRef_ShouldShowElement(e) )	{			
 				//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
-				//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-				docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+				docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+				//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
 			}
 			
 		});
@@ -162,6 +166,19 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 
 	docString += "\n\n|===";
 	return docString;
+}
+
+function c_BookSectionViewRef_ShouldShowElement(e) {
+
+	var show = true;
+	
+	if (e.outlineOpacity == 99)	{
+		show = false;
+	}
+	else if (!e.name || e.name.length() < 1)
+		show = false;
+		
+	return show;
 }
 
 function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLevel) {

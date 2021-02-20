@@ -1,0 +1,27 @@
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+
+console.show();
+console.clear();
+
+console.log("Autodoc utility,show option skip selected elements");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element. Exiting...");
+	exit();
+}
+
+		
+selectedOccurences.each(function (elm) {
+
+	elm.outlineOpacity = const_prop_antoraShowOption_value_skip;
+	
+});
+
+console.log("Script completed");
