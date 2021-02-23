@@ -32,11 +32,12 @@ $(selectedOccurence).children().each(function (viewRefs) {
 	
 	console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ")" );
 
-	if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model'))) {
+	if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model') || (viewRefs.type == 'canvas-model'))) {
 
 		// Find the actual linked views
 		var viewsCollection = $('archimate-diagram-model');
 		viewsCollection.add($('sketch-model'));
+		viewsCollection.add($('canvas-model'));
 		
 		var duplicate = false;
 		var alreadyFound = false;

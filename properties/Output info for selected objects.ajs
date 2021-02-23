@@ -11,21 +11,55 @@ load(__DIR__ + "../common/c_Selection.ajs");
 load(__DIR__ + "../common/c_Concept.ajs");
 
 var occurences = CSelection_GetDirectlySelectedOccurences();
+lib_VerifyNotNull(occurences, "No objects selected");
 
-console.log("type" + "\t" + "name" + "\t" + "id" + "\t"+ "view" + "\t" + "concept.id");
+console.log("type" + "\t" + "name" + "\t" + "id" + "\t"+ "view" + "\t" + "concept.id" + "\t" + "width" + "\t" + "height" + "\t" + "fillColor");
 
 occurences.each(function(o) {
-	
+
+	//console.log(o.type + "\t" + o.name + "\t" + o.id);
+
 	var isConcept = false;
-	if (o.id == o.concept.id)
+	if (o.concept && o.id == o.concept.id)
 		isConcept = true;
-	
-	if (isConcept)
-		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o) + "\t" + "(is concept)" );
+
+	if (o.type == "archimate-model") // 
+		console.log(o.type + "\t" + o.name + "\t" + o.id);
+
+	else if (o.type == "folder") // 
+		console.log(o.type + "\t" + o.name + "\t" + o.id);
+		
+	else if (o.type == "archimate-diagram-model") // 
+		console.log(o.type + "\t" + o.name + "\t" + o.id);
+
+	else if (o.type == "canvas-model") // 
+		console.log(o.type + "\t" + o.name + "\t" + o.id);
+		
+	else if (o.type == "canvas-model-connection") // 
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name);
+
+	else if (o.type.indexOf("relationship") > 0) // 
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name);
+	else if (o.type == "canvas-model-block") // take name from o.content ????????
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + "-" + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+	else if (o.type == "canvas-model-image") // take name from o.documentation
+		console.log(o.type + "\t" + o.documentation + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + "-" + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+	else if (isConcept)
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + "-" + "\t" + "(is concept)" );
 	else
-		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o) + "\t" + o.concept.id + o.id + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + o.concept.id + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
 	
 	
-	cConcept_GetProperties(o.concept);
+	var option_outputProps = false;
+	if (option_outputProps) {
+		var propList = $(o).prop();
+		if (propList.size() > 0) {
+			console.log("\nProperties:");
+			for (var i = 0; i < propList.size(); i++) {
+				console.log(propList[i] + ": " + o.prop( propList[i]) );
+			}
+		}
+	}
+
 	
 });	

@@ -363,8 +363,10 @@ function CSelection_GetSelectedConcepts(conceptType, namespace) { // always retu
 function CSelection_GetDirectlySelectedOccurences() {
 
 	var selectedOccurences = $(selection).filter("element");
+	var selectedOccurences = $(selection);
 	selectedOccurences.add( $(selection).filter("relationship") );
-	
+	//selectedOccurences.add( $(selection).filter("canvas-model-block") );
+	//selectedOccurences.add( $(selection).filter("canvas-model-image") );	
 	return selectedOccurences;
 }
 

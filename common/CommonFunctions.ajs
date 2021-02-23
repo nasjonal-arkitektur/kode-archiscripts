@@ -143,10 +143,16 @@ function lib_Stackdump() {
 }
 
 
-function lib_VerifyNotNull(object) {
+function lib_VerifyNotNull(object, dueTo) {
 
-	if (!object)
-		lib_Error("Unexpected null-pointer to object");
+	if (!object) {
+
+		var msg = "Unexpected null-pointer to object!";
+		if (dueTo)
+			msg += " " + dueTo;
+
+		lib_Error(msg);
+	}
 }
 
 

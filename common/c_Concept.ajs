@@ -21,10 +21,15 @@ function cConcept_GetProperties(concept) {  // maybe not needed, but keep it to 
 	});	
 	*/
 	
+	
 	console.log("\nProperties:");
-	for (var i = 0; i < propList.size(); i++) {
-		console.log(propList[i] + ": " + concept.prop( propList[i]) );
+	if (propList) {
+		for (var i = 0; i < propList.size(); i++) {
+			console.log(propList[i] + ": " + concept.prop( propList[i]) );
+		}
 	}
+	else
+		console.log("\nNo properties");
 	
 	return propList;
 }

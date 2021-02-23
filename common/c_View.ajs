@@ -140,7 +140,15 @@ var cView_GetElementsInView = function(v) {
 	var viewItems = null;
 	
 	viewItems = $(v).find().filter("element");
+	//viewItems.add($("canvas-model-block"));
+	//viewItems.add($("canvas-model-image"));	
+	
+	if (!viewItems)
+		viewItems = $(v).children();
+		
+		
 
+		
 	viewItems.each(function(item) {	
 	
 		//if (itemType == "concept")

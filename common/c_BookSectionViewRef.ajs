@@ -101,6 +101,8 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 
 	var elms = cView_GetElementsInView(refView);
 	
+	lib_VerifyNotNull(elms, "View '" +  refView.name + "' is empty?");
+	
 	var optionSort = false;
 	if (optionSort) {
 		var elmArray = [];

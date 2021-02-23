@@ -433,6 +433,8 @@ function cBookSection_IncludeSubsection(section, subSection) {
 		
 	docString = "";
 	var component = cBookSection_getAntoraComponent(subSection);
+	if (!component)
+		lib_Error("Missing property component for subSection with name " + subSection.name); 
 	lib_VerifyNotNull(component);
 	var version = cBookSection_getAntoraVersion(subSection);
 	//lib_VerifyNotNull(version);
