@@ -51,7 +51,9 @@ function cBook_autodoc(bookElement, sectionLevel) {
 			//docString += "=" + " " + nextSiblingSection.name + "\n"; // note: hardcoded top level sectionLevel!!!!!!!!!!!!!!!!!!!
 			docString += cBookSection_IncludeSubsection(book, nextSiblingSection);
 			
-			cBookSection_autodoc(nextSiblingSection, sectionLevel + 1);	
+			cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 0); // 0 means variant 0; default
+			cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 1); // 1 means variant 1; detailed
+			
 			nextSiblingSection = cBookSection_nextSiblingSection(nextSiblingSection);
 			
 			

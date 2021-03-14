@@ -25,9 +25,10 @@ function cBookSection_SectionHeading(sectionName, sectionLevel) {
 	return docString;
 }
 
-function cBookSection_autodoc(section, sectionLevel) {
+function cBookSection_autodoc(section, sectionLevel, variant) {
 	
-	
+	var modulePath = CBookSection_determineModulePath(section);
+		
 	// starting with the first section, recursively drilling down the hierarchy and then going to the next sibling section and so on
 	
 	section = section.concept; // just to make sure
@@ -48,16 +49,16 @@ function cBookSection_autodoc(section, sectionLevel) {
 		
 	var docString = "";
 
-
-
 	if (section.prop(const_prop_dct_type) === const_conceptType_representation__section) {
 
-		docString += CBookSection_documentAsAsciidoc(section, sectionLevel);
+		// only variant 0 relevant
+		if (variant == 0)
+			docString += CBookSection_documentAsAsciidoc(section, sectionLevel);
 	}
 	
 	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__archimateView) {
-
-		docString += c_BookSectionViewRef_autodoc(section, sectionLevel);
+	
+		docString += c_BookSectionViewRef_autodoc(section, sectionLevel, variant);
 
 	}
 	else 
@@ -84,7 +85,7 @@ function cBookSection_autodoc(section, sectionLevel) {
 			
 			docString += cBookSection_IncludeSubsection(section, nextSiblingSubSection);
 
-			cBookSection_autodoc(nextSiblingSubSection, sectionLevel + 1);	
+			cBookSection_autodoc(nextSiblingSubSection, sectionLevel + 1, variant);	
 
 			nextSiblingSubSection = cBookSection_nextSiblingSection(nextSiblingSubSection);
 		
@@ -102,15 +103,13 @@ function cBookSection_autodoc(section, sectionLevel) {
 ***/
 
 	// save asciidoc text
-	var modulePath = CBookSection_determineModulePath(section);
-
 	var doSave = true;
 	var master = cConcept_GetProperty(section, const_prop_antoraMaster);
 	if (master && master === const_prop_antoraMaster_value_file)
 		doSave = false;
 	
 	if (doSave)
-		CBookSection_saveViewPageToFile(section, docString, modulePath);	
+		CBookSection_saveViewPageToFile(section, docString, modulePath, variant);	
 //lib_TestExit(docString);
 	return docString;
 }
@@ -253,7 +252,7 @@ function cBookSection_documentSectionAsAsciidocChapters(section, view, sectionLe
 		doSave = false;
 	
 	if (doSave)
-		CBookSection_saveViewPageToFile(section, docString, modulePath);
+		CBookSection_saveViewPageToFile(section, docString, modulePath, variant);
 	
 	//console.log(docString);
 	
@@ -330,6 +329,8 @@ function cBookSection_getAntoraModule(section) {
 	return  cConcept_GetProperty(section, const_prop_antoraModule)
 }
 
+
+/*** NOT USED
 function CBookSection_saveSectionPageToFile(section, docString, modulePath) {
 
 lib_Error("function CBookSection_saveSectionPageToFile to be deleted!?");
@@ -355,14 +356,52 @@ lib_Error("function CBookSection_saveSectionPageToFile to be deleted!?");
 		lib_Error("Undetermined fileName")
 	}
 }
+***/
 
-function CBookSection_saveViewPageToFile(section, docString, modulePath) {
+function CBookSection_getXref(section, variant) {
+
+	var component = cConcept_GetProperty(section, const_prop_antoraComponent);
+	var version = cConcept_GetProperty(section, const_prop_antoraVersion);
+	var module = cConcept_GetProperty(section, const_prop_antoraModule);
+	var versionStr = "";
+	if (version)
+		versionStr = version + "@";
+
+	var xref = null;
+	var filename = null;
+	var antoraPath = versionStr + component + ":" + module + ":page$";
+	
+	if (variant == 0) {
+		filename = section.name + ".adoc";
+	}
+	else {
+		filename = section.name + ".var." + variant + ".adoc";
+	}
+
+	//xref = "xref:" + antoraPath + filename + "[]" + "\n";
+	xref = antoraPath + filename;
+	return xref;
+}
+
+function CBookSection_getPathAndfileName(section, modulePath, variant) {
+
+	var pagesDirPath = modulePath + "\\" + "pages";
+	var pathAndfileName = null;
+	if (variant == 0)
+		pathAndfileName = pagesDirPath + "\\" + section.name + ".adoc";
+	else
+		pathAndfileName = pagesDirPath + "\\" + section.name + ".var." + variant + ".adoc";
+	
+	return pathAndfileName;
+}
+
+function CBookSection_saveViewPageToFile(section, docString, modulePath, variant) {
 
 	if (!docString)
 		lib_Error("Attemted to save empty string for Section " + section);
 
 	var pagesDirPath = modulePath + "\\" + "pages";
-	var pathAndfileName = pagesDirPath + "\\" + section.name + ".adoc";
+	var pathAndfileName = CBookSection_getPathAndfileName(section, modulePath, variant);
 
 	cFilesystem_mkDirIfNotExisting(pagesDirPath);
 
@@ -433,8 +472,6 @@ function cBookSection_IncludeSubsection(section, subSection) {
 		
 	docString = "";
 	var component = cBookSection_getAntoraComponent(subSection);
-	if (!component)
-		lib_Error("Missing property component for subSection with name " + subSection.name); 
 	lib_VerifyNotNull(component);
 	var version = cBookSection_getAntoraVersion(subSection);
 	//lib_VerifyNotNull(version);

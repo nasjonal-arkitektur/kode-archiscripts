@@ -10,7 +10,7 @@ load(__DIR__ + "c_Model.ajs");
 
 
 
-function c_BookSectionViewRef_autodoc(section, hierarchyLevel) {
+function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 
 //if (section.name === "Muliggjørende kapabiliteter")
 //	lib_TestExit("section: " + section);
@@ -26,10 +26,33 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel) {
 	var optionDocViewAsTable = true;
 	
 	
-	docString +=c_BookSectionViewRef_documentViewNarrative(section);
+	docString += c_BookSectionViewRef_documentViewNarrative(section);
 	
-	if (optionDocViewAsTable)
-		docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section); //erik: temporary solution
+	docString += "\n";
+	
+	if (optionDocViewAsTable) {
+		
+		if (variant == 0) {
+			var refDetailedDocFile = CBookSection_getXref(section, 1); // variant = 1
+			//docString += "[sidebar]";
+			docString += "****" + "\n";
+			docString += "xref:" + refDetailedDocFile + "[Vis detaljer om elementene i diagrammet]" + " (" + "Tips: kbd:[Shift]-klikk for å åpne i nytt vindu" + ")" + "\n";
+			//docString += "\n";
+			//docString += "TIP: kbd:[Shift]-klikk for å åpne i nytt vindu" + "\n";
+			docString += "****" + "\n";
+
+		}
+		else if (variant == 1) {
+			docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section); //erik: temporary solution
+			var refDefaultDocFile = CBookSection_getXref(section, 0); // variant = 0
+			docString += "\n";
+			docString += "****" + "\n";
+			//docString += "xref:" + refDefaultDocFile + "[Vis uten detaljer om elementene i diagrammet]" + "\n";
+			docString += "TIP: Gå tilbake til standardvisning ved å lukke dette vinduet (eller klikk 'tilbake')" + "\n";
+			docString += "****" + "\n";
+
+		}
+	}
 	else
 		docString += c_BookSectionViewRef_documentViewAsAsciidocChapters(section, hierarchyLevel + 1);
 
@@ -147,7 +170,14 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 			if (c_BookSectionViewRef_ShouldShowElement(e) ) {
 			//if (e.name && e.name.length() > 0) {
 				//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
-				docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+				if ($(e).is("canvas-model-image") )
+					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+				else if ($(e).is("canvas-model-block") )
+					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+				else if ($(e).is("canvas-model-sticky") )
+					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
+				else	
+					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
 			}
         }		
 		

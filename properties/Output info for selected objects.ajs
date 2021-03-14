@@ -32,25 +32,74 @@ occurences.each(function(o) {
 	else if (o.type == "archimate-diagram-model") // 
 		console.log(o.type + "\t" + o.name + "\t" + o.id);
 
-	else if (o.type == "canvas-model") // 
+	else if (o.type == "canvas-model") { // 
 		console.log(o.type + "\t" + o.name + "\t" + o.id);
+		var viewItems = $(o).find();
+		//var viewItems = $(o).find().filter("canvas-model-block");
+		//var viewItems = $(o).find().filter("canvas-model-image");
+		//var viewItems = $(o).find().filter("canvas-model-connection");
 		
+		/*
+		viewItems.each(function(item) {	
+			if ($(item).is("canvas-model-image") )
+				console.log(item.type + "\t" + item.documentation + "\t" + item.id); // + "\t" + $(item).parent().id);
+			else if ($(item).is("canvas-model-block") )
+				console.log(item.type + "\t" + item.prop("content") + "\t" + item.id);
+			else if ($(item).is("canvas-model-sticky") )
+				console.log(item.type + "\t" + item.documentation + "\t" + item.id);
+			else if ($(item).is("canvas-model-connection") )
+				console.log(item.type + "\t" + item.name + "\t" + item.id);
+		});
+		*/
+		viewItems.each(function(item) {	
+			if ($(item).is("canvas-model-image") )
+				console.log(item.type + "\t" + item.name + "\t" + item.documentation + "\t" + item.id); // works for documentation (and for name after been set via scripting)
+			else if ($(item).is("canvas-model-block") )
+				console.log(item.type + "\t" + item.name + "\t" + item.documentation + "\t" + item.id);  //name can be set and read via scripting, not documentation; how to read "content" 
+			else if ($(item).is("canvas-model-sticky") )
+				console.log(item.type + "\t" + item.name + "\t" + item.documentation + "\t" + item.id); //name can be set and read via scripting, not documentation; how to read "content" 
+			else if ($(item).is("canvas-model-connection") )
+				console.log(item.type + "\t" + item.name + "\t" + item.id); // works
+		});
+
+	}	
+
+
 	else if (o.type == "canvas-model-connection") // 
 		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name);
 
-	else if (o.type.indexOf("relationship") > 0) // 
-		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name);
-	else if (o.type == "canvas-model-block") // take name from o.content ????????
+	else if (o.type.indexOf("relationship") > 0) { // 
+	//else if ( $(o).is("relationship")) {
+		if (isConcept) {
+			console.log(o.type + "\t" + o.name + "\t" + o.id );
+		}
+		else
+			console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name);
+	}
+	else if (o.type == "canvas-model-block") {// take name from o.content ????????
+		o.name = "Erik";
+		//o.documentation = "Erik is clever";
+		
 		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + "-" + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
-	else if (o.type == "canvas-model-image") // take name from o.documentation
-		console.log(o.type + "\t" + o.documentation + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + "-" + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+	}
+	else if ($(o).is("canvas-model-sticky") ) {
+		o.name = "Erik-sticky";
+		//o.documentation = "Erik is clever";
+		console.log(o.type + "\t" + o.name  + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + "-" + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+	}
+	else if (o.type == "canvas-model-image") { // take name from o.documentation
+
+		o.name = o.documentation;
+		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + "-" + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
+
+	}
 	else if (isConcept)
 		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + "-" + "\t" + "(is concept)" );
 	else
 		console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + o.concept.id + "\t" + o.bounds.width + "\t" + o.bounds.height + "\t" + o.fillColor);
 	
 	
-	var option_outputProps = false;
+	var option_outputProps = true;
 	if (option_outputProps) {
 		var propList = $(o).prop();
 		if (propList.size() > 0) {

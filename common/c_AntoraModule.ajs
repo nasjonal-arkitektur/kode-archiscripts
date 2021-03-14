@@ -134,6 +134,7 @@ function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, component
 	":imagepath: " + versionStr + componentName +":" + moduleName + ":" + "\n" +
 	"endif::[]" + "\n" +
 	":toc: left" + "\n" +
+	":experimental:" + "\n" +
 	":toclevels: 4" + "\n" +
 	":sectnums:" + "\n" +
 	":sectnumlevels: 9" + "\n\n";
