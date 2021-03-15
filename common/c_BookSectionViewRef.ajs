@@ -43,6 +43,7 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 
 		}
 		else if (variant == 1) {
+			docString += "TIP: Gå tilbake til standardvisning ved å lukke dette vinduet (eller klikk 'tilbake')" + "\n";
 			docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section); //erik: temporary solution
 			var refDefaultDocFile = CBookSection_getXref(section, 0); // variant = 0
 			docString += "\n";
