@@ -7,7 +7,8 @@ console.show();
 console.clear();
 console.log("Clipboard paste color");
 
-var selectedItems = $(selection).filter("element");
+//var selectedItems = $(selection).filter("element");
+var selectedItems = $(selection);
 if (selectedItems == null || selectedItems.size() < 1)
 {
 	window.alert("No elements selected. Exiting...");

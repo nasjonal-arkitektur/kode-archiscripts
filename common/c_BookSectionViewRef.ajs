@@ -107,6 +107,26 @@ function c_BookSectionViewRef_documentViewNarrative(section) {
 	return docString
 
 }
+function c_BookSectionViewRef_DocumentViewElementsAsTableRow(e) {
+
+	var docString = "";
+	
+	if (c_BookSectionViewRef_ShouldShowElement(e) ) {
+//if (e.name && e.name.length() > 0) {
+	//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "a| " + e.documentation;
+	if ($(e).is("canvas-model-image") )
+		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+	else if ($(e).is("canvas-model-block") )
+		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+	else if ($(e).is("canvas-model-sticky") )
+		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+	else	
+		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+	}
+
+	return docString;
+
+}
 
 function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 
@@ -167,19 +187,7 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
         for (var k = 0; k < elmArray.length; k++) {
 
             var e = elmArray[k];
-			
-			if (c_BookSectionViewRef_ShouldShowElement(e) ) {
-			//if (e.name && e.name.length() > 0) {
-				//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
-				if ($(e).is("canvas-model-image") )
-					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-				else if ($(e).is("canvas-model-block") )
-					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-				else if ($(e).is("canvas-model-sticky") )
-					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-				else	
-					docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-			}
+			docString += c_BookSectionViewRef_DocumentViewElementsAsTableRow(e);		
         }		
 		
 	}
@@ -189,9 +197,8 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 			
 			//if (e.name && e.name.length() > 0) {
 			if (c_BookSectionViewRef_ShouldShowElement(e) )	{			
-				//docString += "\n\n" + "| " + e.name + "\n" + "| " + e.type +  "\n" + "| " + e.documentation;
-				docString += "\n\n" + "| " + e.name + "\n" + "| " + e.documentation;
-				//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "| " + e.documentation;
+			
+				docString += c_BookSectionViewRef_DocumentViewElementsAsTableRow(e);	
 			}
 			
 		});
