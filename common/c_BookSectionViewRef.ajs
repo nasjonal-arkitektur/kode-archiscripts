@@ -17,6 +17,9 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 
 	var docString = "";
 
+	if (variant === 1 && c_BookSectionViewRef_noElementDoc(section))
+		return docString;			
+			
 
 	// precondition:
 	if (section.prop(const_prop_dct_type) != const_conceptType_representation__archimateView) {
@@ -30,28 +33,31 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 	
 	docString += "\n";
 	
+	
+
+	
 	if (optionDocViewAsTable) {
 		
 		if (variant == 0) {
 			var refDetailedDocFile = CBookSection_getXref(section, 1); // variant = 1
-			//docString += "[sidebar]";
-			docString += "****" + "\n";
-			docString += "xref:" + refDetailedDocFile + "[Vis detaljer om elementene i diagrammet]" + " (" + "Tips: kbd:[Shift]-klikk for å åpne i nytt vindu" + ")" + "\n";
-			//docString += "\n";
-			//docString += "TIP: kbd:[Shift]-klikk for å åpne i nytt vindu" + "\n";
-			docString += "****" + "\n";
 
+			if (!c_BookSectionViewRef_noElementDoc(section)) {
+				docString += "****" + "\n";
+				docString += "xref:" + refDetailedDocFile + "[Vis detaljer om elementene i diagrammet]" + " (" + "Tips: kbd:[Shift]-klikk for å åpne i nytt vindu" + ")" + "\n";
+				docString += "****" + "\n";
+			}
 		}
 		else if (variant == 1) {
+			
+			// note: see above test on c_BookSectionViewRef_noElementDoc(section)
+			
 			docString += "TIP: Gå tilbake til standardvisning ved å lukke dette vinduet (eller klikk 'tilbake')" + "\n";
 			docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section); //erik: temporary solution
 			var refDefaultDocFile = CBookSection_getXref(section, 0); // variant = 0
 			docString += "\n";
 			docString += "****" + "\n";
-			//docString += "xref:" + refDefaultDocFile + "[Vis uten detaljer om elementene i diagrammet]" + "\n";
 			docString += "TIP: Gå tilbake til standardvisning ved å lukke dette vinduet (eller klikk 'tilbake')" + "\n";
 			docString += "****" + "\n";
-
 		}
 	}
 	else
@@ -107,31 +113,57 @@ function c_BookSectionViewRef_documentViewNarrative(section) {
 	return docString
 
 }
+
 function c_BookSectionViewRef_DocumentViewElementsAsTableRow(e) {
 
 	var docString = "";
 	
 	if (c_BookSectionViewRef_ShouldShowElement(e) ) {
-//if (e.name && e.name.length() > 0) {
-	//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "a| " + e.documentation;
-	if ($(e).is("canvas-model-image") )
-		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
-	else if ($(e).is("canvas-model-block") )
-		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
-	else if ($(e).is("canvas-model-sticky") )
-		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
-	else	
-		docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+	//if (e.name && e.name.length() > 0) {
+		//docString += "\n\n" + "| " + e.name + " <" + e.type + ">" + "\n" + "a| " + e.documentation;
+		if ($(e).is("canvas-model-image") )
+			docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+		else if ($(e).is("canvas-model-block") )
+			docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+		else if ($(e).is("canvas-model-sticky") )
+			docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
+		else	
+			docString += "\n\n" + "| " + e.name + "\n" + "a| " + e.documentation;
 	}
 
 	return docString;
 
 }
 
+function c_BookSectionViewRef_noElementDoc(section) {
+
+	var result = true;
+	var refView = c_BookSectionViewRef_getReferencedView(section);
+	var elms = cView_GetElementsInView(refView);
+
+	var someContent = false;
+	elms.each(function(e) {
+		if (e.documentation)
+			someContent = true;
+	});
+
+	if (someContent)
+		result = false;
+	
+	return result;
+		
+}
+
+
 function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 
 	var docString = "";
 	var refView = c_BookSectionViewRef_getReferencedView(section);
+
+	var elms = cView_GetElementsInView(refView);
+
+	if (c_BookSectionViewRef_noElementDoc(section))
+		return docString;
 	
 	docString += "\n\n";
 	//docString += "[cols =\"1,1,3\", options=\"header\"]";
@@ -143,7 +175,7 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 	docString += "\n\n" + "| " + "Element" +  "\n" + "| " + "Beskrivelse";
 
 
-	var elms = cView_GetElementsInView(refView);
+
 	
 	lib_VerifyNotNull(elms, "View '" +  refView.name + "' is empty?");
 	
