@@ -51,12 +51,14 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 			
 			// note: see above test on c_BookSectionViewRef_noElementDoc(section)
 			
-			docString += "TIP: Gå tilbake til standardvisning ved å lukke dette vinduet (eller klikk 'tilbake')" + "\n";
+			var tip = "TIP: Gå tilbake til standardvisning ved å klikke 'tilbake' (eller lukk dette vinduet om det er nytt)" + "\n";
+			
+			docString += tip;
 			docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section); //erik: temporary solution
 			var refDefaultDocFile = CBookSection_getXref(section, 0); // variant = 0
 			docString += "\n";
 			docString += "****" + "\n";
-			docString += "TIP: Gå tilbake til standardvisning ved å lukke dette vinduet (eller klikk 'tilbake')" + "\n";
+			docString += tip;
 			docString += "****" + "\n";
 		}
 	}
@@ -226,13 +228,7 @@ function c_BookSectionViewRef_documentAllViewElementsAsTable(section) {
 	else {
 	
 		elms.each(function(e) {
-			
-			//if (e.name && e.name.length() > 0) {
-			if (c_BookSectionViewRef_ShouldShowElement(e) )	{			
-			
-				docString += c_BookSectionViewRef_DocumentViewElementsAsTableRow(e);	
-			}
-			
+			docString += c_BookSectionViewRef_DocumentViewElementsAsTableRow(e);	
 		});
 	}
 
@@ -244,7 +240,7 @@ function c_BookSectionViewRef_ShouldShowElement(e) {
 
 	var show = true;
 	
-	if (e.outlineOpacity == 99)	{
+	if (e.outlineOpacity == const_prop_antoraShowOption_value_skip)	{
 		show = false;
 	}
 	else if (!e.name || e.name.length() < 1)

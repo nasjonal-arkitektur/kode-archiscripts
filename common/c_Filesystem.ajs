@@ -186,6 +186,35 @@ function cFilesystem_listFiles(filePath) {
 	return true; // ??
 }
 
+function cFilesystem_renameFile(filePath, newFilePath) {
+
+	console.log("cFilesystem_readTextFile");
+	
+	var txt = null;
+
+	if (!filePath) {
+		lib_ErrorExit("Empty filePath as input to cFilesystem_readTextFile");
+		//lib_Log("Empty filePath as input to cFilesystem_readTextFile");
+
+	}
+	else if (!cFilesystem_fileExists(filePath) )
+		lib_Log("The file " + filePath + " does not exist");
+	else {
+		
+		var File = Java.type("java.io.File");
+		
+		var fileToMove = new File(filePath);
+		var isMoved = fileToMove.renameTo(new File(newFilePath));
+		if (!isMoved) {
+			lib_ErrorExit("Failed to rename file " + filePath);
+		}	
+	
+	}
+	
+	
+	
+}
+
 function cFilesystem_mkDirIfNotExisting(dirPath) {
 	//console.log("cFilesystem_createDir " + dirPath);
 	var File = Java.type("java.io.File");

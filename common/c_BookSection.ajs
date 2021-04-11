@@ -427,16 +427,18 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 		
 		lib_Log("File " + fileName + " exists");
 		
+		/*
 		previousContent = cFilesystem_readTextFile(fileName);
-		
-		
+	
 		//if (CBookSection_MatchingStrings(docString, previousContent)) {
 		if (false) {
 			doWrite = false;
 			
 			lib_Log(fileName + " did not change!" );
-
 		}
+		*/
+		
+		cFilesystem_renameFile(fileName, fileName + ".bak");
 	}
 	
 		
