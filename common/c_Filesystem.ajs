@@ -2,6 +2,8 @@
  * c_Filesystem.ajs
  */
 
+load(__DIR__ + "Constants.ajs");
+
 function cFilesystem_getSubDirs(dirPath) {
 	
 	
@@ -188,14 +190,10 @@ function cFilesystem_listFiles(filePath) {
 
 function cFilesystem_renameFile(filePath, newFilePath) {
 
-	console.log("cFilesystem_readTextFile");
-	
 	var txt = null;
 
 	if (!filePath) {
-		lib_ErrorExit("Empty filePath as input to cFilesystem_readTextFile");
-		//lib_Log("Empty filePath as input to cFilesystem_readTextFile");
-
+		lib_Error("Empty filePath as input to cFilesystem_renameFile");
 	}
 	else if (!cFilesystem_fileExists(filePath) )
 		lib_Log("The file " + filePath + " does not exist");
@@ -206,14 +204,36 @@ function cFilesystem_renameFile(filePath, newFilePath) {
 		var fileToMove = new File(filePath);
 		var isMoved = fileToMove.renameTo(new File(newFilePath));
 		if (!isMoved) {
-			lib_ErrorExit("Failed to rename file " + filePath);
+			lib_Error("Failed to rename file " + filePath);
 		}	
 	
 	}
-	
-	
-	
 }
+
+function cFilesystem_deleteFile(filePath) {
+	
+	var txt = null;
+
+	if (!filePath) {
+		lib_Error("Empty filePath as input to cFilesystem_deleteFile");
+;
+
+	}
+	else if (!cFilesystem_fileExists(filePath) )
+		lib_Log("The file " + filePath + " does not exist");
+	else {
+		
+		var File = Java.type("java.io.File");
+		
+		var fileToDelete = new File(filePath);
+		var isDeleted = fileToDelete.delete();
+		if (!isDeleted) {
+			lib_Error("Failed to delete file " + filePath);
+		}	
+	
+	}
+}
+
 
 function cFilesystem_mkDirIfNotExisting(dirPath) {
 	//console.log("cFilesystem_createDir " + dirPath);

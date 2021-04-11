@@ -420,7 +420,7 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 	if (!fileName)
 		lib_Error("Undetermined fileName in c_BookSectionViewRef_saveViewPageToFile.")
 	
-	var previousContent = null;
+	var bakFilename = fileName + ".bak";
 	var doWrite = true;
 	if (cFilesystem_fileExists(fileName) )
 	{
@@ -438,10 +438,11 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 		}
 		*/
 		
-		cFilesystem_renameFile(fileName, fileName + ".bak");
+		cFilesystem_deleteFile(bakFilename);
+		cFilesystem_renameFile(fileName, bakFilename);
+
 	}
 	
-		
 	if (doWrite) {
 		
 		
@@ -449,6 +450,17 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 		
 		$.fs.writeFile(fileName, docString);
 	}
+
+	var previousContent = cFilesystem_readTextFile(bakFilename);
+	var newContent = cFilesystem_readTextFile(fileName);
+	
+	if (previousContent.equals(newContent)) {
+		//lib_TestExit("Test worked!");
+		cFilesystem_deleteFile(fileName);
+		cFilesystem_renameFile(bakFilename, fileName);
+	}
+	else
+		cFilesystem_deleteFile(bakFilename);
 
 }
 
