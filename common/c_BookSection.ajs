@@ -454,13 +454,16 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 	var previousContent = cFilesystem_readTextFile(bakFilename);
 	var newContent = cFilesystem_readTextFile(fileName);
 	
-	if (previousContent.equals(newContent)) {
-		//lib_TestExit("Test worked!");
-		cFilesystem_deleteFile(fileName);
-		cFilesystem_renameFile(bakFilename, fileName);
+	
+	if (previousContent) {
+		if (previousContent.equals(newContent)) {
+			//lib_TestExit("Test worked!");
+			cFilesystem_deleteFile(fileName);
+			cFilesystem_renameFile(bakFilename, fileName);
+		}
+		else
+			cFilesystem_deleteFile(bakFilename);
 	}
-	else
-		cFilesystem_deleteFile(bakFilename);
 
 }
 
