@@ -48,6 +48,8 @@ function cBook_autodoc(bookElement, sectionLevel) {
 		docString += ":leveloffset: +1" + "\n";
 		while (nextSiblingSection) {
 			
+			//window.alert("nextSiblingSection = " + nextSiblingSection);
+			
 			//docString += "=" + " " + nextSiblingSection.name + "\n"; // note: hardcoded top level sectionLevel!!!!!!!!!!!!!!!!!!!
 			docString += cBookSection_IncludeSubsection(book, nextSiblingSection);
 			

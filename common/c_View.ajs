@@ -1098,3 +1098,52 @@ function cView_GetContainingElementIfExists(view, anElement) {
 	
 	return foundParent;
 }
+
+
+var cView_GetDiagramComponents = function(v, e) {
+
+    return $(v).find().filter(function(o) {
+        return o.concept.id == e.id;
+    });
+}
+
+// Checks if a view contains a visual connection from src and tgt visual objects
+var cView_contains = function(r, src, tgt) {
+    found = false;
+    
+    $(r).objectRefs().each(function(o) {
+        if (o.source.id == src.id && o.target.id == tgt.id) {
+            found = true;
+        }
+    });
+    
+    return found;
+}
+
+function cView_ShowHiddenRelationships(v) {
+
+	$(v).find("element").each(function(e) {
+
+		//debug? console.log("    Checking element: " + e.name):true; // erik
+
+		$(e.concept).rels().each(function(r) {
+		
+			if (r.source.id == e.concept.id) { // Erik-1: The end result will be the same, but this makes it more logical to me  
+	
+				cView_GetDiagramComponents(v,r.source).each(function(src) {
+				
+					cView_GetDiagramComponents(v,r.target).each(function(tgt) {
+					
+						if (!cView_contains(r, src, tgt)) {
+							debug? console.log("        => Adding " + r.type + "(" + r.name + ") from " + src.name + " to " + tgt.name ):true; // erik
+							v.add(r, src, tgt);
+						}
+					});
+				
+				});
+			} // Erik-1
+		});
+	});
+	
+}
+

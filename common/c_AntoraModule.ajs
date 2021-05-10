@@ -42,6 +42,8 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 	//console.log("---------------------------------------");
 
 	var dirsWithAnAntoraYmlFile = cFilesystem_getDirsWithFile(antoraRootPath, "antora.yml");
+	if (!dirsWithAnAntoraYmlFile)
+		lib_Error("No dirsWithAnAntoraYmlFile under " + antoraRootPath);
 
 	for (var i = 0; i < dirsWithAnAntoraYmlFile.length; i++) {
 		var modulesPath = dirsWithAnAntoraYmlFile[i];
@@ -50,6 +52,10 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 		
 		var dirModules = cAntoraModule_getModulesUnderPath(modulesPath + "\\" + "modules");
 		//console.log("Modules under " + modulesPath);
+		
+		if (!dirModules)
+			lib_Error("Failed to getModulesUnderPath " + modulesPath);
+		
 		for (var j = 0; j < dirModules.length; j++) {
 		
 			var dirModule = dirModules[j]; 
@@ -71,6 +77,9 @@ function cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleNam
 			}
 		}	
 	}
+	
+	//if (!result)
+	//	lib_Error("Failed to locateModulePath");
 	
 	return result;
 }

@@ -26,16 +26,25 @@ function cBookSection_SectionHeading(sectionName, sectionLevel) {
 }
 
 function cBookSection_autodoc(section, sectionLevel, variant) {
+
+//window.alert("cBookSection_autodoc, section=" + section);	
+
+if (section.name === "Publisering av hendelser - basiskonsept UH/F")
+	lib_Log("cBookSection_autodoc 1	!!!!!!!!!!!!!!!, section=" + section.name);	
 	
 	var viewDoc = "";
 	var modulePath = CBookSection_determineModulePath(section);
-		
+
+if (section.name === "Publisering av hendelser - basiskonsept UH/F")
+	lib_Log("cBookSection_autodoc 1	!!!!!!!!!!!!!!!, modulePath=" + modulePath);	
+				
 	// starting with the first section, recursively drilling down the hierarchy and then going to the next sibling section and so on
 	
 	section = section.concept; // just to make sure
 	var dctType = section.prop(const_prop_dct_type);
 	if (!dctType)
 		lib_Error("Missing property '" + const_prop_dct_type + "' for section: " + section.name);
+
 	
 	//********* log:
 	var indent = "";
@@ -44,7 +53,7 @@ function cBookSection_autodoc(section, sectionLevel, variant) {
 	}
 	console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  dctType + ")" + ", level " + sectionLevel);
 	//*********
-
+	
 	if (section.type == "junction")
 		return "";
 		
@@ -402,6 +411,13 @@ function CBookSection_getPathAndfileName(section, modulePath, variant) {
 
 function CBookSection_saveViewPageToFile(section, docString, modulePath, variant) {
 
+	//lib_Log("CBookSection_saveViewPageToFile: " + section.name);
+	//if (section.name == "Publisering av hendelser - basiskonsept UH/F")
+	//	lib_TestExit("CBookSection_saveViewPageToFile: Publisering av hendelser - basiskonsept UH/F");
+		
+//if (section.name === "Datautveksling ved publisering – konsumering (hendelsesbasert)")
+//	lib_Log("CBookSection_saveViewPageToFile!!!!!!!!!!!!!!!, section=" + section.name);		
+		
 	if (!docString)
 		lib_Error("Attemted to save empty string for Section " + section);
 
@@ -444,11 +460,14 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 	}
 	
 	if (doWrite) {
-		
+	
 		
 		lib_Log("Writing file " + fileName);
 		
-		$.fs.writeFile(fileName, docString);
+		//$.fs.writeFile(fileName, docString);
+		
+	
+		cFilesystem_writeTextFile(fileName, docString);
 	}
 
 	var previousContent = cFilesystem_readTextFile(bakFilename);
@@ -470,11 +489,16 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 function CBookSection_determineModulePath(section) {
 
 	var antoraRootPath = cAntoraModule_GetComponentsRootPath();
+
 	var componentName = cConcept_GetProperty(section, const_prop_antoraComponent);
 	var version = cConcept_GetProperty(section, const_prop_antoraVersion);
 	var moduleName = cConcept_GetProperty(section, const_prop_antoraModule);
 
-	
+
+	//lib_Log("antoraRootPath=" + antoraRootPath);
+	//lib_Log("componentName=" + componentName);
+	//lib_Log("moduleName=" + moduleName);
+
 	if (!antoraRootPath)
 		lib_Error("Missing model property " + const_prop_antoraComponentsPath);
 	if (!componentName)

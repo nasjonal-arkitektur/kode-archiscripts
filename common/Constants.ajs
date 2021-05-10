@@ -2,6 +2,17 @@
  * Constants
  */
 
+var const_x_start = 10;
+var const_y_start = 10;
+var const_x_size = 143;
+var const_y_size = 71;
+var const_x_incr = const_x_size + 10;
+var const_y_incr = const_y_size + 10;
+var const_x_outer = const_x_size + 10 + const_x_offset;
+var const_y_outer = const_y_size + 10 + const_y_offset;
+var const_x_offset = 20;
+var const_y_offset = 30;
+
 var debug = false;
 var debug2 = true;
 
@@ -172,6 +183,7 @@ var const_prop_doc_lifecycle_timestamp = "difi:docstatus_timestamp"; //
 var const_prop_doc_lifecycle_comment = "difi:docstatus_comment"; // 
 var const_prop_doc_lifecycle_history = "difi:docstatus_history"; // auto generated; works if always using script to change status
 
+
 // EIRA properties:
 var const_prop_eira_ID = "ID";
 var const_prop_dct_type = "dct:type"; // !!!!!!!!!!!!!!!!!!
@@ -327,17 +339,17 @@ var const_conceptType_junction = "archi:junction";
 
 // Relationships
 
-var const_conceptType_composition_relationship = "archi:composition-relationship";
-var const_conceptType_aggregation_relationship = "archi:aggregation-relationship";
-var const_conceptType_assignment_relationship = "archi:assignment-relationship";
-var const_conceptType_realization_relationship = "archi:realization-relationship";
-var const_conceptType_serving_relationship = "archi:serving-relationship";
-var const_conceptType_access_relationship = "archi:access-relationship";
-var const_conceptType_influence_relationship = "archi:influence-relationship";
-var const_conceptType_triggering_relationship = "archi:triggering-relationship";
-var const_conceptType_flow_relationship = "archi:flow-relationship";
-var const_conceptType_specialization_relationship = "archi:specialization-relationship";
-var const_conceptType_association_relationship = "archi:association-relationship";
+var const_conceptType_composition_relationship = "composition-relationship";
+var const_conceptType_aggregation_relationship = "aggregation-relationship";
+var const_conceptType_assignment_relationship = "assignment-relationship";
+var const_conceptType_realization_relationship = "realization-relationship";
+var const_conceptType_serving_relationship = "serving-relationship";
+var const_conceptType_access_relationship = "access-relationship";
+var const_conceptType_influence_relationship = "influence-relationship";
+var const_conceptType_triggering_relationship = "triggering-relationship";
+var const_conceptType_flow_relationship = "flow-relationship";
+var const_conceptType_specialization_relationship = "specialization-relationship";
+var const_conceptType_association_relationship = "association-relationship";
 
 /*
 

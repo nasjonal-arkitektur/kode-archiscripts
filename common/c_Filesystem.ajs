@@ -189,6 +189,7 @@ function cFilesystem_listFiles(filePath) {
 }
 
 function cFilesystem_renameFile(filePath, newFilePath) {
+lib_Log("cFilesystem_renameFile: " + filePath);
 
 	var txt = null;
 
@@ -211,7 +212,8 @@ function cFilesystem_renameFile(filePath, newFilePath) {
 }
 
 function cFilesystem_deleteFile(filePath) {
-	
+lib_Log("cFilesystem_deleteFile: " + filePath);
+
 	var txt = null;
 
 	if (!filePath) {
@@ -246,13 +248,28 @@ function cFilesystem_mkDirIfNotExisting(dirPath) {
 
 
 function cFilesystem_writeTextFile(filePath, txt) {
-	//console.log("cFilesystem_writeTextFile");
+lib_Log("cFilesystem_writeTextFile: " + filePath);
+	
 	$.fs.writeFile(filePath, txt);
+	
+	/*
+	
+	*** doesn't work: ***
+	
+	var fs = Java.type("java.io.FileWriter");
+	fs.writeFile(filePath, txt, function(err){
+		if (err) 
+			lib_Error(err);
+		
+		console.log('Saved!');
+	});
+	*/
+
 }
 
 function cFilesystem_readTextFile(filePath) {
+lib_Log("cFilesystem_readTextFile: " + filePath);
 
-	console.log("cFilesystem_readTextFile");
 	
 	var txt = null;
 

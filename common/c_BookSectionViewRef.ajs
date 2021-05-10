@@ -276,14 +276,20 @@ function c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath) 
 
 	//lib_Log("image pathAndfileName = " + pathAndfileName);
 
-	var option_promptFileSave = false;	
+	var option_promptFileSave = false;
+	
+
+	
 	if (option_promptFileSave)
 		fileName = window.promptSaveFile( { title: "Save view image", filterExtensions: [ "*.png" ], fileName: pathAndfileName } );
 	else
 		fileName = pathAndfileName;
 	
 	if (fileName) {
+		if (section.name === "Publisering av hendelser - basiskonsept UH/F")
+			lib_Log("1 image pathAndfileName = " + pathAndfileName);
 		$.fs.writeFile(fileName, bytes, "BASE64");
+			lib_Log("2 image pathAndfileName = " + pathAndfileName);
 	}
 	else {
 		lib_Error("Undetermined fileName!")
