@@ -77,7 +77,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	
 	// save asciidoc text
 	var modulePath = CBookSection_determineModulePath(book);
-	CBookSection_saveViewPageToFile(book, docString, modulePath);	
+	CBookSection_saveViewPageToFile(book, docString, modulePath, 0);	
 	
 	
 	

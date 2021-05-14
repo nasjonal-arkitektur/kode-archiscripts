@@ -29,14 +29,25 @@ function cBookSection_autodoc(section, sectionLevel, variant) {
 
 //window.alert("cBookSection_autodoc, section=" + section);	
 
-if (section.name === "Publisering av hendelser - basiskonsept UH/F")
-	lib_Log("cBookSection_autodoc 1	!!!!!!!!!!!!!!!, section=" + section.name);	
+
+
+if ( (section.name.indexOf("+") !== -1)
+|| (section.name.indexOf("/") !== -1)
+|| (section.name.indexOf(":") !== -1)
+|| (section.name.indexOf("*") !== -1)
+|| (section.name.indexOf("?") !== -1)
+|| (section.name.indexOf("+") !== -1) )
+	lib_Error("Invalid character (+/:*?\"<>|) in module name '" + section.name + "'. ");
+
+//if (section.name.indexOf("Delegere rettigheter til databehandler - UHF") !== -1)
+//if (section.name.indexOf("Datautveksling ved oppslag") !== -1)
+//	lib_Error("Test exit section = '" + section.name + "'. ");
+
+
 	
 	var viewDoc = "";
 	var modulePath = CBookSection_determineModulePath(section);
 
-if (section.name === "Publisering av hendelser - basiskonsept UH/F")
-	lib_Log("cBookSection_autodoc 1	!!!!!!!!!!!!!!!, modulePath=" + modulePath);	
 				
 	// starting with the first section, recursively drilling down the hierarchy and then going to the next sibling section and so on
 	
@@ -116,8 +127,11 @@ if (section.name === "Publisering av hendelser - basiskonsept UH/F")
 	// save asciidoc text to file, unless files is master
 	var doSave = true;
 	var master = cConcept_GetProperty(section, const_prop_antoraMaster);
-	if (master && master === const_prop_antoraMaster_value_file)
+	if (master && master === const_prop_antoraMaster_value_file) {
 		doSave = false;
+		
+		lib_TestExit("Temp test and exit: Master is file for section " + section.name);
+	}
 
 	if (!viewDoc)
 		doSave = false;
