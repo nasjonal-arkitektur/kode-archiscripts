@@ -524,6 +524,9 @@ function CBookSection_determineModulePath(section) {
 	
 	var modulePath = cAntoraModule_locateModulePath(antoraRootPath, componentName, moduleName, version);
 	
+	if (!modulePath)
+		lib_Error("Failed to find existing antora file folder for section='" + section.name + "'" + ", configured module='" + moduleName + "'" + ", component='" + componentName + "'" + ", components root='" + antoraRootPath + "'");
+	
 	return modulePath;
 }
 
