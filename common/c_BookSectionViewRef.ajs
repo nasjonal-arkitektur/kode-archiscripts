@@ -98,7 +98,14 @@ function c_BookSectionViewRef_documentViewNarrative(section) {
 	
 	docString += "\n\n";
 	docString += "." + section.name;
-	docString += "\nimage::" + "{imagepath}" + section.name + ".png" + "[alt=" + section.name + " image]";
+
+	var fileName = section.name + ".png";
+	if (section.prop(const_prop_view_image) )
+		fileName = section.prop(const_prop_view_image);	
+		
+	docString += "\nimage::" + "{imagepath}" + fileName + "[alt=" + section.name + " image]";
+	
+	
 	//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
 				
 	// todo: ",link = ..." for link to published web view
@@ -267,7 +274,10 @@ function c_BookSectionViewRef_documentViewAsAsciidocChapters(section, sectionLev
 function c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath) {
 	
 	var imageDirPath = modulePath + "\\" + "images";
-	var pathAndfileName = imageDirPath + "\\" + section.name + ".png";
+	var fileName = section.name + ".png";
+	var pathAndfileName = imageDirPath + "\\" + fileName;
+	
+
 
 	cFilesystem_mkDirIfNotExisting(imageDirPath);
 

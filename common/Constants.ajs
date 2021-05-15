@@ -6,7 +6,7 @@ var const_x_start = 10;
 var const_y_start = 10;
 var const_x_size = 143;
 var const_y_size = 71;
-var const_x_incr = const_x_size + 10;
+var const_x_incr = 	 + 10;
 var const_y_incr = const_y_size + 10;
 var const_x_outer = const_x_size + 10 + const_x_offset;
 var const_y_outer = const_y_size + 10 + const_y_offset;
@@ -107,7 +107,6 @@ var const_prop_antoraMaster = "modelx:antora_master";
 var const_prop_antoraMaster_value_view = "view";
 var const_prop_antoraMaster_value_file = "file";
 var const_prop_antoraMaster_value_default = const_prop_antoraMaster_value_view;
-
 
 
 
@@ -224,6 +223,14 @@ var const_conceptType_association__owns = "difi:is-owner-of";
 var const_conceptType_association__manages = "difi:is-manager-of";
 var const_conceptType_association__develops = "difi:developing";
 
+
+
+
+/*
+*	Views
+*/	
+var const_prop_view_image = "modelx:view-image"; // if set, use the given view, otherwise the archi view image
+var const_prop_view_image_value_default = "";
 
 
 /*
