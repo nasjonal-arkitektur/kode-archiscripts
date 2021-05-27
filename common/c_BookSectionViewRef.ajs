@@ -154,6 +154,14 @@ function c_BookSectionViewRef_noElementDoc(section) {
 	elms.each(function(e) {
 		if (e.documentation)
 			someContent = true;
+		
+		// however...
+		if ( ($(e).is("canvas-model-image"))
+		|| ($(e).is("canvas-model-block"))
+		|| ($(e).is("canvas-model-sticky")) )
+			someContent = false;
+		
+		
 	});
 
 	if (someContent)

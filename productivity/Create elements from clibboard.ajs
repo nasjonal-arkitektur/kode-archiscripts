@@ -130,9 +130,14 @@ for (i = 0; i < arr.length; i++) {
 		
 		var option_stripIDInName = true; 
 		if (option_stripIDInName) {
-			var nameArr = line.split(":"); // based on a common practice, but this is by no means foolproof
-			name = nameArr[1].trim();
-			id = nameArr[0].trim();
+			
+			if (line.indexOf(":") != -1) {
+			
+				var nameArr = line.split(":"); // based on a common practice, but this is by no means foolproof
+				name = nameArr[1].trim();
+				id = nameArr[0].trim();
+			}
+			
 		}
 		
 		concept= model.createElement(elementType, name);
