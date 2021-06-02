@@ -97,6 +97,8 @@ var const_prop_antoraVersion = "modelx:antora_version";
 var const_prop_antoraVersion_value_default = "E.g. master";
 var const_prop_antoraModule = "modelx:antora_module";
 var const_prop_antoraModule_value_default = "Antora module name";
+var const_prop_antoraFile = "modelx:antora_file";
+var const_prop_antoraFile_value_default = "";
 
 var const_prop_antoraSectionHeader = "modelx:antora_section_header";
 var const_prop_antoraSectionHeader_value_yes
