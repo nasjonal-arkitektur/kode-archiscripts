@@ -413,12 +413,18 @@ function CBookSection_getXref(section, variant) {
 
 function CBookSection_getPathAndfileName(section, modulePath, variant) {
 
+	var filenameWithoutExtension = section.name;
+	var configuredName = cConcept_GetProperty(section, const_prop_antoraFile);
+	
+	if (configuredName)
+		filenameWithoutExtension = configuredName;
+	
 	var pagesDirPath = modulePath + "\\" + "pages";
 	var pathAndfileName = null;
 	if (variant == 0)
-		pathAndfileName = pagesDirPath + "\\" + section.name + ".adoc";
+		pathAndfileName = pagesDirPath + "\\" + filenameWithoutExtension + ".adoc";
 	else
-		pathAndfileName = pagesDirPath + "\\" + section.name + ".var." + variant + ".adoc";
+		pathAndfileName = pagesDirPath + "\\" + filenameWithoutExtension + ".var." + variant + ".adoc";
 	
 	return pathAndfileName;
 }
@@ -433,7 +439,7 @@ function CBookSection_saveViewPageToFile(section, docString, modulePath, variant
 //	lib_Log("CBookSection_saveViewPageToFile!!!!!!!!!!!!!!!, section=" + section.name);		
 		
 	if (!docString)
-		lib_Error("Attemted to save empty string for Section " + section);
+		lib_Error("Attempted to save empty string for Section " + section);
 
 	var pagesDirPath = modulePath + "\\" + "pages";
 	var pathAndfileName = CBookSection_getPathAndfileName(section, modulePath, variant);
