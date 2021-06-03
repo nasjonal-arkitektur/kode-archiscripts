@@ -82,6 +82,8 @@ if ( (section.name.indexOf("+") !== -1)
 		viewDoc = c_BookSectionViewRef_autodoc(section, sectionLevel, variant);
 
 	}
+	
+	
 	else 
 		lib_Error("Unexpected " + const_prop_dct_type + " = " + section.prop(const_prop_dct_type));
 
@@ -340,8 +342,8 @@ function cBookSection_sectionFileName(section) {
 	bookAntoraModule += ".adoc"; 
 	return bookAntoraModule;
 */
-
-	var fileName = section.name + ".adoc";
+const_prop_antoraFile
+	var fileName = CBookSection_filenameWithoutExtension(section) + ".adoc";
 	return fileName;
 
 }
@@ -411,13 +413,22 @@ function CBookSection_getXref(section, variant) {
 	return xref;
 }
 
-function CBookSection_getPathAndfileName(section, modulePath, variant) {
+function CBookSection_filenameWithoutExtension(section) {
+	
 
 	var filenameWithoutExtension = section.name;
 	var configuredName = cConcept_GetProperty(section, const_prop_antoraFile);
 	
 	if (configuredName)
-		filenameWithoutExtension = configuredName;
+		filenameWithoutExtension = configuredName;	
+	
+	return filenameWithoutExtension;
+	
+}
+
+function CBookSection_getPathAndfileName(section, modulePath, variant) {
+
+	var filenameWithoutExtension = CBookSection_filenameWithoutExtension(section);
 	
 	var pagesDirPath = modulePath + "\\" + "pages";
 	var pathAndfileName = null;

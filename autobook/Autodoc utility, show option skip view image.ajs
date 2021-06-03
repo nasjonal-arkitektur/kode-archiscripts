@@ -4,7 +4,7 @@ load(__DIR__ + "../common/c_Namespace.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 
 console.clear();
-console.log("Autobook set filename for selected elements");
+console.log("Autobook set skip_view_image for selected elements");
 
 
 //var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
@@ -26,18 +26,7 @@ if (selectedConcepts.size() > 1)
 var num = 0;
 selectedConcepts.each(function(concept) {
 	
-	var prev_name = cConcept_GetProperty(concept, const_prop_antoraFile);
-	if (!prev_name)
-		prev_name = "";
-	
-	
-	var newPropValue = window.prompt("File name (without extension) for section with name '" + concept.name + "'?", prev_name);
-	if (newPropValue === null || newPropValue === "") {
-		window.alert("Canceled - exiting...");	
-		exit();
-	}
-	
-	cConcept_SetProperty(concept, const_prop_antoraFile, newPropValue);
+	cConcept_SetProperty(concept, const_prop_autobook_skip_view_image, 1);
 	num++;
 	
 });

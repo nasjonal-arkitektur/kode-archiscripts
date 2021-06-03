@@ -131,6 +131,9 @@ var const_author_name_value_default = "";
 var const_author_email = "modelx:author_email";
 var const_author_email_value_default = "";
 
+
+var const_prop_autobook_skip_view_image = "modelx:skip_view_image";
+
 // pre-Antora
 var const_prop_modelRenderingRootPath = "difi:docRootPath"; //added 2019-08-24; the local root path of asciidoc documents
 var const_prop_viewRelativeRenderPath =  "difi:docViewPath"; //added 2019-08-24; the path for storing asciidoc documents for the view in question, relative to difi:docRootPath
@@ -245,6 +248,7 @@ var const_conceptType_representation__library = "modelx:library";
 var const_conceptType_representation__book = "modelx:book";
 var const_conceptType_representation__section = "modelx:section"; // any section
 var const_conceptType_representation__archimateView = "modelx:archimate_view"; // a type of section 
+
 	
 // risk/security related extensions
 var const_conceptType_grouping__risk_security_domain = "difi:risk-security-domain";
