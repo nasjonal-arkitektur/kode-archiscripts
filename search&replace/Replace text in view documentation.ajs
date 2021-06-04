@@ -1,0 +1,38 @@
+﻿load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.show();
+console.clear();
+console.log("Replace text in view documentation. ");
+console.log("Searching...");
+console.log("\n");
+
+var selectedViews = CSelection_GetViewsUnderSelectedFoldersAndSubfolders("", "");
+if (selectedViews == null || selectedViews.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+//var conceptType = window.prompt("Specify conceptType (set blank or Cancel for all types): ", "representation");
+
+var txtToReplace = window.prompt("Specify text to search for (documentation): ");
+var newTxt = null;
+if (txtToReplace)
+	newTxt = window.prompt("Specify replacement text (documentation): ");
+else
+	exit();
+
+var i = 0;
+selectedViews.each(function(v) {
+
+	var res = v.documentation.replace(txtToReplace, newTxt);
+	if (res != v.documentation) {
+		v.documentation = res;
+		i++;
+	}
+
+});
+
+console.log(i + " replacements made. " + "Script completed.");

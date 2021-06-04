@@ -1,0 +1,60 @@
+﻿"use strict";
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.clear();
+
+function ReplacePropertyTextForSelectedConcepts() {
+
+	var selectedConcepts = CSelection_GetSelectedConcepts("","");
+	
+	if (selectedConcepts === null || selectedConcepts.size() < 1)
+	{
+		window.alert("No concepts selected. Exiting...");
+		exit();
+	}
+
+	var prop = window.prompt("Please specify property name (leave empty to cancel):", "");
+	if (prop === null || prop === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	var oldTxt = window.prompt("Text to be replaced for property '"+prop+"' (leave empty to cancel)?", "");
+	if (oldTxt === null || oldTxt === "") {
+		oldTxtwindow.alert("Cancelled - exiting...");	
+		exit();
+	}
+	var newTxt = window.prompt("Text to use instead of '"+oldTxt+"' (leave empty to cancel)?", "");
+	if (newTxt === null || newTxt === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	
+	var num = 0;
+	selectedConcepts.each(function(concept) {
+		
+		console.log("concept.name = " + concept.name);
+		
+		var oldPropvalue = cConcept_GetProperty(concept, prop);
+		var newPropvalue = null;
+		if (oldPropvalue) {
+			newPropvalue = oldPropvalue.replace(oldTxt, newTxt);
+			//console.log("Missing oldPropvalue concept.name = " + concept.name);
+		
+			if (newPropvalue != oldPropvalue) {
+				cConcept_SetProperty(concept, prop, newPropvalue);
+				num++;
+			}
+		}
+			
+	});
+
+	window.alert(num + " substitutions done");
+
+}
+
+
+ReplacePropertyTextForSelectedConcepts();	
+
+

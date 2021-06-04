@@ -39,16 +39,21 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 	if (optionDocViewAsTable) {
 
 		var skipViewImage = cConcept_GetProperty(section, const_prop_autobook_skip_view_image);
-		if (skipViewImage) {
-			if (variant == 0)
-				return docString;
+		
+		if (skipViewImage) { //(skipViewImage && (skipViewImage === 1)) {
 			
-			docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section);	
+	
+			if (variant === 1)
+				return docString;
+
+			//lib_TestExit("doc:\n" +  c_BookSectionViewRef_documentAllViewElementsAsTable(section));
+			docString += c_BookSectionViewRef_documentAllViewElementsAsTable(section);
+			return docString;
 		
 		}
 
 		
-		else if (variant == 0) {
+		if (variant == 0) {
 			var refDetailedDocFile = CBookSection_getXref(section, 1); // variant = 1
 
 			if (!c_BookSectionViewRef_noElementDoc(section)) {
@@ -114,22 +119,23 @@ function c_BookSectionViewRef_documentViewNarrative(section) {
 		fileName = section.prop(const_prop_view_image);	
 		
 	var skipViewImage = cConcept_GetProperty(section, const_prop_autobook_skip_view_image);
-	if (!skipViewImage)
+	if (!skipViewImage) {
 		docString += "\nimage::" + "{imagepath}" + fileName + "[alt=" + section.name + " image]";
 	
 	
-	//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
-				
-	// todo: ",link = ..." for link to published web view
-	docString += "\n\n"
+		//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
+					
+		// todo: ",link = ..." for link to published web view
+		docString += "\n\n"
 
-	var modulePath = CBookSection_determineModulePath(section);
-	
-	// save Image
-	c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath);
+		var modulePath = CBookSection_determineModulePath(section);
+		
+		// save Image
+		c_BookSectionViewRef_saveViewImageToFile(section, refView, modulePath);
 
 
-	//var topLevelElms = cView_getTopLevelElementsOf(refView);
+		//var topLevelElms = cView_getTopLevelElementsOf(refView);
+	}
 	
 	return docString;
 
