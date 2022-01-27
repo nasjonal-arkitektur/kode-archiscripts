@@ -1,0 +1,32 @@
+﻿/*
+ * New Archi Script
+ */
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+
+console.show();
+console.clear();
+console.log("Drilldown");
+ 
+
+var occurences = CSelection_GetDirectlySelectedOccurences();
+lib_VerifyNotNull(occurences, "No objects selected");
+
+//console.log("type" + "\t" + "name" + "\t" + "id" + "\t"+ "view" + "\t" + "concept.id" + "\t" + "width" + "\t" + "height" + "\t" + "fillColor");
+
+if (occurences.size() > 1) 
+	lib_Error("Cannot select more than one element for drilldown");
+
+var o = occurences.first();
+console.log(o.type + "\t" + o.name + "\t" + o.id + "\t" + cElement_GetView(o).name + "\t" + o.concept.id);
+
+var drilldownId = cConcept_GetProperty(o.concept, const_prop_view_reference);	
+console.log(drilldownId, );
+
+$("view").each(function(view) {
+
+		if (view.id ===  drilldownId)
+			console.log(view.name);
+		
+    });

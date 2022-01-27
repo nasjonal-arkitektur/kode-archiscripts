@@ -17,7 +17,7 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 
 	var docString = "";
 
-	if (variant === 2) // TEMP_OPTION_HEIDI_BRUTE_FORCE
+	if (variant === 2)
 	{
 		if (variant === 2 && c_BookSectionViewRef_noElementDoc(section))
 			return docString;					

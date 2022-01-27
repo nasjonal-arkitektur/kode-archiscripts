@@ -4,7 +4,7 @@ load(__DIR__ + "../common/c_Selection.ajs");
 
 console.show();
 console.clear();
-console.log("Replace text in concept documentation. ");
+console.log("Search text in concept documentation. ");
 console.log("Searching...");
 console.log("\n");
 
@@ -17,15 +17,15 @@ if (selectedConcepts == null || selectedConcepts.size() < 1)
 
 var conceptType = window.prompt("Specify conceptType (set blank or Cancel for all types): ", "representation");
 
-var txtToReplace = window.prompt("Specify text to search for (documentation): ");
-var newTxt = null;
-if (txtToReplace)
-	newTxt = window.prompt("Specify replacement text (documentation): ");
-else
+var txtToFind = window.prompt("Specify text to search for (documentation): ");
+if (!txtToFind)
 	exit();
 
 var i = 0;
 var cnt = 0;
+
+console.log("Searching for text " + txtToFind + " in documentation string of selected concepts\n");
+
 selectedConcepts.each(function(c) {
 
 	if (!conceptType || conceptType.length() < 1 || (c.type === conceptType)) {
@@ -33,15 +33,13 @@ selectedConcepts.each(function(c) {
 		
 		
 
-		if (c.documentation.search(txtToReplace) > 0) {
+		if (c.documentation.search(txtToFind) > 0) {
 			console.log(c.name );
 			cnt++;
 		}
 	
-		var res = c.documentation.replace(txtToReplace, newTxt);
-		c.documentation = res;
 	}
 
 });
 
-console.log(cnt + " replacements made. " + "Script completed.");
+console.log("\n" + cnt + " matches found in a total of " + i + " selected concepts. "+ "\nScript completed.");

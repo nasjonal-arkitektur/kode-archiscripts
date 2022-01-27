@@ -55,7 +55,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 			
 
 			if (TEMP_OPTION_HEIDI_BRUTE_FORCE)
-				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 2); // 2 means variant 2; detailed only
+				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 3); // 3 means variant 3; detailed only
 			else {
 				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 0); // 0 means variant 0; default
 				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 1); // 1 means variant 1; detailed

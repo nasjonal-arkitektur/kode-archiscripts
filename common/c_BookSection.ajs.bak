@@ -331,7 +331,7 @@ function cBookSection_sectionHeader(section, sectionLevel) {
 	return docString;
 }
 
-function cBookSection_sectionFileName(section) {
+function cBookSection_sectionFileName(section) { // remember TEMP_OPTION_HEIDI_BRUTE_FORCE
 
 /*
 	var bookAntoraModule = cBookSection_getAntoraModule(section);
@@ -576,6 +576,7 @@ function cBookSection_IncludeSubsection(section, subSection) {
 		versionStr = version + "@";
 
 
+	// + remember var/TEMP_OPTION_HEIDI_BRUTE_FORCE
 	var includeFileName = cBookSection_sectionFileName(subSection);
 
 	docString += "include::" + versionStr + component + ":" + module + ":page$" + cBookSection_sectionFileName(subSection) + "[]" + "\n";

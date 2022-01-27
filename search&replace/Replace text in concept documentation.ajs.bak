@@ -32,11 +32,9 @@ selectedConcepts.each(function(c) {
 		i++;
 		
 		
-
-		if (c.documentation.search(txtToReplace) > 0) {
-			console.log(c.name );
+		console.log(c.name );
+		if (c.documentation.search(txtToReplace) > 0)
 			cnt++;
-		}
 	
 		var res = c.documentation.replace(txtToReplace, newTxt);
 		c.documentation = res;

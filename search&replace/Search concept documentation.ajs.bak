@@ -4,7 +4,7 @@ load(__DIR__ + "../common/c_Selection.ajs");
 
 console.show();
 console.clear();
-console.log("Replace text in concept documentation. ");
+console.log("Search text in concept documentation. ");
 console.log("Searching...");
 console.log("\n");
 
@@ -38,10 +38,8 @@ selectedConcepts.each(function(c) {
 			cnt++;
 		}
 	
-		var res = c.documentation.replace(txtToReplace, newTxt);
-		c.documentation = res;
 	}
 
 });
 
-console.log(cnt + " replacements made. " + "Script completed.");
+console.log(cnt + " occurences found. " + "Script completed.");
