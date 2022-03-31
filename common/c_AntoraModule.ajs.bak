@@ -146,7 +146,7 @@ function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, component
 	":experimental:" + "\n" +
 	":toclevels: 4" + "\n" +
 	":sectnums:" + "\n" +
-	":sectnumlevels: 0" + "\n\n";
+	":sectnumlevels: 9" + "\n\n";
 
 /* used to be:
 
