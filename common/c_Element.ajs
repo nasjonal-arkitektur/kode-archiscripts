@@ -343,3 +343,23 @@ function cElement_EAPostImportMerge(element) {
 
 }
 
+
+function cElement_setLabel(element, parentConceptType, name, namespace, language, conceptType) {
+
+	var label = "";
+	
+	//if (parentConceptType)
+
+	if (name=== true)
+		label += "${name}";
+	if (namespace === true)
+		label += " [ns:${property:" + const_prop_namespace + "}]"; //" [ns:${property:difi:namespace}]";
+	if (language === true)
+		label += " [lang:${property:difi:language}]"; // const_prop_language
+	if(conceptType === true)
+		label += "\n<<${property:dct:type}>>"; // const_prop_dct_type
+	 
+	//element.prop(const_prop_label, label);
+	element.labelExpression = label;
+}
+

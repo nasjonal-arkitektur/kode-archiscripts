@@ -867,6 +867,7 @@ function cConcept_setLabel(concept, parentConceptType, name, namespace, language
 		label += "\n<<${property:dct:type}>>"; // const_prop_dct_type
 	 
 	concept.prop(const_prop_label, label);
+	concept.labelExpression = "test"; // temptest
 }
 
 function cConcept_UpdateNameAndDescriptionAndLabel(concept) {

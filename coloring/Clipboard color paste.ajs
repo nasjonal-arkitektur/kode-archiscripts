@@ -29,6 +29,7 @@ selectedItems.each(function(element) {
 	
 	element.fillColor = clipboardString; 
 
+
 });	
 
 

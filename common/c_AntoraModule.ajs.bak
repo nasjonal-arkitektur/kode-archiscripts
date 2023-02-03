@@ -138,15 +138,21 @@ function cAntoraModule_asciidocTemplateHeader(sectionName, moduleName, component
 	"ifeval::[{wysiwig_editing} == 1]" + "\n" +
 	//":imagesdir: ../images" + "\n" +
 	":imagepath: ../images/" + "\n" +
-	"endif::[]" + "\n" +
-	"ifeval::[{wysiwig_editing} == 0]" + "\n" +
-	":imagepath: " + versionStr + componentName +":" + moduleName + ":" + "\n" +
-	"endif::[]" + "\n" +
+	"endif::[]" + 
+	
+	//"\n" +
+	//"ifeval::[{wysiwig_editing} == 0]" + "\n" +
+	//":imagepath: " + versionStr + componentName +":" + moduleName + ":" + "\n" +
+	//"endif::[]" + "\n" +
+
+	cAntoraModule_imagePathString(sectionName, moduleName, componentName, version) +
+
+
 	":toc: left" + "\n" +
 	":experimental:" + "\n" +
 	":toclevels: 4" + "\n" +
 	":sectnums:" + "\n" +
-	":sectnumlevels: 9" + "\n\n";
+	":sectnumlevels: 0" + "\n\n";
 
 /* used to be:
 

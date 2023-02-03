@@ -331,7 +331,7 @@ function cBookSection_sectionHeader(section, sectionLevel) {
 	return docString;
 }
 
-function cBookSection_sectionFileName(section) { // remember TEMP_OPTION_HEIDI_BRUTE_FORCE
+function cBookSection_sectionFileName(section) {
 
 /*
 	var bookAntoraModule = cBookSection_getAntoraModule(section);
@@ -541,7 +541,7 @@ function CBookSection_determineModulePath(section) {
 
 	//lib_Log("antoraRootPath=" + antoraRootPath);
 	//lib_Log("componentName=" + componentName);
-	//lib_Log("moduleName=" + moduleName);
+	lib_Log("moduleName=" + moduleName);
 
 	if (!antoraRootPath)
 		lib_Error("Missing model property " + const_prop_antoraComponentsPath);
@@ -576,7 +576,6 @@ function cBookSection_IncludeSubsection(section, subSection) {
 		versionStr = version + "@";
 
 
-	// + remember var/TEMP_OPTION_HEIDI_BRUTE_FORCE
 	var includeFileName = cBookSection_sectionFileName(subSection);
 
 	docString += "include::" + versionStr + component + ":" + module + ":page$" + cBookSection_sectionFileName(subSection) + "[]" + "\n";
