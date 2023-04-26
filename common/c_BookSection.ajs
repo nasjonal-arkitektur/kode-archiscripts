@@ -25,10 +25,9 @@ function cBookSection_SectionHeading(sectionName, sectionLevel) {
 	return docString;
 }
 
-function cBookSection_autodoc(section, sectionLevel, variant) {
+function cBookSection_autodoc(book, section, sectionLevel, variant) {
 
 //window.alert("cBookSection_autodoc, section=" + section);	
-
 
 
 if ( (section.name.indexOf("+") !== -1)
@@ -79,7 +78,7 @@ if ( (section.name.indexOf("+") !== -1)
 	else if (section.prop(const_prop_dct_type) === const_conceptType_representation__archimateView) {
 
 
-		viewDoc = c_BookSectionViewRef_autodoc(section, sectionLevel, variant);
+		viewDoc = c_BookSectionViewRef_autodoc(book, section, sectionLevel, variant);
 
 	}
 	
@@ -97,7 +96,7 @@ if ( (section.name.indexOf("+") !== -1)
 
 
 	//if (firstSubSection)
-	//	cBookSection_autodoc(firstSubSection, sectionLevel + 1);
+	//	cBookSection_autodoc(book, firstSubSection, sectionLevel + 1);
 
 	var nextSiblingSubSection = firstSubSection;
 	if (firstSubSection) {
@@ -109,7 +108,7 @@ if ( (section.name.indexOf("+") !== -1)
 			
 			docString += cBookSection_IncludeSubsection(section, nextSiblingSubSection);
 
-			cBookSection_autodoc(nextSiblingSubSection, sectionLevel + 1, variant);	
+			cBookSection_autodoc(book, nextSiblingSubSection, sectionLevel + 1, variant);	
 
 			nextSiblingSubSection = cBookSection_nextSiblingSection(nextSiblingSubSection);
 		
@@ -122,7 +121,7 @@ if ( (section.name.indexOf("+") !== -1)
 	// next at same level
 	var nextSiblingSection = cBookSection_nextSiblingSection(section);
 	if (nextSiblingSection) {
-		cBookSection_autodoc(nextSiblingSection, sectionLevel);
+		cBookSection_autodoc(book, nextSiblingSection, sectionLevel);
 	}
 ***/
 
@@ -562,6 +561,11 @@ function CBookSection_determineModulePath(section) {
 
 
 function cBookSection_IncludeSubsection(section, subSection) {
+	
+console.log("section: " + section);
+console.log("subSection: " + subSection);
+	
+
 		
 	docString = "";
 	var component = cBookSection_getAntoraComponent(subSection);

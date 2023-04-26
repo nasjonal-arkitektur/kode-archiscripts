@@ -1,0 +1,49 @@
+﻿/*
+ * New Archi Script
+ */
+ 
+
+load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Element.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
+load(__DIR__ + "../common/c_Filesystem.ajs");
+load(__DIR__ + "../common/c_AntoraModule.ajs");
+
+console.log("Open link");
+
+var selection = window.promptSelection("Choose selection", ["1. VG", "2. Dagbladet"] );
+//window.alert(selection);
+if (selection == ("Option 1"))
+	window.alert("You selected Option 1");
+
+//window.open("https://www.w3schools.com");
+
+
+var cmdLineApp = cModel_GetCmdLineApp(model);
+var webBrowserApp = cModel_GetWebBrowser(model);
+
+
+//cmdLineApp = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+//webBrowserApp = "C:\\Users\\eha\\AppData\\Local\\Programs\\Git\\git-bash.exe";
+
+var siteUrl = "https://www.vg.no/";
+
+if (!webBrowserApp)
+	lib_Warning("Model property for web browser app (" + const_prop_web_browser + ") not set, so not automatically opening url in web browser");
+else {
+	
+	if (!siteUrl) {
+		lib_Warning("Missing property " + const_prop_site_url + ", so not automatically opening url in web browser");
+	}
+	else {
+		$.child_process.exec(webBrowserApp, siteUrl);	
+	}			
+}
+
+

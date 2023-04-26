@@ -644,6 +644,7 @@ function cModel_mergeImportedSparxEA(model) {
 function cModel_GetWebBrowser(model) {	
 
 	var app = model.prop(const_prop_web_browser);
+
 	//if (!app)
 	//	lib_Warning("Missing model property " + const_prop_web_browser);
 	return app;

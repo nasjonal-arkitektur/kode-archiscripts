@@ -1,0 +1,11 @@
+﻿/*
+ * New Archi Script
+ */
+ 
+console.log("assist element options");
+
+
+var selection = window.promptSelection("Choose selection", ["1. Web links", "2. Related models", "3. Element documentation"] );
+//window.alert(selection);
+if (selection == ("Option 1"))
+	window.alert("You selected Option 1");

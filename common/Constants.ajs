@@ -32,7 +32,7 @@ var default_option_caseForShowingNamespace = const_duplicateNames;//"always";dup
 var default_option_caseForShowingLanguage = "missingCurrentLanguage"; //"always", missingCurrentLanguage
 var default_option_caseForShowingConceptType = "const_never"; //"extensions" "always" "never"
 
-var TEMP_OPTION_HEIDI_BRUTE_FORCE = true; // strange name *** TO BE REANMED ***, coming from an experiment, directly include a table to document an archi model
+var TEMP_OPTION_HEIDI_BRUTE_FORCE = false; // strange name *** TO BE REANMED ***, coming from an experiment, directly include a table to document an archi model
 
 
 var const_prop_narrative_no = "digdir:narrative_no" ; //added 2020-12-06; 
@@ -79,9 +79,9 @@ var const_option_section_suppress_heading = "modelx:option_section_suppress_head
 
 // model props
 var const_prop_web_browser =  "modelx:web_browser_app";
-var const_prop_web_browser_value_default =  "E.g. C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+var const_prop_web_browser_value_default = "E.g. C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 var const_prop_cmd_line_app =  "modelx:cmd_line_app";
-var const_prop_cmd_line_app_value_default =  "E.g. C:\\Program Files\\Git\\git-bash.exe";
+var const_prop_cmd_line_app_value_default = "E.g. C:\\Users\\eha\\AppData\\Local\\Programs\\Git\\git-bash.exe"; 
 
 //book props	
 var const_prop_book_front_cover_image = "modelx:book_front_cover_image";

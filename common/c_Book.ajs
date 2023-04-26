@@ -42,7 +42,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	
 	if (firstSection) {
 		// starting with the first section, recursively drill down the hierarchy, go to next sibling section and so on
-		//docString += cBookSection_autodoc(firstSection, sectionLevel);
+		//docString += cBookSection_autodoc(book, firstSection, sectionLevel);
 		
 		var nextSiblingSection = firstSection;
 		docString += ":leveloffset: +1" + "\n";
@@ -55,10 +55,10 @@ function cBook_autodoc(bookElement, sectionLevel) {
 			
 
 			if (TEMP_OPTION_HEIDI_BRUTE_FORCE)
-				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 2); // 2 means variant 2; detailed only
+				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 2); // 2 means variant 2; detailed only
 			else {
-				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 0); // 0 means variant 0; default
-				cBookSection_autodoc(nextSiblingSection, sectionLevel + 1, 1); // 1 means variant 1; detailed
+				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 0); // 0 means variant 0; default
+				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 1); // 1 means variant 1; detailed
 			}
 			
 			nextSiblingSection = cBookSection_nextSiblingSection(nextSiblingSection);

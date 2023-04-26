@@ -10,8 +10,8 @@ load(__DIR__ + "c_Model.ajs");
 
 
 
-function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
-
+function c_BookSectionViewRef_autodoc(book, section, hierarchyLevel, variant) {
+	
 //if (section.name === "Muliggjørende kapabiliteter")
 //	lib_TestExit("section: " + section);
 
@@ -29,8 +29,8 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 		
 		var optionDocViewAsTable = true;
 		
-		
-		docString += c_BookSectionViewRef_documentViewNarrative(section);
+	
+		docString += c_BookSectionViewRef_documentViewNarrative(book, section);
 		
 		docString += "\n";
 		
@@ -101,7 +101,7 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 		var optionDocViewAsTable = true;
 		
 		
-		docString += c_BookSectionViewRef_documentViewNarrative(section);
+		docString += c_BookSectionViewRef_documentViewNarrative(book, section);
 		
 		docString += "\n";
 		
@@ -158,7 +158,9 @@ function c_BookSectionViewRef_autodoc(section, hierarchyLevel, variant) {
 }
 
 
-function c_BookSectionViewRef_documentViewNarrative(section) {
+function c_BookSectionViewRef_documentViewNarrative(book, section) {
+	
+	//lib_Error("Book: " + book.name + " (" +  book.prop(const_prop_dct_type) + ")" );
 
 	var docString = "";
 	
@@ -190,10 +192,17 @@ function c_BookSectionViewRef_documentViewNarrative(section) {
 	var fileName = section.name + ".png";
 	if (section.prop(const_prop_view_image) )
 		fileName = section.prop(const_prop_view_image);	
+	
 		
 	var skipViewImage = cConcept_GetProperty(section, const_prop_autobook_skip_view_image);
 	if (!skipViewImage) {
-		docString += "\nimage::" + "{imagepath}" + fileName + "[alt=" + section.name + " image]";
+		
+		var siteUrl = cBook_GetAntoraSiteUrl(book); // E.g. https://solutions-no.github.io
+		var archiModelsUrl = siteUrl + "/models/archi/";
+		var refViewId = section.prop(const_prop_view_reference);	
+		
+		docString += "\nimage::" + "{imagepath}" + fileName + "[alt=" + section.name + " image" + 
+		", link=" + archiModelsUrl + "?view=" + refViewId + "]";
 	
 	
 		//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";
