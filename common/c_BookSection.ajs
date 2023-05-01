@@ -7,6 +7,8 @@ load(__DIR__ + "c_Model.ajs");
 load(__DIR__ + "c_BookSectionViewRef.ajs");
 
 var option_promptFileSave = false;
+//var previousSection = "";
+var global_BookTableOfContents = "";
 
 function cBookSection_SectionHeading(sectionName, sectionLevel) {
 
@@ -25,7 +27,7 @@ function cBookSection_SectionHeading(sectionName, sectionLevel) {
 	return docString;
 }
 
-function cBookSection_autodoc(book, section, sectionLevel, variant) {
+function cBookSection_autodoc(book, section, sectionLevel, variant, includeInToc) {
 
 //window.alert("cBookSection_autodoc, section=" + section);	
 
@@ -50,18 +52,59 @@ if ( (section.name.indexOf("+") !== -1)
 				
 	// starting with the first section, recursively drilling down the hierarchy and then going to the next sibling section and so on
 	
-	section = section.concept; // just to make sure
+	section = section.concept; // just to make sure we have the concept object
 	var dctType = section.prop(const_prop_dct_type);
 	if (!dctType)
 		lib_Error("Missing property '" + const_prop_dct_type + "' for section: " + section.name);
 
-	
-	//********* log:
-	var indent = "";
-	for (var i = 0; i < sectionLevel; i++) {
-		indent += "    ";
+	var logSections = false;
+	if (logSections) {
+		//********* log:
+		var indent = "";
+		for (var i = 0; i < sectionLevel; i++) {
+			indent += "    ";
+		}
+		console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  dctType + ")" + ", level " + sectionLevel);
 	}
-	console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  dctType + ")" + ", level " + sectionLevel);
+
+
+
+
+
+	// build the global_BookTableOfContents	
+	
+	if (includeInToc) {
+		var levelIndication = "";
+		for (var i = 1; i < sectionLevel; i++) {
+			levelIndication += "*";
+		}
+		
+		var autobookTocLevels = book.prop(const_option_autobook_toc_levels);
+		if (!autobookTocLevels)
+			lib_Error("Missing book property " + const_option_autobook_toc_levels);
+			
+		
+		//if (section != previousSection) { // there may be several calls to this function for the same section (variants)
+		if (i <= autobookTocLevels) {
+			
+			var bookContentsItem = levelIndication + " " + "xref:" 
+					+ cBookSection_getAntoraComponent(section) + ":" 
+					+ cBookSection_getAntoraModule(section) + ":" 
+					+ section.name + ".adoc" + "[" 
+					+ section.name + "]";
+					
+			var logBookHeaders = true;
+			if (logBookHeaders)
+				console.log(bookContentsItem);
+			
+			global_BookTableOfContents += "\n" + bookContentsItem;
+			
+		}
+		//}
+		//previousSection = section;	
+	}
+
+	
 	//*********
 	
 	if (section.type == "junction")
@@ -96,7 +139,7 @@ if ( (section.name.indexOf("+") !== -1)
 
 
 	//if (firstSubSection)
-	//	cBookSection_autodoc(book, firstSubSection, sectionLevel + 1);
+	//	cBookSection_autodoc(book, firstSubSection, sectionLevel + 1, includeInToc);
 
 	var nextSiblingSubSection = firstSubSection;
 	if (firstSubSection) {
@@ -108,24 +151,24 @@ if ( (section.name.indexOf("+") !== -1)
 			
 			docString += cBookSection_IncludeSubsection(section, nextSiblingSubSection);
 
-			cBookSection_autodoc(book, nextSiblingSubSection, sectionLevel + 1, variant);	
+			cBookSection_autodoc(book, nextSiblingSubSection, sectionLevel + 1, variant, includeInToc);	
 
 			nextSiblingSubSection = cBookSection_nextSiblingSection(nextSiblingSubSection);
 		
 		}
 		docString += ":leveloffset: -1" + "\n";
-//lib_TestExit(docString);	
+
 	}
 		
 /**
 	// next at same level
 	var nextSiblingSection = cBookSection_nextSiblingSection(section);
 	if (nextSiblingSection) {
-		cBookSection_autodoc(book, nextSiblingSection, sectionLevel);
+		cBookSection_autodoc(book, nextSiblingSection, sectionLevel, includeInToc);
 	}
 ***/
 
-	// save asciidoc text to file, unless files is master
+	// save asciidoc text to file, unless file is master
 	var doSave = true;
 	var master = cConcept_GetProperty(section, const_prop_antoraMaster);
 	if (master && master === const_prop_antoraMaster_value_file) {
@@ -136,9 +179,11 @@ if ( (section.name.indexOf("+") !== -1)
 
 	if (!viewDoc)
 		doSave = false;
-	
 	if (doSave)
 		CBookSection_saveViewPageToFile(section, docString, modulePath, variant);	
+	
+	
+	
 //lib_TestExit(docString);
 	return docString;
 }
@@ -211,7 +256,7 @@ function cBookSection_determineFirstSubSection(section) {
 
 
 function cBookSection_documentSectionAsAsciidocChapters(section, view, sectionLevel) {  // deprecated??
-
+lib_TestExit("Got here: cBookSection_documentSectionAsAsciidocChapters");
 
 	var docString = "";
 
@@ -632,3 +677,4 @@ function CBookSection_MatchingStrings(normalString, htmlString) {
 	return result;
 
 }
+

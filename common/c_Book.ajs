@@ -30,6 +30,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	// front cover
 	if (book.prop(const_prop_book_front_cover_image) ) { 
 		docString += "\n" + "image:" + const_imagepath_variable + book.prop(const_prop_book_front_cover_image) + "[]" + "\n\n";
+	
 	}
 	
 	
@@ -55,10 +56,10 @@ function cBook_autodoc(bookElement, sectionLevel) {
 			
 
 			if (TEMP_OPTION_HEIDI_BRUTE_FORCE)
-				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 2); // 2 means variant 2; detailed only
+				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 2, true); // 2 means variant 2; detailed only
 			else {
-				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 0); // 0 means variant 0; default
-				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 1); // 1 means variant 1; detailed
+				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 0, true); // 0 means variant 0; default
+				cBookSection_autodoc(book, nextSiblingSection, sectionLevel + 1, 1), false; // 1 means variant 1; detailed
 			}
 			
 			nextSiblingSection = cBookSection_nextSiblingSection(nextSiblingSection);
@@ -71,7 +72,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	// back cover
 	if (book.prop(const_prop_book_back_cover_image) ) {
 		
-		// {imagepath} variable may need to be reset poroperly here
+		// {imagepath} variable may need to be reset properly here
 		docString += cAntoraModule_imagePathString(book.name, cBookSection_getAntoraModule(book), 
 															 cBookSection_getAntoraComponent(book), 
 															 cBookSection_getAntoraVersion(book));
@@ -84,7 +85,8 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	var modulePath = CBookSection_determineModulePath(book);
 	CBookSection_saveViewPageToFile(book, docString, modulePath, 0);	
 	
-	
+	// save bookContents
+	CBook_saveBookContents(book, global_BookTableOfContents);
 	
 	// run custom antora update script
 	
@@ -263,6 +265,8 @@ function cBook_determineFirstSection(book) {
 }
 
 
+
+
 function cBook_GetAntoraUpdateScriptPath(book) {	
 
 	if (!book.prop(const_prop_antoraUdateScript))
@@ -271,6 +275,55 @@ function cBook_GetAntoraUpdateScriptPath(book) {
 	var path = book.prop(const_prop_antoraUdateScript);
 	return path;
 }
+
+function cBook_GetAntoraPlaybookFilePath(book) {	
+
+	if (!book.prop(const_prop_antoraPlaybook))
+		lib_Error("Missing book property " + const_prop_antoraPlaybook);
+
+	var path = book.prop(const_prop_antoraPlaybook);
+	return path;
+}
+
+function cBook_GetNavigationFilePath(book) {
+
+	if (const_option_playbookexperiment){
+		var filePath = cBook_GetAntoraPlaybookFilePath(book);
+		var fileTxt = cFilesystem_readTextFile(filePath);
+
+		var textToSearchFor = "start_path:";
+
+		var pos = fileTxt.indexOf(textToSearchFor) + textToSearchFor.length;
+		var restOfString = fileTxt.substr(pos, fileTxt.length);
+		var pos2 = restOfString.indexOf("\n");
+		
+		var navigationPath = fileTxt.substr(pos, pos2);
+		navigationPath = navigationPath.trim();
+		
+		//lib_TestExit("navigationPath:" + navigationPath);
+		
+		var msg = "The Antora playbook specifies that the component start path (for the book) is '" + navigationPath
+					+ "' , but then to find the navigation file(s) as such is more complex... "
+					+ "stopping the experiment here for now!";
+					
+		lib_TestExit(msg);
+		
+		return navigationPath;
+		
+	
+	}
+	else {
+		
+		var navigationPath = book.prop(const_prop_antoraAutobookNavigationFile);
+		if (!navigationPath)
+			lib_Error("Missing book property " + const_prop_antoraAutobookNavigationFile);
+		return navigationPath;
+	}
+
+
+	
+}
+
 
 function cBook_GetAntoraSiteUrl(book) {	
 
@@ -292,12 +345,11 @@ function CBook_CreateMissingAutobookProperties(book) {
 	}	
 
 
-
-
 	cConcept_CreateMissingProperty(book, const_prop_antoraVersion, const_prop_antoraVersion_value_default);
 	cConcept_CreateMissingProperty(book, const_prop_antoraComponent, const_prop_antoraComponent_value_default);
 	cConcept_CreateMissingProperty(book, const_prop_antoraModule, const_prop_antoraModule_value_default);
-
+	cConcept_CreateMissingProperty(book, const_prop_antoraAutobookNavigationFile, const_prop_antoraAutobookNavigationFile_value_default);
+	cConcept_CreateMissingProperty(book, const_option_autobook_toc_levels, const_option_autobook_toc_levels_value_default);	
 
 	cConcept_CreateMissingProperty(book, const_prop_site_url, const_prop_site_url_value_default);
 
@@ -317,4 +369,13 @@ function CBook_CreateMissingAutobookProperties(book) {
 			cBookSection_CreateMissingAutobookProperties(section);
 		});	
 	}
+}
+
+function CBook_saveBookContents(book, bookContents) {
+	
+	var navigationFilePath = cBook_GetNavigationFilePath(book);
+	//lib_TestExit(navigationFilePath);
+	
+	cFilesystem_writeTextFile(navigationFilePath, bookContents);
+	
 }

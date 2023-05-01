@@ -189,7 +189,7 @@ function cFilesystem_listFiles(filePath) {
 }
 
 function cFilesystem_renameFile(filePath, newFilePath) {
-lib_Log("cFilesystem_renameFile: " + filePath);
+//lib_Log("cFilesystem_renameFile: " + filePath);
 
 	var txt = null;
 
@@ -212,13 +212,13 @@ lib_Log("cFilesystem_renameFile: " + filePath);
 }
 
 function cFilesystem_deleteFile(filePath) {
-lib_Log("cFilesystem_deleteFile: " + filePath);
+//lib_Log("cFilesystem_deleteFile: " + filePath);
 
 	var txt = null;
 
 	if (!filePath) {
 		lib_Error("Empty filePath as input to cFilesystem_deleteFile");
-;
+
 
 	}
 	else if (!cFilesystem_fileExists(filePath) )
@@ -248,7 +248,7 @@ function cFilesystem_mkDirIfNotExisting(dirPath) {
 
 
 function cFilesystem_writeTextFile(filePath, txt) {
-lib_Log("cFilesystem_writeTextFile: " + filePath);
+//lib_Log("cFilesystem_writeTextFile: " + filePath);
 	
 	$.fs.writeFile(filePath, txt);
 	
@@ -268,7 +268,7 @@ lib_Log("cFilesystem_writeTextFile: " + filePath);
 }
 
 function cFilesystem_readTextFile(filePath) {
-lib_Log("cFilesystem_readTextFile: " + filePath);
+//lib_Log("cFilesystem_readTextFile: " + filePath);
 
 	
 	var txt = null;

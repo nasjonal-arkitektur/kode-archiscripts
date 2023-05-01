@@ -84,6 +84,17 @@ var const_prop_cmd_line_app =  "modelx:cmd_line_app";
 var const_prop_cmd_line_app_value_default = "E.g. C:\\Users\\eha\\AppData\\Local\\Programs\\Git\\git-bash.exe"; 
 
 //book props	
+
+var const_option_playbookexperiment = false;
+if (const_option_playbookexperiment)
+	var const_prop_antoraPlaybook = "modelx:antora_playbookfile"; // e.g. C:\Users\eha\OneDrive\antora\solutions-no\playbook\antora-playbook.yml
+
+var const_prop_antoraAutobookNavigationFile = "modelx:antora_autobook_nav_file";
+var const_prop_antoraAutobookNavigationFile_value_default = "C:\\Users\\eha\\OneDrive\\antora\\solutions-no\\components\\messaging\\docs\\modules\\ROOT\\nav.adoc";
+var const_option_autobook_toc_levels = "modelx:autobook_toc_levels";
+var const_option_autobook_toc_levels_value_default = "9";
+
+
 var const_prop_book_front_cover_image = "modelx:book_front_cover_image";
 var const_prop_book_front_cover_image_value_default = "Front cover image, e.g. image1.jpeg";
 var const_prop_book_back_cover_image = "modelx:book_back_cover_image";

@@ -117,11 +117,13 @@ var const_prop_antoraMaster_value_default = const_prop_antoraMaster_value_view;
 var const_prop_antoraShowOption_value_skip = "99"; 
 var const_prop_antoraShowOption_value_include = "255";
 
-
+//var const_prop_antoraPlaybook = "modelx:antora_playbookfile"; // e.g. C:\Users\eha\OneDrive\antora\solutions-no\playbook\antora-playbook.yml
+var const_prop_antoraAutobookNavigationFile = "modelx:antora_autobook_nav_file";
+var const_prop_antoraAutobookNavigationFile_value_default = "C:\Users\eha\OneDrive\antora\solutions-no\components\messaging\docs\modules\ROOT\nav.adoc";
 
 
 var const_prop_antoraUdateScript = "modelx:antora_update_script";
-var const_prop_antorauUdateScript_value_default = "C:\antora\\modelx-no\\modelx-no-playbook\\update.sh";
+var const_prop_antorauUdateScript_value_default = "C:\\antora\\modelx-no\\modelx-no-playbook\\update.sh";
 
 var const_prop_antoraComponentsPath = "difi:antoraComponentsPath"; //added 2020-03-15; the local root path for antora components
 var const_prop_antoraViewPath =  "difi:antoraViewPath"; //Deprecated? added 2020-03-15; the path for storing asciidoc documents for the view in question, relative to difi:antoraDocRootPath
