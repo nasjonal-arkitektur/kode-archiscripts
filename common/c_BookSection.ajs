@@ -67,14 +67,21 @@ if ( (section.name.indexOf("+") !== -1)
 		console.log(indent + "cBookSection_autodoc, " + section.name + " (" +  dctType + ")" + ", level " + sectionLevel);
 	}
 
-
-
-
-
 	// build the global_BookTableOfContents	
 	
+	if (global_BookTableOfContents.length == 0)
+	{
+		var levelIndication = "*";
+		global_BookTableOfContents = levelIndication + " " + "xref:" 
+					+ cBookSection_getAntoraComponent(book) + ":" 
+					+ cBookSection_getAntoraModule(book) + ":" 
+					+ book.name + ".adoc" + "[" 
+					+ book.name + "]";
+	}
+	//lib_TestExit("global_BookTableOfContents = " + global_BookTableOfContents);
+	
 	if (includeInToc) {
-		var levelIndication = "";
+		var levelIndication = "*";
 		for (var i = 1; i < sectionLevel; i++) {
 			levelIndication += "*";
 		}
@@ -85,7 +92,8 @@ if ( (section.name.indexOf("+") !== -1)
 			
 		
 		//if (section != previousSection) { // there may be several calls to this function for the same section (variants)
-		if (i <= autobookTocLevels) {
+		//if (i <= autobookTocLevels) {
+		if (sectionLevel <= autobookTocLevels) {
 			
 			var bookContentsItem = levelIndication + " " + "xref:" 
 					+ cBookSection_getAntoraComponent(section) + ":" 

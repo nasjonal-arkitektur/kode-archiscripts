@@ -77,8 +77,58 @@ function transformViewRef(parentObj, viewRefObj, viewObj, makeRelationFromElm) {
 	
 	console.log("viewRefObj.x=" + viewRefObj.bounds.x);
 	console.log("viewRefObj.y=" + viewRefObj.bounds.y);
+	console.log("viewRefObj.width=" + viewRefObj.bounds.width);
+	console.log("viewRefObj.height=" + viewRefObj.bounds.y);
 	
-	var elm = thisView.add(concept, parentObj.bounds.x + viewRefObj.bounds.x, parentObj.bounds.y + viewRefObj.bounds.y, -1, -1);	
+//lib_TestExit("test stop");
+	
+	var elm = thisView.add(concept, parentObj.bounds.x + viewRefObj.bounds.x, parentObj.bounds.y + viewRefObj.bounds.y, -1, -1);
+
+var optionKeepViewRefObj = true;
+if (optionKeepViewRefObj) {
+
+	var refSizeX = 18;
+	var refSizeY = 18;
+		
+	var newViewRefObj = thisView.createViewReference(viewRefObj.refView, elm.bounds.x + elm.bounds.width - refSizeX, 
+								elm.bounds.y + elm.bounds.height - refSizeY, 
+								refSizeX, refSizeY, true);
+								
+	newViewRefObj.labelExpression = " "; // prevent object name to disturb the image
+	newViewRefObj.opacity = 0;
+	newViewRefObj.outlineOpacity = 0;	
+								
+	viewRefObj.delete();
+
+/* doesn't work
+	var refSize = 20;
+	viewRefObj.bounds.x = elm.bounds.x + elm.bounds.width - refSize/2;
+	viewRefObj.bounds.y = elm.bounds.y + elm.bounds.height - refSize/2;
+	viewRefObj.bounds.width = refSize;
+	viewRefObj.bounds.height = refSize;
+	console.log("viewRefObj.x=" + viewRefObj.bounds.x);
+	console.log("viewRefObj.y=" + viewRefObj.bounds.y);	
+*/	
+	var parentRelation = null;
+	var aggregatesLabel = ""; //aggregates
+	parentRelation = model.createRelationship("aggregation-relationship", aggregatesLabel, parentObj.concept, concept); 
+	//Skip the following statement?
+	thisView.add(parentRelation, parentObj, elm);	
+	
+	
+	var concept = elm.concept;
+	var parentSection = parentObj.concept;
+	cConcept_SetProperty(concept, const_prop_antoraComponent, cConcept_GetProperty(parentSection, const_prop_antoraComponent));
+	cConcept_SetProperty(concept, const_prop_antoraVersion, cConcept_GetProperty(parentSection, const_prop_antoraVersion));
+	cConcept_SetProperty(concept, const_prop_antoraModule, cConcept_GetProperty(parentSection, const_prop_antoraModule));
+
+	cConcept_SetProperty(concept, const_prop_dct_type, const_conceptType_representation__archimateView);
+
+	cConcept_SetProperty(concept, const_prop_view_reference, viewObj.id);
+	//cConcept_SetProperty(concept, "drill down", viewObj.id);	
+	
+}
+else {
 	viewRefObj.delete();
 	
 	var parentRelation = null;
@@ -98,7 +148,7 @@ function transformViewRef(parentObj, viewRefObj, viewObj, makeRelationFromElm) {
 
 	cConcept_SetProperty(concept, const_prop_view_reference, viewObj.id);
 	cConcept_SetProperty(concept, "drill down", viewObj.id);	
-	
+}	
 
 	var newRelation = null;
 	var relationLabel = ""; //preceeds

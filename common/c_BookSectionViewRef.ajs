@@ -251,18 +251,20 @@ function c_BookSectionViewRef_noElementDoc(section) {
 	var elms = cView_GetElementsInView(refView);
 
 	var someContent = false;
-	elms.each(function(e) {
-		if (e.documentation)
-			someContent = true;
-		
-		// however...
-		if ( ($(e).is("canvas-model-image"))
-		|| ($(e).is("canvas-model-block"))
-		|| ($(e).is("canvas-model-sticky")) )
-			someContent = false;
-		
-		
-	});
+	
+	if (elms) {
+		elms.each(function(e) {
+			if (e.documentation)
+				someContent = true;
+			
+			// however...
+			if ( ($(e).is("canvas-model-image"))
+			|| ($(e).is("canvas-model-block"))
+			|| ($(e).is("canvas-model-sticky")) )
+				someContent = false;
+
+		});
+	}
 
 	if (someContent)
 		result = false;

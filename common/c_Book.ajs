@@ -34,7 +34,7 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	}
 	
 	
-	// Include a first section with the documenation of the book object, if not empty
+	// Include a first section with the documentation of the book object, if not empty
 	docString += cBook_aboutBookChapter(book, sectionLevel);
 
 	//determine first section
@@ -44,7 +44,8 @@ function cBook_autodoc(bookElement, sectionLevel) {
 	if (firstSection) {
 		// starting with the first section, recursively drill down the hierarchy, go to next sibling section and so on
 		//docString += cBookSection_autodoc(book, firstSection, sectionLevel);
-		
+	
+			
 		var nextSiblingSection = firstSection;
 		docString += ":leveloffset: +1" + "\n";
 		while (nextSiblingSection) {

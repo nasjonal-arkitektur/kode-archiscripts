@@ -1,0 +1,99 @@
+﻿load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_BookSectionViewRef.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+
+
+console.show();
+console.clear();
+console.log("Autodoc utility, add viewref to selected objects.ajs");
+
+
+	
+			
+var selectedElements = cView_GetSelectedElements();
+if (selectedElements == null || selectedElements.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}
+
+
+selectedElements.each(function(e) {
+	var c = e.concept;
+	console.log("Prosessing " + c.name);
+
+	// verify dcttype!!!!!!!!!!!!!!!
+	var conceptType = c.prop(const_prop_dct_type);
+
+	if (conceptType != const_conceptType_representation__archimateView) {
+		//lib_TestExit("Unexpected dct:type. Found '" + conceptType + "', expected '" + const_conceptType_representation__archimateView + "'");	
+		var section = c;
+		var thisView = e.view;
+		
+		var refView = null;
+		if (e.concept.prop(const_prop_view_reference))
+			refView = cModel_GetViewWithId(e.concept.prop(const_prop_view_reference));
+		
+		if (refView) {
+			console.log("refView is " + refView.name + " " + refView.id + refView.documentation);
+			
+			var refSizeX = 18;
+			var refSizeY = 18;
+
+			var x = e.bounds.x;
+			var y = e.bounds.y;
+			
+			// adjust xy coordinates relative to containing parent objects
+			var childElm = e;
+			var x = childElm.bounds.x;
+			var y = childElm.bounds.y;
+			
+			var parentElm = cView_GetContainingElementIfExists(thisView, childElm);
+			while (parentElm ) {
+				console.log("parentElm = " + parentElm.name);
+				x += parentElm.bounds.x;
+				y += parentElm.bounds.y;
+				parentElm = cView_GetContainingElementIfExists(thisView, parentElm);
+			}
+
+
+			var newViewRefObj = thisView.createViewReference(refView, 
+										x, 
+										y + e.bounds.height - refSizeY, 
+										refSizeX, refSizeY, true);
+										
+			newViewRefObj.labelExpression = " "; // prevent object name to disturb the image
+			newViewRefObj.opacity = 0;
+			newViewRefObj.outlineOpacity = 0;
+			e.fontStyle = "bold"; // to show there is something "under"	
+		}
+	
+	}
+	else { //const_conceptType_representation__archimateView
+	
+		var section = c;
+		var thisView = e.view;
+		var refView = c_BookSectionViewRef_getReferencedView(section);
+		console.log("refView is " + refView.name + " " + refView.id + refView.documentation);
+		
+
+		var refSizeX = 18;
+		var refSizeY = 18;
+			
+		var newViewRefObj = thisView.createViewReference(refView, e.bounds.x + e.bounds.width - refSizeX, 
+									e.bounds.y + e.bounds.height - refSizeY, 
+									refSizeX, refSizeY, true);
+									
+		newViewRefObj.labelExpression = " "; // prevent object name to disturb the image
+		newViewRefObj.opacity = 0;
+		newViewRefObj.outlineOpacity = 0;
+	}
+
+});
+			
+			
+console.log("Script completed");

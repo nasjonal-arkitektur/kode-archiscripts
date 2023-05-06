@@ -1,0 +1,119 @@
+﻿/*
+ * New Archi Script
+ */
+load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
+load(__DIR__ + "../common/c_Filesystem.ajs");
+load(__DIR__ + "../common/c_AntoraModule.ajs");
+
+
+console.show();
+console.clear();
+console.log("Position and format linkref");
+
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select an element. Exiting...");
+	exit();
+}
+
+/*
+else if (selectedOccurences.size() > 1) {
+	window.alert("More than one object selected. Please select only one element. Exiting...");
+	exit();
+}
+*/
+	
+var selectedOccurence = null;
+$(selectedOccurences).each(function (selectedOccurence) {
+	//console.log(selectedOccurence.name);
+
+	var previousElm = null;
+	$(selectedOccurence).children().each(function (viewRefs) {
+		
+		if (previousElm)
+			lib_TestExit("Sorry, you may currently only add one viewref with this script");
+		
+		
+		console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ")" );
+
+		if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model') || (viewRefs.type == 'canvas-model'))) {
+
+			// Find the actual linked views
+			var viewsCollection = $('archimate-diagram-model');
+			viewsCollection.add($('sketch-model'));
+			viewsCollection.add($('canvas-model'));
+			
+			var duplicate = false;
+			var alreadyFound = false;
+			viewsCollection.each(function (linkedView) {
+				
+				//console.log("a View: " + linkedView.name + ": " + linkedView.id);			
+				// this doesn't cater for duplicate view names, sorry
+				if (linkedView.name === viewRefs.name) {
+					//viewList.push([viewRefs, linkedView]);
+					console.log("--viewRefs.name: " + viewRefs.name + ": " + viewRefs.id);
+					
+					previousElm = sizeAndPostionViewRef(selectedOccurence, viewRefs, linkedView, previousElm );
+					
+					if (alreadyFound) {
+						duplicate = true;
+						console.log("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+						window.alert("Problem: Found more than one view with the name: '" + linkedView.name + "'. You need to resolve this before rerunning the script. Sorry. Exiting..." );
+						//exit();
+					}
+					else
+					 alreadyFound = true;
+					
+				}
+			});
+		}
+
+
+	});
+});
+
+
+function sizeAndPostionViewRef(parentObj, viewRefObj, viewObj, makeRelationFromElm) {
+
+	var thisView = viewRefObj.view;
+
+	console.log("Transformimg " + viewRefObj.name);
+	var concept= model.createElement("representation", viewRefObj.name);
+	concept.documentation = viewObj.documentation;
+	
+	console.log("viewRefObj.x=" + viewRefObj.bounds.x);
+	console.log("viewRefObj.y=" + viewRefObj.bounds.y);
+	console.log("viewRefObj.width=" + viewRefObj.bounds.width);
+	console.log("viewRefObj.height=" + viewRefObj.bounds.y);
+	
+	var elm = parentObj;
+
+
+	var refSizeX = 18;
+	var refSizeY = 18;
+		
+	var newViewRefObj = thisView.createViewReference(viewRefObj.refView, elm.bounds.x + elm.bounds.width - refSizeX, 
+								elm.bounds.y + elm.bounds.height - refSizeY, 
+								refSizeX, refSizeY, true);
+								
+	cConcept_SetProperty(elm.concept, const_prop_view_reference, viewRefObj.refView.id);
+								
+	newViewRefObj.labelExpression = " "; // prevent object name to disturb the image
+	newViewRefObj.opacity = 0;
+	newViewRefObj.outlineOpacity = 0;	
+								
+	viewRefObj.delete();
+
+	return newViewRefObj;
+
+}
+
+

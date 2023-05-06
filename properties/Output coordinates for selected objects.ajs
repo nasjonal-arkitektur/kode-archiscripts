@@ -1,0 +1,19 @@
+﻿load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+
+console.show();
+console.clear();
+console.log("Output coordinates for selected objects");
+
+var occurences = CSelection_GetDirectlySelectedOccurences();
+lib_VerifyNotNull(occurences, "No objects selected");
+
+occurences.each(function(o) {
+
+	//console.log(o.type + "\t" + o.name + "\t" + o.id);
+
+	var e = o;
+
+	console.log(e.type + " " + e.name + " x=" + e.bounds.x + ", w=" + e.bounds.width + ", y=" + e.bounds.y + ", h=" + e.bounds.height);
+	
+});	
