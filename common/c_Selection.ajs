@@ -410,3 +410,5 @@ function CSelection_GetDirectlySelectedElements() {
 	var selectedOccurences = $(selection).filter("element");
 	return selectedOccurences;
 }
+
+

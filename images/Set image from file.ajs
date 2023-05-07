@@ -1,0 +1,110 @@
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+  
+console.log("Set image from file");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select one or more elements. Exiting...");
+	exit();
+}
+
+selectedOccurences.each(function (elm) {
+	lib_Log("Processing " + elm.name);
+	//elm.concept.prop(const_prop_dct_type, const_conceptType_representation__archimateView);
+
+
+	
+	elm.imageSource = IMAGE_SOURCE.CUSTOM;
+	
+	filePath = window.promptOpenFile({ title: "Select image file", filterExtensions: [ "*.png", "*.svg", "*.*" ] });
+	
+	//elm.image = model.createImage("C:\\Users\\eha\\OneDrive\\antora\\solutions-no\\components\\messaging\\docs\\modules\\messaging-books\\images\\messaging-back-cover.png");
+	elm.image = model.createImage(filePath);
+	
+	elm.bounds.width = elm.image.width;
+	elm.bounds.height = elm.image.height;
+	
+	elm.imagePosition = IMAGE_POSITION.FILL;
+console.log("elm.image = " + elm.image);
+
+console.log("existing elm.id = " + elm.id);
+console.log("elm.bounds.width = " + elm.bounds.width);
+console.log("elm.bounds.height = " + elm.bounds.height);
+
+
+	//********
+	var option_resize_based_on_width = false; // *******************************************
+	//********
+	
+	var shrinkImage = false;
+	var newWidth = elm.bounds.width; //assume unchanged
+	var newHeight = elm.bounds.height; //assume unchanged
+
+	var elm_wh_ratio = elm.bounds.width/elm.bounds.height;
+	var image_wh_ratio = elm.image.width/elm.image.height;
+	
+	if (elm.bounds.width < elm.image.width) { 
+		shrinkImage = true;
+	}
+	if (elm.bounds.height < elm.image.height) { 
+		shrinkImage = true;
+	}
+	
+	if (shrinkImage) {
+		
+		console.log("Shrinking file image...");
+		
+		if (option_resize_based_on_width) {
+			newWidth = elm.bounds.width;
+			newHeight = elm.bounds.height / image_wh_ratio;
+		}
+		else {
+			newHeight = elm.bounds.height;
+			newWidth = elm.bounds.width * 1/image_wh_ratio;
+		}
+		
+	}
+	else { // enlarge image 
+	
+		console.log("Enlarging file image...");
+
+		if (option_resize_based_on_width) {
+			newWidth = elm.bounds.width;
+			newHeight = newWidth / image_wh_ratio;
+		}
+		else {
+			newHeight = elm.bounds.height;
+			newWidth = newHeight * image_wh_ratio;
+		}	
+	
+	}
+
+	//..
+	console.log("elm.view: " + elm.view);
+	
+	//var newElm = elm.view.add(elm.concept, elm.bounds.x, elm.bounds.y, elm.image.width, elm.image.height, true); //true for autoNest
+	var newElm = elm.view.add(elm.concept, elm.bounds.x, elm.bounds.y, newWidth, newHeight, false); //false for not autoNest, since may lead to deletion of the new elm if nested inside a larger existing elm
+	
+	
+	newElm.imageSource = IMAGE_SOURCE.CUSTOM;
+	newElm.image = elm.image;
+	newElm.imagePosition = IMAGE_POSITION.FILL;
+console.log("newElm.image = " + newElm.image);
+console.log("New elm.id = " + newElm.id);
+console.log("newElm.bounds.width = " + newElm.bounds.width);
+console.log("newElm.bounds.height = " + newElm.bounds.height);
+
+	elm.delete(); // NB! will also delete all nested elements from the view, so TO-DO: need to recover realationships and objects  to the new view object
+
+});
+
+console.log("Script completed");

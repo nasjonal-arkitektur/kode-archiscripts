@@ -1,0 +1,54 @@
+﻿load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+  
+console.log("Set image from other object");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select one or more elements. Exiting...");
+	exit();
+}
+
+var last = null;
+selectedOccurences.each(function (elm) {
+	lib_Log("Processing " + elm.name);
+	last = elm;
+});
+
+//lib_Log("selectedOccurences.first() " + selectedOccurences.first() ) ;
+lib_Log("last " + last ) ;
+
+
+selectedOccurences.each(function (elm) {
+	lib_Log("Processing " + elm.name);
+	//elm.concept.prop(const_prop_dct_type, const_conceptType_representation__archimateView);
+/*
+	var clipboardString = cClipboard_GetClipboardString();
+	anotherID = clipboardString;
+	//var anotherObject = cModel_GetElementWithId(anotherID);
+	var anotherObject = cModel_GetElementWithName(clipboardString);
+
+console.log("other.name = " + anotherObject.name);
+console.log("other.image = " + anotherObject.image);
+*/
+
+	elm.imageSource = IMAGE_SOURCE.CUSTOM;
+//	elm.image = anotherObject.image;
+	elm.imagePosition = IMAGE_POSITION.FILL;
+	elm.image = last.image;	
+	//doesn't work: elm.bounds.width = last.bounds.width;
+	
+	
+console.log("elm.image = " + elm.image);
+
+});
+
+console.log("Script completed");
