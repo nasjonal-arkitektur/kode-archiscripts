@@ -528,7 +528,7 @@ function concept_nameEqualsNameOfCurrentLanguage(concept) {
 
 
 function cConcept_EvaluateLabel(concept, option_caseForShowingparentConceptType, option_caseForShowingname, option_caseForShowingNamespace, option_caseForShowingConceptType, option_caseForShowingLanguage ) {
-
+console.log("Erik was here");
 	var label = "${name}";
 	var doShowNamespace = false;
 	var doShowType = false;
@@ -560,9 +560,14 @@ function cConcept_EvaluateLabel(concept, option_caseForShowingparentConceptType,
 			//if (concept_NameForCurrentModelLanguageMissing(concept) )
 				doShowLanguage= true;
 		}
-	if (doShowNamespace)
-		label += " [ns:${property:difi:namespace}]";	// const_prop_namespace
-	
+	if (doShowNamespace) {
+		var nsString = cConcept_GetProperty(concept, const_prop_namespace);
+console.log(nsString);
+		if (nsString)
+			label += " [ns:${property:difi:namespace}]";	// const_prop_namespace
+		else
+			label += " [ns:undefined]";	// const_prop_namespace
+	}
 	
 	
 	if (doShowLanguage){

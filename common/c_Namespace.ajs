@@ -27,10 +27,27 @@ function cNamespace_conceptNameIncludesNamespace(c) {
 	return false;
 }
 
+function cNamespace_UpdateNamespaceForGivenConcept(c, newNamespaceValue) {
+	
+	console.log("cNamespace_UpdateNamespaceForGivenConcept for " + c.name + " of type " + c.type); 
+
+	if (cNamespace_conceptNameIncludesNamespace(c) ) {
+		
+		cConcept_RemoveNamespaceFromName(c);
+		//c.prop(const_prop_namespace, newNamespaceValue);
+		cConcept_SetProperty(c, const_prop_namespace, newNamespaceValue);
+		cConcept_AddNamespaceToName(c);
+	}
+	else {
+		c.prop(const_prop_namespace, newNamespaceValue);
+	}
+}
 
 
 function cNamespace_UpdateNamespaceForGivenConcepts(givenConcepts, newNamespaceValue) {
 
+	//if (newNamespaceValue === "")
+	//	newNamespaceValue = "undefined";
 
 	//givenConcepts.prop(const_prop_namespace, newNamespaceValue);
 

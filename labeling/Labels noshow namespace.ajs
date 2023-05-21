@@ -1,5 +1,5 @@
 /*
- * Show namespace
+ * NoShow namespace
  */
  
 load(__DIR__ + "../common/c_Namespace.ajs");
@@ -9,12 +9,32 @@ load(__DIR__ + "../common/c_Selection.ajs");
 console.show();
 console.clear();
 
-console.log("NOShow namespace, script started");
+console.log("NoShow namespace, script started");
 
-var selectedConcepts = CSelection_GetSelectedConcepts("","");
-
-selectedConcepts.each(function(concept) {
-	cConcept_setLabel(concept, false, true, false, false, false); //	parentConceptType, name, namespace, language, conceptType
+var selectedElements = CSelection_GetDirectlySelectedElements();
+selectedElements.each(function(element) {
+	cElement_setLabel(element, false, true, false, false, false); //	parentConceptType, name, namespace, language, conceptType
 });
 
-console.log("Script completed");
+var selectedViews = CSelection_GetAllSelectedViews();
+selectedViews.each(function(view) {
+	
+	//Not supported by Archi, 2023: cElement_setLabel(view, false, true, true, false, false); //	parentConceptType, name, namespace, language, conceptType
+	
+	var elements = cView_GetElementsInView(view);
+	if (elements) {
+		elements.each(function(element) {
+			cElement_setLabel(element, false, true, false, false, false); //	parentConceptType, name, namespace, language, conceptType
+		});
+	}
+});
+
+/* Not supported by Archi?
+var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
+selectedViews.each(function(folder) {
+	cElement_setLabel(folder, false, true, true, false, false); //	parentConceptType, name, namespace, language, conceptType
+});
+*/
+
+//console.log("Script completed. Hint: Refresh view to see the result (if you selected elements in a an opened view.");
+console.log("Script completed.");

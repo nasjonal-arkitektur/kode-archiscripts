@@ -105,6 +105,9 @@ console.log("newElm.bounds.height = " + newElm.bounds.height);
 
 	elm.delete(); // NB! will also delete all nested elements from the view, so TO-DO: need to recover realationships and objects  to the new view object
 
+
+//TO-DO: Visual properties like e.g. font, opacity, label...
+
 });
 
 console.log("Script completed");

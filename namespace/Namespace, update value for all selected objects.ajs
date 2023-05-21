@@ -24,26 +24,38 @@ function UpdateNamespaceForSelectedConceptsWithUserDialog() {
 	var selectedViews = CSelection_GetAllSelectedViews();
 	var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
 	
-
+/**
 	if (selectedConcepts === null || selectedConcepts.size() < 1)
 	{
 		window.alert("No concepts selected. Exiting...");
 		exit();
 	}
-
+**/
 	var newNamespaceValue = UserDialogInputNewNamespaceValue();
 	if (newNamespaceValue === null || newNamespaceValue === "")
 		window.alert("Cancelled - no update done.");
 	else {
 		
 		if (selectedConcepts != null)
-			cNamespace_UpdateNamespaceForGivenConcepts(selectedConcepts, newNamespaceValue);
+			//cNamespace_UpdateNamespaceForGivenConcepts(selectedConcepts, newNamespaceValue);
+		
+			selectedConcepts.each(function(c) {
+				cNamespace_UpdateNamespaceForGivenConcept(c, newNamespaceValue);
+			});	
+
 		if (selectedViews != null )
-			cNamespace_UpdateNamespaceForGivenConcepts(selectedViews, newNamespaceValue);
+			selectedViews.each(function(c) {
+				cNamespace_UpdateNamespaceForGivenConcept(c, newNamespaceValue);
+			});
+			//cNamespace_UpdateNamespaceForGivenViews(selectedViews, newNamespaceValue);
 		if (selectedFolders != null)
-			cNamespace_UpdateNamespaceForGivenConcepts(selectedFolders, newNamespaceValue);
+			selectedFolders.each(function(c) {
+				cNamespace_UpdateNamespaceForGivenConcept(c, newNamespaceValue);
+			});
+			//cNamespace_UpdateNamespaceForGivenFolders(selectedFolders, newNamespaceValue);
 		
 		//window.alert("Updated namespace to '" + newNamespaceValue + "' for " + selectedConcepts.size() + " concepts," + selectedViews.size() + " views, " + selectedFolders.size() + " folders" +  ".");
+
 	}
 
 }
