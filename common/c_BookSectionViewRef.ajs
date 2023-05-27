@@ -197,12 +197,14 @@ function c_BookSectionViewRef_documentViewNarrative(book, section) {
 	var skipViewImage = cConcept_GetProperty(section, const_prop_autobook_skip_view_image);
 	if (!skipViewImage) {
 		
-		var siteUrl = cBook_GetAntoraSiteUrl(book); // E.g. https://solutions-no.github.io
-		var archiModelsUrl = siteUrl + "/models/archi/";
+		//var siteUrl = cBook_GetAntoraSiteUrl(book); // E.g. https://solutions-no.github.io
+		//var archiModelsUrl = siteUrl + "/models/archi-all/";
+		var archiSiteUrl = cBook_GetArchiSiteUrl(book);
+		
 		var refViewId = section.prop(const_prop_view_reference);	
 		
 		docString += "\nimage::" + "{imagepath}" + fileName + "[alt=" + section.name + " image" + 
-		", link=" + archiModelsUrl + "?view=" + refViewId + "]";
+		", link=" + archiSiteUrl + "?view=" + refViewId + "]";
 	
 	
 		//old: cView_GetImagePath(view) + "[alt=" + view.name + " image]";

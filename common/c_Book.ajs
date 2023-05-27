@@ -335,6 +335,12 @@ function cBook_GetAntoraSiteUrl(book) {
 	return path;
 }
 
+function cBook_GetArchiSiteUrl(book) {	
+
+	var path = book.prop(const_prop_achisite_url);
+	return path;
+}
+
 
 
 function CBook_CreateMissingAutobookProperties(book) {

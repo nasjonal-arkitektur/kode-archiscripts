@@ -100,8 +100,12 @@ var const_prop_book_front_cover_image_value_default = "Front cover image, e.g. i
 var const_prop_book_back_cover_image = "modelx:book_back_cover_image";
 var const_prop_book_back_cover_image_value_default = "Front cover image, e.g. image11.png";
 
+var const_prop_achisite_url =  "modelx:archi_site_url";
+var const_prop_achisite_url_value_default =  "url of web site for the related published archi models, e.g. https://altinn.github.io/ark/models/archi-all";
+
 var const_prop_site_url =  "modelx:site_url";
 var const_prop_site_url_value_default =  "url of web site for publishing a generated autobook; e.g. https://modelx-no.github.io/";
+
 
 var const_prop_antoraComponent = "modelx:antora_component";
 var const_prop_antoraComponent_value_default = "Antora component name";
@@ -111,6 +115,7 @@ var const_prop_antoraModule = "modelx:antora_module";
 var const_prop_antoraModule_value_default = "Antora module name";
 var const_prop_antoraFile = "modelx:antora_file";
 var const_prop_antoraFile_value_default = "";
+
 
 var const_prop_antoraSectionHeader = "modelx:antora_section_header";
 var const_prop_antoraSectionHeader_value_yes
