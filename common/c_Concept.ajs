@@ -12,6 +12,41 @@ function cConcept_removeProperty(concept, propName) {
 	concept.removeProp(propName);
 }
 
+function cConcept_getCSVPropertiesValues(concept, propList) {
+	
+	
+	//lib_TestExit(concept.prop("difi:description_en"));
+	
+
+	var csvValues = "";
+		
+	if (propList) {
+		
+		for (var i = 0; i < propList.length; i++) {
+			
+			if (propList[i] == const_arhi_name)
+				csvValues += concept.name + "\t";
+			else if (propList[i] == const_archi_documentation) {
+				csvValues += concept.documentation + "\t";
+			}
+			else {
+				//console.log(propList[i] + "=" + concept.prop(propList[i]) );
+				if (concept.prop(propList[i]) != null)
+					csvValues += concept.prop(propList[i]) + "\t";
+				else
+					//csvValues += "\t"; //here means the property is not defined? Should we differ vs. property value = ""?
+					csvValues += "***Warning: Missing property***" + "\t"; 
+			}
+			
+		}
+	}
+
+	
+	csvValues = lib_SliceTrailingCharIfPresent(csvValues, "\t");
+	return csvValues;
+}
+
+/***
 function cConcept_getCSVPropertiesValues(concept) {
 
 	var csvValues = "";
@@ -46,7 +81,9 @@ function cConcept_getCSVPropertiesValues(concept) {
 	
 	return csvValues;
 }
+**/
 
+/***
 function cConcept_getCSVPropertiesHeader(concept) {
 
 //const const_archi_concept_id = "archi:concept_id";
@@ -81,6 +118,8 @@ function cConcept_getCSVPropertiesHeader(concept) {
 	
 	return csvHeader;
 }
+**/
+
 
 function cConcept_GetProperties(concept) {  // maybe not needed, but keep it to show...
 	

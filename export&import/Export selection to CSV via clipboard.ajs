@@ -13,48 +13,58 @@ console.log("Export selection to CSV via clipboard - script starting");
 
 
 
-	var selectedConcepts = CSelection_GetSelectedConcepts("","");
-	var selectedViews = CSelection_GetAllSelectedViews();
-	var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
-
-
 //var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
 var selectedConcepts = CSelection_GetSelectedConcepts("","");
 //var selectedViews = CSelection_GetAllSelectedViews();
 //var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
-	
+
+if (!selectedConcepts)
+	lib_Error("No concepts selected. Exiting...");
+
+
+var csvColumnSpecString = cClipboard_GetClipboardString();
+//lib_TestExit("'" + csvColumnSpecString + "'"); // shows there's an extra "\n" after the last ...
+csvColumnSpecString = lib_SliceTrailingCharIfPresent(csvColumnSpecString, "\n"); //there's an extra "\n" at the end of the string when copied from Excel!
+
+
+if (!csvColumnSpecString)
+	lib_Error("Missing csvColumnSpecification by clipboard. Please e.g. copy header columns from Excel and try again. Exiting...");
+
+var lines = csvColumnSpecString.split("\n");
+var csvHeader = lines[0];
+
+// throwing away any other lines.. (to-do: could give a warning of more than one line)
+
+var properties = csvColumnSpecString.split("\t");
+
 var csvString = ""; 
 
-if (selectedConcepts != null) {
+csvString += csvHeader;
+csvString += "\n";
 	
+var i = 0;	
+selectedConcepts.each(function(c) {
+
+	csvString += cConcept_getCSVPropertiesValues(c, properties);
+	if (i < selectedConcepts.size() - 1)
+		csvString += "\n";
+	i++;
 	
-	var i = 0;	
-	selectedConcepts.each(function(c) {
-		//csvString += cConcept_getCSVString(c);
-		if (i==0) {
-			csvString += cConcept_getCSVPropertiesHeader(c);
-			csvString += "\n";
-		}
-		csvString += cConcept_getCSVPropertiesValues(c);
-		if (i < selectedConcepts.size() - 1)
-			csvString += "\n";
-		i++;
-		
 
-		
-		/*
-		var propList = c.prop();
-		if (propList.size() > 0) {
-			console.log("\nProperties:");
-			for (var i = 0; i < propList.size(); i++) {
-				console.log(propList[i] + ": " + c.prop( propList[i]) );
-			}
-
+	
+	/*
+	var propList = c.prop();
+	if (propList.size() > 0) {
+		console.log("\nProperties:");
+		for (var i = 0; i < propList.size(); i++) {
+			console.log(propList[i] + ": " + c.prop( propList[i]) );
 		}
-		*/
-		
-	});	
-}
+
+	}
+	*/
+	
+});	
+
 
 cClipboard_SetClipboardString(csvString);
 //console.log("csvString:\n" + csvString);
