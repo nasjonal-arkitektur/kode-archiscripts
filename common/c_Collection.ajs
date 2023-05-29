@@ -76,3 +76,14 @@ console.log("cCollection_GetItemsWithSeqNoAndNamespace, " + seqNo + ", " + names
 
 	return items;
 }
+
+var cCollection_GetItemsWithConceptId = function(coll, id){
+	
+	// note: may be more than one occurence of the same object 
+
+	const const_prop_concept_id = "archi:concept_id";
+
+    return coll.filter(function(o) {
+        return ( o.prop(const_prop_concept_id) == id );
+    });
+}

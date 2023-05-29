@@ -269,22 +269,27 @@ function cModel_GetElementWithName(name) {
 
 function cModel_GetConceptWithId(id) {
 	
+	var result = null;
+	var elm = null;
+	
    var elms =  $("concept").filter(function(o) {
         return ( (o.id == id) );
     });
 	
 	if (elms.size() < 1) {
 		
-		console.log("cModel_GetConceptWithId: No elements with given id = " + id + "! Exiting!");
-		exit();
+		elm = null;
+		
+		//console.log("cModel_GetConceptWithId: No elements with given id = " + id + "! Exiting!");
+		//exit();
 	}
 	else if (elms.size() > 1) {
 		window.alert("cModel_GetConceptWithId: More than one element selected");
 		exit();
 	}
-	
-		
-	var elm = elms.first();
+	else
+		elm = elms.first();
+
 	//console.log("cModel_GetElementWithId: Element name  = " + elm.name);
 	return elm;
 

@@ -159,6 +159,12 @@ var const_prop_viewRelativeRenderPath =  "difi:docViewPath"; //added 2019-08-24;
 
 var const_prop_source = "dct:BibliographicResource"; //added 2019-08-20
 
+/*** new constants 2023.05.29 .. erik to-do: rename to const_prop...*/
+var const_archi_concept_id = "archi:concept_id";
+var const_arhi_name = "archi:name";
+var const_archi_documentation = "archi:documentation";
+var const_arhi_type = "archi:type";
+/***/
 
 var const_title_namespace_prefix = " [ns:";
 var const_title_namespace_postfix = "]";
@@ -241,7 +247,7 @@ var const_prop_dctType_difi_prefix = "difi:";
 var const_conceptType_association__synonym = "difi:synonym-preferred-term-of";
 
 // Roles
-var const_conceptType_association__owns = "difi:is-owner-of";
+var const_conceptType_association__griowns = "difi:is-owner-of";
 var const_conceptType_association__manages = "difi:is-manager-of";
 var const_conceptType_association__develops = "difi:developing";
 

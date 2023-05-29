@@ -12,24 +12,93 @@ function cConcept_removeProperty(concept, propName) {
 	concept.removeProp(propName);
 }
 
+function cConcept_getCSVPropertiesValues(concept) {
+
+	var csvValues = "";
+	
+	//csvValues += concept.id;
+	//csvValues += "\t";
+	csvValues += concept.name;
+	csvValues += "\t";
+	csvValues += concept.documentation;	
+	
+	var propList = cConcept_GetProperties(concept);
+	
+		if (propList) {
+		
+			csvValues += "\t";
+			
+			for (var i = 0; i < propList.size(); i++) {
+				
+				//if (propList[i] != const_archi_concept_id) {
+					//console.log(propList[i] + ": " + concept.prop( propList[i]) );
+					//csv += propList[i] + "\t" + concept.prop(propList[i]);
+					csvValues += concept.prop(propList[i]);
+					if (i < propList.size() - 1)
+						csvValues += "\t";
+				//}
+				
+			}
+			//console.log("csvValues: " + csvValues);
+	}
+	//else
+	//	console.log("\nNo properties");
+	
+	return csvValues;
+}
+
+function cConcept_getCSVPropertiesHeader(concept) {
+
+//const const_archi_concept_id = "archi:concept_id";
+//const const_arhi_name = "archi:name";
+//const const_archi_documentation = "archi:documentation";
+//const const_arhi_type = "archi:type";
+
+	var csvHeader = "";
+	//csvHeader += const_archi_concept_id;
+	//csvHeader += "\t";
+	csvHeader += const_arhi_name;
+	csvHeader += "\t";
+	csvHeader += const_archi_documentation;
+	
+	var propList = cConcept_GetProperties(concept);
+	
+	if (propList) {
+		
+		csvHeader += "\t";
+	
+		for (var i = 0; i < propList.size(); i++) {
+			//console.log(propList[i] + ": " + concept.prop( propList[i]) );
+			csvHeader += propList[i];
+			if (i < propList.size() - 1)
+				csvHeader += "\t";
+				
+		}
+		//console.log("csvheader: " + csvHeader);
+	}
+	else
+		console.log("\nNo properties");
+	
+	return csvHeader;
+}
+
 function cConcept_GetProperties(concept) {  // maybe not needed, but keep it to show...
 	
-	var propList = $(concept).prop();
- 	/* .each not working here!?
-	propList.each(function(p) {
-		console.log(p);
-	});	
-	*/
-	
-	
-	console.log("\nProperties:");
+	var propList = concept.prop();
+ 	/* .each not working here! arraylist...*/ 
+
+	/*
 	if (propList) {
+		
+		console.log("\nProperties:");
+			
 		for (var i = 0; i < propList.size(); i++) {
 			console.log(propList[i] + ": " + concept.prop( propList[i]) );
 		}
 	}
 	else
 		console.log("\nNo properties");
+	*/
 	
 	return propList;
 }

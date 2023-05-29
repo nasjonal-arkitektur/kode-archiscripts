@@ -26,7 +26,7 @@ var selectedOccurence = selectedOccurences.first();
 //console.log("Selected " + selectedOccurence.name);
 var concept = selectedOccurence.concept;
 
-// merge attributes
+// list attributes
 var props = concept.prop();
 for (var i = 0; i < props.size(); i++) {
 	console.log(concept.prop( props[i].name) + ": " + concept.prop( props[i].value));
