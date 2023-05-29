@@ -1,0 +1,37 @@
+﻿/*
+ * New Archi Script
+ */
+load(__DIR__ + "../common/Constants.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Book.ajs");
+load(__DIR__ + "../common/c_Filesystem.ajs");
+load(__DIR__ + "../common/c_AntoraModule.ajs");
+
+
+console.show();
+console.clear();
+console.log("Set Group Border Rectangle");
+
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+
+if (selectedOccurences.size() < 1) {
+	window.alert("No objects selected. Please select one or more elements. Exiting...");
+	exit();
+}
+
+selectedOccurences.each(function (elm) {
+	lib_Log("Processing " + elm.name);
+	
+	// TO-DO: Verify type = group or note!
+	
+	var group = elm;
+	group.borderType = BORDER.RECTANGLE ;
+
+});
+
+console.log("Script completed");

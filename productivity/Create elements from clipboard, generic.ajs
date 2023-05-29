@@ -1,0 +1,432 @@
+﻿/*
+ * Create elements from clibboard, generic.ajs
+ */
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("Create elements from clibboard, generic.ajs");
+
+/********* 
+->Constants to be transferred to Constants.ajs subsequent to testing
+**********/
+
+//const_prop_name_no
+//const_prop_name_en
+//const_prop_description_no
+//const_prop_description_en
+//const_prop_namespace
+
+
+
+var const_prop_inScope_csvColumn = 0;
+var const_prop_namespace_svcColumn = 1;
+const const_prop_sequenceNumber = "digdir:sequenceNumber";
+var const_prop_sequenceNumber_csvColumn = 2;
+
+var const_prop_category_no = "digdir:category_no";
+var const_prop_category_no_svcColumn = 3;
+
+var const_prop_category_en = "digdir:category_en";
+var const_prop_category_en_svcColumn = 11;
+
+
+var const_prop_hexColorcode_scvColumn = 10;
+
+
+var const_prop_name_no_svcColumn = 4;
+var const_prop_description_no_svcColumn = 5;
+var const_prop_name_en_svcColumn = 12;
+var const_prop_description_en_svcColumn = 13;
+
+const const_prop_ability_no = "digdir:ability_no";
+const const_prop_ability_no_scvColumn = const_prop_description_no_svcColumn;
+const const_prop_purpose_no = "digdir:purpose_no";
+const const_prop_purpose_no_scvColumn = const_prop_ability_no_scvColumn + 1;
+
+const const_prop_ability_en = "digdir:ability_en";
+const const_prop_ability_en_scvColumn = const_prop_description_en_svcColumn;
+const const_prop_purpose_en = "digdir:purpose_en";
+const const_prop_purpose_en_scvColumn = const_prop_ability_en_scvColumn + 1;
+
+
+
+/********* 
+<-Constans to be transferred to Constants.ajs subsequent to testing
+**********/
+
+
+function getClipboard() {
+	
+	var Toolkit = Java.type("java.awt.Toolkit");
+	var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	
+
+    //try {
+      if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+
+		return txt;
+        //return txt.trim();
+      }
+    //} catch (Exception e) {
+    //}
+
+    return "";
+}
+
+// getExistingElementsFromConceptId shoud be in cView!!!!!!!!!!!
+function getExistingElementsFromConceptId(view, conceptId) {
+
+	viewItems = $(view).find().filter("element");
+
+	var resultList = null;
+
+	if (viewItems != null) {
+		
+		resultList = cCollection_GetItemsWithConceptId(viewItems, conceptId);
+		
+	}
+
+	return resultList; // may be null, one or more occurencies of the same object
+	
+	// TODO: verify that the id is the same of all elements in the resultList
+	
+}
+
+
+function establishPropertiesFromLine(line) {
+
+console.log("establishPropertiesFromLine");
+
+	var properties = line.split("\t");
+	
+	var property;
+	
+	for (i = 0; i < properties.length; i++) {
+		
+		property = properties[i]; 
+		console.log("  * " + property);
+		
+	}
+	
+	return properties;
+
+}
+
+var txt = getClipboard();
+//console.log(txt);
+
+var selectedViews = $(selection).filter("archimate-diagram-model");
+
+if(selectedViews.size() < 1) {
+	window.alert("No views selected");
+	exit();
+}
+else if(selectedViews.size() > 1) {
+	window.alert("More than one view selected");
+	exit();
+}
+
+var view = selectedViews.first();
+
+
+var lines = txt.split("\n");
+var concept = null;
+var elm = null;
+
+/*
+var const_x_start = 10;
+var const_y_start = 10;
+var const_x_incr = 143 + 10;
+var const_y_incr = 71 + 10;
+*/
+
+var x = const_x_start;
+var y = const_y_start;
+
+var elementType = "resource"; // TODO, Erik: Take it from the input, if archi:type is there
+var elementType = window.prompt("Archi concept type?", elementType);
+
+var previousLevel = 0;
+var previousConcept = null;
+var previousElm = null;
+var parentConcept = null
+var parentElm = null;
+
+// Erik experimenting, May 2023 *********************'s
+var line = lines[0];
+var properties = establishPropertiesFromLine(line)
+
+
+//*************************
+
+var i = 1;
+for (i = 1; i < lines.length - 1; i++) {
+	
+var generic = true;
+
+if (generic) {
+	
+	const const_arhi_name = "archi:name";
+
+	var row = lines[i];
+	
+	console.log("row#", i);
+	console.log("row", row);
+	
+	var columns = row.split("\t");
+	
+	var archi_main_name = null;
+	var archi_main_documentation = null;
+	
+	var concept = null;
+	var elm = null;
+	var prop = null;
+
+	//check property archi:concept_id", if present, we update rather than create the concept
+	//const const_archi_concept_id = "archi:concept_id";
+	var existingConceptWithConceptId = false;
+	
+	for (var p = 0; p < properties.length; p++) {
+		
+		prop = properties[p];
+		if (prop == const_archi_concept_id) {
+			archi_concept_id = columns[p];
+			console.log("* Found archi_concept_id  = " + archi_concept_id);
+			
+			if (archi_concept_id.length() > 0) {
+				concept = cModel_GetConceptWithId(archi_concept_id);
+				if (concept)
+					existingConceptWithConceptId = true;
+				else
+					//console.log("Warning: Given " + const_archi_concept_id + " = " + archi_concept_id + " does not exist in this model");
+					lib_Error("Given " + const_archi_concept_id + " = " + archi_concept_id + " does not exist in this model. Exiting");
+			}
+			
+			//break;
+		}
+	}
+	
+
+
+	// find the archi main name among the input properties and create the concept
+	if (!existingConceptWithConceptId) {
+		
+		for (var p = 0; p < properties.length; p++) {
+			
+			prop = properties[p];
+			if (prop == const_arhi_name) {
+				archi_main_name = columns[p];
+				console.log("* Found " + const_arhi_name + " = " + archi_main_name);
+				concept = model.createElement(elementType, archi_main_name);
+				
+console.log("Trying to set concept.id = " + concept.id);
+				cConcept_SetProperty(concept, const_archi_concept_id, concept.id);
+				//break; // doesn't work?
+			}
+		}
+		if (!concept)
+			lib_Error("Failed to find the Archi concept main name in the input, row #" + i);
+	}
+
+	
+	if (!concept)
+		lib_Error("Unexpected error - no concept stablished?" + i);
+	
+	//const const_archi_documentation = "archi:documentation";
+				
+	// update the newly created (or existing) concept with other properties as found in the input
+	for (var p = 0; p < properties.length; p++) {
+		
+		property = properties[p]; 
+		console.log(property);
+		
+		
+		//if (property != const_arhi_name && property != const_archi_concept_id) {
+		if (property != const_archi_concept_id) {
+		
+			if (property == const_arhi_name)
+				concept.name = columns[p];
+		
+			else if (property == const_archi_documentation)
+				concept.documentation = columns[p];
+			else
+					
+				// should we check that the property is valid? I
+			
+				cConcept_SetProperty(concept, property, columns[p]);
+		}
+	}
+	
+	
+	if (!existingConceptWithConceptId) {
+		elm = view.add(concept, x, y, -1, -1);	
+		//x = const_x_start +  const_x_incr * level;
+		y += const_y_incr; 
+	}
+	
+	console.log("Script completed");
+
+
+}
+else {// generic
+
+	
+	var line = lines[i];
+	var columns = line.split("\t");
+	
+	var name = null;
+	var descr = null;
+		
+	if (columns[0]) {
+		level = 0;
+		name = columns[const_prop_name_no_svcColumn]; 
+		descr = columns[const_prop_description_no_svcColumn];
+
+//lib_TestExit(column3);
+
+	}
+	else if( columns[1]) {
+		level = 1;
+		name = columns[1]; 
+		descr = columns[2];
+	}
+	else if( columns[2]) {
+		level = 2;
+		name = columns[2]; 
+		descr = columns[3];
+	}
+
+
+	var inScope = true;
+	if (columns[const_prop_inScope_csvColumn])
+		if (columns[const_prop_inScope_csvColumn] == 0)
+			inScope = false; 
+
+	if (name && inScope) { // or else it's a blank line
+
+		name = name.trim();
+		var id = null;
+		
+		var option_stripIDInName = false; // ??????????
+		if (option_stripIDInName) {
+			
+			if (line.indexOf(":") != -1) {
+			
+				var nameArr = line.split(":"); // based on a common practice, but this is by no means foolproof
+				name = nameArr[1].trim();
+				id = nameArr[0].trim();
+			}
+			
+		}
+		
+		
+		concept= model.createElement(elementType, name);
+		// rather use var element = model.createElement(elementType, name);
+		
+		
+		if (descr)
+			concept.documentation = descr;
+		
+		
+		if (id) //????????????????????????????????????????????????????????????????
+			cConcept_SetProperty(concept, const_prop_dct_identifier, id);
+
+
+
+
+		if (columns[const_prop_category_no_svcColumn])	
+			cConcept_SetProperty(concept, const_prop_category_no, columns[const_prop_category_no_svcColumn]);
+		if (columns[const_prop_name_no_svcColumn])	
+			cConcept_SetProperty(concept, const_prop_name_no, columns[const_prop_name_no_svcColumn]);
+		if (columns[const_prop_description_no_svcColumn])
+			cConcept_SetProperty(concept, const_prop_description_no, columns[const_prop_description_no_svcColumn]);	
+
+		if (columns[const_prop_category_en_svcColumn])	
+			cConcept_SetProperty(concept, const_prop_category_en, columns[const_prop_category_en_svcColumn]);
+
+		if (columns[const_prop_name_en_svcColumn])	
+			cConcept_SetProperty(concept, const_prop_name_en, columns[const_prop_name_en_svcColumn]);
+		if (columns[const_prop_description_en_svcColumn])
+			cConcept_SetProperty(concept, const_prop_description_en, columns[const_prop_description_en_svcColumn]);	
+		
+
+		if (columns[const_prop_sequenceNumber_csvColumn])
+			cConcept_SetProperty(concept, const_prop_sequenceNumber, columns[const_prop_sequenceNumber_csvColumn]);
+		if (columns[const_prop_namespace_svcColumn])
+			cConcept_SetProperty(concept, const_prop_namespace, columns[const_prop_namespace_svcColumn]);
+
+
+		if (columns[const_prop_name_en_svcColumn])
+			cConcept_SetProperty(concept, const_prop_name_en, columns[const_prop_name_en_svcColumn]);
+		if (columns[const_prop_description_en_svcColumn])
+			cConcept_SetProperty(concept, const_prop_description_en, columns[const_prop_description_en_svcColumn]);
+			
+
+		if (columns[const_prop_ability_no_scvColumn])
+			cConcept_SetProperty(concept, const_prop_ability_no, columns[const_prop_ability_no_scvColumn]);
+		if (columns[const_prop_purpose_no_scvColumn])
+			cConcept_SetProperty(concept, const_prop_purpose_no, columns[const_prop_purpose_no_scvColumn]);
+		if (columns[const_prop_ability_en_scvColumn])
+			cConcept_SetProperty(concept, const_prop_ability_en, columns[const_prop_ability_en_scvColumn]);
+		if (columns[const_prop_purpose_en_scvColumn])
+			cConcept_SetProperty(concept, const_prop_purpose_en, columns[const_prop_purpose_en_scvColumn]);
+
+
+		if (previousLevel == level && level == 0 && i > 0) {
+			parentConcept = null;
+			parentElm = null;
+			x = const_x_start +  const_x_incr * level;
+			y += const_y_incr; 
+		}
+		else if (previousLevel == level-1) {
+			parentConcept = previousConcept;
+			parentElm = previousElm;
+			x = const_x_start +  const_x_incr * level;
+			y += const_y_incr; 
+		}
+		else if (previousLevel == level && level > 0) {
+			x += const_x_incr;
+		}
+		else if (previousLevel == level + 1) {
+			x = const_x_start +  const_x_incr * level;
+			y += const_y_incr; 
+			parentConcept = null;
+			parentElm = null;
+		}
+			
+		//x = const_x_start +  const_x_incr * level;
+		elm = view.add(concept, x, y, -1, -1);	
+		//x += 143; // default width is 133
+		
+		if (columns[const_prop_hexColorcode_scvColumn])	
+			elm.fillColor = columns[const_prop_hexColorcode_scvColumn]; // element!
+		
+		elm.labelExpression = "${property:" + const_prop_sequenceNumber + "}. ${name}";
+		elm.textPosition = TEXT_POSITION.CENTER;
+		
+		if (parentConcept) {
+			var relType = "composition-relationship";
+			var relName = "composes";
+			var newRelation = model.createRelationship(relType, relName, parentConcept, concept);
+			//view.add(newRelation, parentElm, elm);
+		}
+		
+		previousConcept = concept;
+		previousElm = elm;
+		previousLevel = level;
+	}
+
+	cView_ShowHiddenRelationships(view);
+
+} //generic
+
+
+}
+
+

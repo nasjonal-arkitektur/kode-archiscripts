@@ -1,0 +1,62 @@
+﻿/*
+ * Export selection to CSV via clipboard
+ */
+ 
+"use strict";
+
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.clear();
+console.log("Export selection to CSV via clipboard - script starting");
+
+
+
+	var selectedConcepts = CSelection_GetSelectedConcepts("","");
+	var selectedViews = CSelection_GetAllSelectedViews();
+	var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
+
+
+//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
+var selectedConcepts = CSelection_GetSelectedConcepts("","");
+//var selectedViews = CSelection_GetAllSelectedViews();
+//var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
+	
+var csvString = ""; 
+
+if (selectedConcepts != null) {
+	
+	
+	var i = 0;	
+	selectedConcepts.each(function(c) {
+		//csvString += cConcept_getCSVString(c);
+		if (i==0) {
+			csvString += cConcept_getCSVPropertiesHeader(c);
+			csvString += "\n";
+		}
+		csvString += cConcept_getCSVPropertiesValues(c);
+		if (i < selectedConcepts.size() - 1)
+			csvString += "\n";
+		i++;
+		
+
+		
+		/*
+		var propList = c.prop();
+		if (propList.size() > 0) {
+			console.log("\nProperties:");
+			for (var i = 0; i < propList.size(); i++) {
+				console.log(propList[i] + ": " + c.prop( propList[i]) );
+			}
+
+		}
+		*/
+		
+	});	
+}
+
+cClipboard_SetClipboardString(csvString);
+//console.log("csvString:\n" + csvString);
+
+console.log("Script completed. You may paste the resulting string into your spreadsheet, e.g. Excel");
