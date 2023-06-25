@@ -636,7 +636,7 @@ function concept_nameEqualsNameOfCurrentLanguage(concept) {
 
 
 function cConcept_EvaluateLabel(concept, option_caseForShowingparentConceptType, option_caseForShowingname, option_caseForShowingNamespace, option_caseForShowingConceptType, option_caseForShowingLanguage ) {
-console.log("Erik was here");
+//console.log("Erik was here");
 	var label = "${name}";
 	var doShowNamespace = false;
 	var doShowType = false;

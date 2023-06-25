@@ -8,7 +8,10 @@ var debug = true;
 var getDiagramComponents = function(v, e) {
 
     return $(v).find().filter(function(o) {
-        return o.concept.id == e.id;
+		if (o.concept)
+			return o.concept.id == e.id;
+		else 
+			return false;
     });
 }
 
@@ -30,6 +33,8 @@ var contains = function(r, src, tgt) {
 console.clear();
 console.log("Add unshown relationships");
 
+var onlyThisRelationshipType = window.prompt("Relationship typ to show (leave empty to show all)?", "");
+
 // Iterate through selected views to add relationships which exist in the model but not in the view
 $(selection).filter("archimate-diagram-model").each(function(v) {
 
@@ -48,8 +53,20 @@ $(selection).filter("archimate-diagram-model").each(function(v) {
 					getDiagramComponents(v,r.target).each(function(tgt) {
 					
 						if (!contains(r, src, tgt)) {
-							debug? console.log("        => Adding " + r.type + "(" + r.name + ") from " + src.name + " to " + tgt.name ):true; // erik
-							v.add(r, src, tgt);
+							var doAdd = true;
+							
+							if (onlyThisRelationshipType != "") {
+								if (onlyThisRelationshipType != r.type) {
+									doAdd = false;
+								}
+							}
+								
+							if (doAdd) {
+								debug? console.log("        => Adding " + r.type + "(" + r.name + ") from " + src.name + " to " + tgt.name ):true; // erik
+								v.add(r, src, tgt);
+								
+							}
+
 						}
 					});
 				

@@ -1,0 +1,48 @@
+﻿// Check that a model or a model's component is selected   
+if (model == null || model.id == null)  
+    fatal("You must select a model or some Archimate elements."); 
+
+try {  
+  // jArchi provides a ArchimateModelProxy class instead of a ArchimateModel class  
+  // unfortunately, the getEObject() method that provides the underlying ArchimateModel class is protected  
+  // so we use reflection to invoke this method.  
+  var method = Packages.com.archimatetool.script.dom.model.ArchimateModelProxy.class.getDeclaredMethod("getEObject");  
+  method.setAccessible(true);  
+  var m = method.invoke(model);  
+  var modelFilePath = m.getFile().getPath();
+  
+  // Generate a script that will import the model
+  console.log("// Model name: " + model.name);
+  console.log("$.model.import('" + modelFilePath.replace(/\\/g, '\\\\') + "');");
+
+} catch (e) {  
+  console.log("An error occurred: " + e);  
+}
+
+/* Listing models doesn't work, june 2023
+
+// List all models and their file paths
+$.models.forEach(function(model) {
+  // Print the model name
+  console.log(model.name);
+  
+  // Attempt to get the file path
+  if (model == null || model.id == null) {
+    console.error("Invalid model: " + model.name);
+  } else {
+    try {
+      // Use reflection to invoke the getEObject method
+      var method = Packages.com.archimatetool.script.dom.model.ArchimateModelProxy.class.getDeclaredMethod("getEObject");
+      method.setAccessible(true);
+      var m = method.invoke(model);
+      
+      // Print the file path
+      console.log(m.getFile());
+    } catch (e) {
+      console.error("Failed to get the file path for model: " + model.name);
+    }
+  }
+});
+
+
+*/

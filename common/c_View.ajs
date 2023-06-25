@@ -288,6 +288,8 @@ function cView_createMissingProperties(view) {
 			cView_CreateMissingProperty(view, const_prop_narrative_en, "" );
 		//}
 			
+		cView_CreateMissingProperty(view, const_prop_notes, "" );
+			
 		if (const_option_antora)
 		{
 			cView_CreateMissingProperty(view, const_prop_antoraViewPath, "");

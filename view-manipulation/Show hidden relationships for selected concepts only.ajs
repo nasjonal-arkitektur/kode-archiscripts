@@ -9,7 +9,10 @@ console.log("Running script: Show hidden relationships for selected concepts onl
 // Find DiagramComponents for a given element in a given view
 var getDiagramComponents = function(v, e) {
 
+console.log("getDiagramComponents");
+
     return $(v).find().filter(function(o) {
+		console.log(o.name);
         return o.concept.id == e.id;
     });
 }

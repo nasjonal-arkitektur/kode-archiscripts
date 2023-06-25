@@ -192,9 +192,15 @@ var const_prop_label = "label";
 
 var const_prop_name_no = "difi:name_no";
 var const_prop_name_en = "difi:name_en";
-var const_prop_description_no = "difi:description_no";
+var const_prop_description_no = "difi:description_no"; //rename to short_description
 var const_prop_description_en = "difi:description_en";
-var const_prop_description_default = "-";
+var const_prop_description_default = "-"; // in use??
+
+var const_prop_detailed_description_no = "digdir:detaild_description_no"; 
+var const_prop_detailed_description_en = "digdir:detailed_description_en";
+
+
+
 
 var const_prop_link1_text = "difi:link1-text";
 var const_prop_link1_address = "difi:link1-address";
