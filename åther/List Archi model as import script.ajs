@@ -1,4 +1,27 @@
-﻿// Check that a model or a model's component is selected   
+﻿window.alert ("This script lets you create a \"standard\" (Erik)loadModel record for inclusion in an 'import my models' script, useful for reestablishing models when switching to a new PC. Refer to \"import my models (Erik)\" for an example");
+
+
+if (model == null || model.id == null)  
+    fatal("You must select a model or some Archimate elements."); 
+
+var modelName = null;
+var openedModel = null;
+var filePath = null;
+
+try {
+    var method = Packages.com.archimatetool.script.dom.model.ArchimateModelProxy.class.getDeclaredMethod("getEObject");
+    method.setAccessible(true);
+    var m = method.invoke(model);
+    modelName = model.name;
+    filePath = m.getFile().toString().replace("\\", "\\\\");
+    console.log('loadModel("' + modelName + '", "' + filePath + '");');
+} catch (e) {
+    console.error("Failed to get the model's filename or file location");
+}
+
+
+/*
+// Check that a model or a model's component is selected   
 if (model == null || model.id == null)  
     fatal("You must select a model or some Archimate elements."); 
 
@@ -12,12 +35,15 @@ try {
   var modelFilePath = m.getFile().getPath();
   
   // Generate a script that will import the model
+  modelName = model.name;
+  modelPath = '" + modelFilePath.replace(/\\/g, '\\\\') + "');"
   console.log("// Model name: " + model.name);
-  console.log("$.model.import('" + modelFilePath.replace(/\\/g, '\\\\') + "');");
+  console.log("$.model.open('" + modelFilePath.replace(/\\/g, '\\\\') + "');");
 
 } catch (e) {  
   console.log("An error occurred: " + e);  
 }
+*/
 
 /* Listing models doesn't work, june 2023
 
