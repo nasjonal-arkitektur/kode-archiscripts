@@ -1,0 +1,79 @@
+﻿load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+load(__DIR__ + "../common/c_BookSectionViewRef.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+
+
+/*
+
+	Room for enhancements: 
+	
+		1. Move functions to common "classes"
+		2. Add support for model level and folder level selection of elements
+
+*/
+
+console.show();
+console.clear();
+console.log("Hide connection anchors.ajs");
+
+function hideConnectionAnchor(connectionAnchorElm) {
+	
+	console.log("Hiding " + connectionAnchorElm);
+	
+	connectionAnchorElm.labelExpression = " "; // prevent object name to disturb the image
+	connectionAnchorElm.opacity = 0;
+	connectionAnchorElm.outlineOpacity = 10;
+	connectionAnchorElm.showIcon = SHOW_ICON.NEVER;
+	
+}
+
+function childQualifiesAsConnectionAnchorOfElement(e, child) {
+	
+	if (child.concept.id === e.concept.id)
+		return true;
+	else 
+		return false;
+	
+}
+
+//var selectedViews = CSelection_GetAllSelectedViews();
+//selectedViews.each(function(e) {
+			
+	var selectedElements = cView_GetSelectedElements();
+
+
+
+	if (selectedElements == null || selectedElements.size() < 1)
+	{
+		window.alert("No elements selected. Exiting...");
+		exit();
+	}
+
+
+	selectedElements.each(function(e) {
+		
+		console.log("Prosessing " + e.name);
+		
+		var children = $(e).children();
+	/*
+		var isConnectionAnchor = false;
+		if (children == null || children.size() < 1)
+			isConnectionAnchor = true;
+	*/	
+
+		children.each(function (child) {
+			console.log("Child: " + child.name );
+			if (childQualifiesAsConnectionAnchorOfElement(e, child) ) 	
+				hideConnectionAnchor(child);
+				
+		});	
+
+	});
+			
+//});
+	
+console.log("Script completed");

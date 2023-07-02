@@ -30,9 +30,44 @@ selectedElements.each(function(elm) {
 	var parentConcept = elm.concept;
 	var parentElm = elm;
 	
-	var view = elm.view;
+	var thisView = elm.view;
+	
+	// adjust xy coordinates relative to containing parent objects
+	var childElm = elm;
+	var x = childElm.bounds.x;
+	var y = childElm.bounds.y;
 
-	var connectionAnchorElm = view.add(parentConcept, elm.bounds.x +1, elm.bounds.y +1, 16, 16, true);
+	var refSizeX = 18;
+	var refSizeY = 18;
+	
+	var parentElm = cView_GetContainingElementIfExists(thisView, childElm);
+	while (parentElm ) {
+		console.log("parentElm = " + parentElm.name);
+		x += parentElm.bounds.x;
+		y += parentElm.bounds.y;
+		parentElm = cView_GetContainingElementIfExists(thisView, parentElm);
+	}
+
+	var connectionAnchorElm = thisView.add(parentConcept, 
+										x + (elm.bounds.width - refSizeX)/2,
+										y + elm.bounds.height - refSizeY, 
+										refSizeX, refSizeY, true);								
+								
+	//cConcept_SetProperty(elm.concept, const_prop_view_reference, viewRefObj.refView.id);
+								
+	connectionAnchorElm.labelExpression = " "; // prevent object name to disturb the image
+	connectionAnchorElm.opacity = 0;
+	connectionAnchorElm.outlineOpacity = 100;
+	connectionAnchorElm.showIcon = SHOW_ICON.NEVER;
+
+
+	//var connectionAnchorElm = view.add(parentConcept, elm.bounds.x +1, elm.bounds.y +1, 16, 16, true);
+	
+	
+	
+	
+	
+	
 	
 	//var relation = $.model.createRelationship("composition-relationship", element, connectionAnchor);
 	
