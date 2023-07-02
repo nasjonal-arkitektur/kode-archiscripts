@@ -1,0 +1,51 @@
+﻿/*
+ * New Archi Script
+ */
+
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_View.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+
+console.clear();
+console.log("Add connection anchor");
+
+//var theSelectedView = CSelection_GetTheSelectedView();
+//if (theSelectedView.size() < 1) 	
+//	lib_Error("No selected view?");
+
+
+var selectedElements = CSelection_GetDirectlySelectedElements();
+
+console.log(selectedElements.size() );
+
+if (selectedElements.size() < 1) 	
+	lib_Error("You must select at least one element");
+	
+
+selectedElements.each(function(elm) {
+	console.log(elm.name);
+	
+	var parentConcept = elm.concept;
+	var parentElm = elm;
+	
+	var view = elm.view;
+
+	var connectionAnchorElm = view.add(parentConcept, elm.bounds.x +1, elm.bounds.y +1, 16, 16, true);
+	
+	//var relation = $.model.createRelationship("composition-relationship", element, connectionAnchor);
+	
+	//var parentrelation = cModel_createRelationship("composition-relationship", "", parentConcept, connectionAnchorElm.concept);
+	//var childrelation = cModel_createRelationship("composition-relationship", "", connectionAnchorElm.concept, parentConcept);
+	
+
+	console.log("Added " + connectionAnchorElm.name);
+	
+
+	
+});
+
+
+
+console.log("Script completed");

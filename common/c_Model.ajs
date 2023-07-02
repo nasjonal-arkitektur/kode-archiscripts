@@ -457,6 +457,9 @@ function cModel_createRelationship(relationshipType, name, source, target) {
 		window.alert("Failed to create relationship with type " + type);
 		exit();
 	}
+	
+	//model.add(rel); // added 2023-07-02
+	
 	return rel;
 }
 

@@ -36,15 +36,15 @@ $(selectedOccurences).each(function (selectedOccurence) {
 	//console.log(selectedOccurence.name);
 
 	var previousElm = null;
-	$(selectedOccurence).children().each(function (viewRefs) {
+	$(selectedOccurence).children().each(function (viewRef) {
 		
-		if (previousElm)
-			lib_TestExit("Sorry, you may currently only add one viewref with this script");
-		
-		
-		console.log("View ref: " + viewRefs.name + " (" + viewRefs.type + ")" );
 
-		if ((viewRefs) && ((viewRefs.type == 'archimate-diagram-model') || (viewRefs.type == 'sketch-model') || (viewRefs.type == 'canvas-model'))) {
+		console.log("View ref: " + viewRef.name + " (" + viewRef.type + ")" );
+
+		if ((viewRef) && ((viewRef.type == 'archimate-diagram-model') || (viewRef.type == 'sketch-model') || (viewRef.type == 'canvas-model'))) {
+			
+			if (previousElm)
+				lib_TestExit("Sorry, you may currently only add one viewref with this script");
 
 			// Find the actual linked views
 			var viewsCollection = $('archimate-diagram-model');
@@ -57,11 +57,12 @@ $(selectedOccurences).each(function (selectedOccurence) {
 				
 				//console.log("a View: " + linkedView.name + ": " + linkedView.id);			
 				// this doesn't cater for duplicate view names, sorry
-				if (linkedView.name === viewRefs.name) {
-					//viewList.push([viewRefs, linkedView]);
-					console.log("--viewRefs.name: " + viewRefs.name + ": " + viewRefs.id);
+				if (linkedView.name === viewRef.name) {
+					//viewList.push([viewRef, linkedView]);
+					console.log("--viewRef.name: " + viewRef.name + ": " + viewRef.id);
+	
+					previousElm = sizeAndPostionViewRef(selectedOccurence, viewRef, linkedView, previousElm );
 					
-					previousElm = sizeAndPostionViewRef(selectedOccurence, viewRefs, linkedView, previousElm );
 					
 					if (alreadyFound) {
 						duplicate = true;
@@ -99,10 +100,30 @@ function sizeAndPostionViewRef(parentObj, viewRefObj, viewObj, makeRelationFromE
 
 	var refSizeX = 18;
 	var refSizeY = 18;
+	
+	// adjust xy coordinates relative to containing parent objects
+	var childElm = elm;
+	var x = childElm.bounds.x;
+	var y = childElm.bounds.y;
+	
+	var parentElm = cView_GetContainingElementIfExists(thisView, childElm);
+	while (parentElm ) {
+		console.log("parentElm = " + parentElm.name);
+		x += parentElm.bounds.x;
+		y += parentElm.bounds.y;
+		parentElm = cView_GetContainingElementIfExists(thisView, parentElm);
+	}
+
 		
-	var newViewRefObj = thisView.createViewReference(viewRefObj.refView, elm.bounds.x + elm.bounds.width - refSizeX, 
-								elm.bounds.y + elm.bounds.height - refSizeY, 
-								refSizeX, refSizeY, true);
+	//var newViewRefObj = thisView.createViewReference(viewRefObj.refView, elm.bounds.x + elm.bounds.width - refSizeX, 
+	//							elm.bounds.y + elm.bounds.height - refSizeY, 
+	//							refSizeX, refSizeY, true);
+								
+								
+	var newViewRefObj = thisView.createViewReference(viewRefObj.refView, 
+								x + elm.bounds.width - refSizeX,
+								y + elm.bounds.height - refSizeY, 
+								refSizeX, refSizeY, true);								
 								
 	cConcept_SetProperty(elm.concept, const_prop_view_reference, viewRefObj.refView.id);
 								
