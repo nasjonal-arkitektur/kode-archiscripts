@@ -164,6 +164,7 @@ var const_archi_concept_id = "archi:concept_id";
 var const_arhi_name = "archi:name";
 var const_archi_documentation = "archi:documentation";
 var const_arhi_type = "archi:type";
+var const_capability_relation = "modelx:capability_relation";
 /***/
 
 var const_title_namespace_prefix = " [ns:";
@@ -269,7 +270,13 @@ var const_prop_view_image_value_default = "";
 
 /*
 *	Elements
-*/		
+*/
+var const_prop_dct_modified = "dct:modified";
+
+var const_conceptType_goal__user_story = "user-story";
+
+
+		
 var const_conceptType_resource__reference_arhitecture = "difi:reference-arhitecture";
 var const_conceptType_business_object__term = "difi:term";
 
@@ -393,6 +400,9 @@ var const_conceptType_flow_relationship = "flow-relationship";
 var const_conceptType_specialization_relationship = "specialization-relationship";
 var const_conceptType_association_relationship = "association-relationship";
 
+
+
+var const_prop_dct_type_capability = "capability";
 /*
 
 // Strategy

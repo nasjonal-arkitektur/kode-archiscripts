@@ -40,6 +40,14 @@ function childQualifiesAsConnectionAnchorOfElement(e, child) {
 	
 }
 
+
+
+var selectedViews = $(selection).filter("view");
+selectedViews.each(function(view) {
+	console.log(view);
+});
+exit();
+
 //var selectedViews = CSelection_GetAllSelectedViews();
 //selectedViews.each(function(e) {
 			

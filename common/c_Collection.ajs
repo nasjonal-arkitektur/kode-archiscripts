@@ -42,6 +42,13 @@ var cCollection_GetItemsOfType = function(coll, type) {
     });
 }
 
+var cCollection_GetItemsOfDctType = function(coll, dctType) {
+
+    return coll.filter(function(o) {
+        return ( (o.prop(const_prop_dct_type) == dctType) );
+    });
+}
+
 var cCollection_GetItemsWithNamespace = function(coll, namespace){
 
     return coll.filter(function(o) {

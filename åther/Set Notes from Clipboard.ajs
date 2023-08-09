@@ -1,0 +1,27 @@
+﻿
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.log("Running script Set Notes from clipboard");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() != 1)
+{
+	window.alert("You need to select exactly one concept. Exiting...");
+	exit();
+}
+
+
+selectedConcepts.each(function(concept) {
+	
+	var clipboardString = cClipboard_GetClipboardString();
+	
+	cConcept_SetProperty(concept, const_prop_notes, clipboardString);
+	
+	//cConcept_UpdateLabel(concept);
+	
+});
+
+console.log("Script completed");

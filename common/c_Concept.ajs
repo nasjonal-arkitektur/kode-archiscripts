@@ -12,6 +12,23 @@ function cConcept_removeProperty(concept, propName) {
 	concept.removeProp(propName);
 }
 
+function cConcept_generateUserStoryDescription(concept) {
+	
+	const_dctType_role = "Rolle";
+	const_dctType_userstyory_wish = "Behov";
+	const_dctType_userstory_rationale = "Rationale";
+	
+	
+	var role = cConcept_GetProperty(concept, const_dctType_role);
+	var wish = cConcept_GetProperty(concept, const_dctType_userstyory_wish);
+	var rationale = cConcept_GetProperty(concept, const_dctType_userstory_rationale);
+	
+	var story = "Som " + role + " ønsker jeg " + wish + ", slik at " + rationale;
+	
+	cConcept_SetDescription(concept, story);
+	
+}
+
 function cConcept_getCSVPropertiesValues(concept, propList) {
 	
 	
@@ -28,6 +45,10 @@ function cConcept_getCSVPropertiesValues(concept, propList) {
 				csvValues += concept.name + "\t";
 			else if (propList[i] == const_archi_documentation) {
 				csvValues += concept.documentation + "\t";
+			}
+			else if (propList[i] == const_capability_relation) {
+				var capabilityStr = cConcept_ListRelatedConceptsOfType(concept, const_prop_dct_type_capability);
+				csvValues += capabilityStr + "\t";
 			}
 			else {
 				//console.log(propList[i] + "=" + concept.prop(propList[i]) );
@@ -182,6 +203,55 @@ function cConcept_HasProperty(concept, propertyName)
 
 	return false;
 }
+
+function cConcept_ListRelatedConceptsOfType(concept, relatedConceptType)
+{
+
+	var thisConcept = concept.concept; // just to make 100% sure we're dealing with the concept object and not an occurence
+	
+	var result = "\"";
+	
+	var rels= cConcept_getRelations(thisConcept);
+	rels.each(function(r) {
+		
+		var source = $(r).sourceEnds();
+		source = source.first();
+		if (source.concept.type == relatedConceptType)
+			//console.log("source " + r.type + ": " + source.concept.name);
+			result += "* " + source.concept.name + "\n";
+
+		var target = $(r).targetEnds();
+		target = target.first();	
+		if (target.concept.type == relatedConceptType)
+			//console.log("target " + r.type + ": " + target.concept.name);
+			result += "* " + target.concept.name + "\n";
+
+/*
+		if (thisSource.name === otherSource.name && thisTarget.name === otherTarget.name) {
+			//console.log(thisSource.name + ": Same source and target");	
+
+			if (r.name === otherRelation.name && r.type === otherRelation.type) {
+				//console.log(thisSource.name + ": Same name and type");
+				result = true;
+			}
+				
+		}
+
+		else if (otherSource.concept.type == relatedConceptType)
+			lib_TestExit("yes");
+		else if (otherTarget.concept.type == relatedConceptType)
+			lib_TestExit("hoho");
+*/			
+		
+	});	
+	
+	result = lib_SliceTrailingCharIfPresent(result, "\n");
+	
+	result += "\"";
+
+	return result;
+}
+
 
 function cConcept_HasRelation(concept, otherRelation)
 {

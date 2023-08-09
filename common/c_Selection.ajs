@@ -325,7 +325,9 @@ function CSelection_GetAllDirectlySelectedConcepts() {
 	
 }
 
-function CSelection_GetSelectedConcepts(conceptType, namespace) { // always return the concepts only, not the occurences
+
+
+function CSelection_GetSelectedConcepts(conceptType, namespace, conceptDctType) { // always return the concepts only, not the occurences
 
 	var selectedConcepts = null;
 	var directlySelectedConcepts = null;
@@ -351,6 +353,9 @@ function CSelection_GetSelectedConcepts(conceptType, namespace) { // always retu
 	if (conceptType != null && conceptType != "")
 		selectedConcepts = cCollection_GetItemsOfType(selectedConcepts, conceptType);
 	
+	else if (conceptDctType != null && conceptDctType != "")
+		selectedConcepts = cCollection_GetItemsOfDctType(selectedConcepts, conceptDctType);
+	
 	if (namespace != null && namespace != "")
 		selectedConcepts = cCollection_GetItemsWithNamespace(selectedConcepts, namespace);
 
@@ -358,6 +363,7 @@ function CSelection_GetSelectedConcepts(conceptType, namespace) { // always retu
 	
 	return selectedConcepts;
 }
+
 
 
 function CSelection_GetDirectlySelectedOccurences() {

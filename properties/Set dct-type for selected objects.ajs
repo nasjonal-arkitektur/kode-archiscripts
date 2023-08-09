@@ -1,0 +1,61 @@
+﻿/*
+ * New Archi Script
+ */
+ 
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Model.ajs");
+//load(__DIR__ + "./tests/c_Test.ajs");
+
+console.clear();
+console.log("Set dct:type for selected concepts");
+ 
+var conceptType = window.prompt("Specify Archi type if you want to filter selection based on type (or leave empty and click OK to proceed)", "");
+
+if (conceptType == null) // means user hit Cancel
+	exit();
+
+var givenName = window.prompt("Specify the dct:type to set for the selected concepts", "user-story");
+
+var list = null;
+list = CSelection_GetSelectedConcepts(conceptType, "");
+
+
+if (list === null )
+	window.alert("No selected concepts");
+else {	
+
+	var concepts = list.filter("concept");
+
+	if (concepts.size() === 0) {
+		window.alert("No selected concepts...");
+		//if (list.size() > 0) // at least something was selected 
+		//	window.alert("Note that Archi does not select nested relations when you select elements in a view. If this may be the problem, try to select the view as such instead.");
+	}
+	else {
+		concepts.each(function(c) {
+			cConcept_SetProperty(c, const_prop_dct_type, givenName);
+
+		});
+	}
+
+/*
+	var rels = list.filter("relationship");
+
+	if (rels.size() === 0) {
+		window.alert("No selected relations...");
+		if (list.size() > 0) // at least something was selected 
+			window.alert("Note that Archi does not select nested relations when you select elements in a view. If this may be the problem, try to select the view as such instead.");
+	}
+	else {
+		rels.each(function(o) {
+			o.name = givenName;
+			console.log(o.type + "\t" + o.name + "\t" + o.id);
+		});
+	}
+
+*/
+
+
+}
