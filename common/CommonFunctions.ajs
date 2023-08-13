@@ -200,3 +200,18 @@ function lib_Alert(txt) {
 
 	window.alert(txt);
 }
+
+
+function lib_FixExcelCellQuotes(str) {
+	
+	console.log("Before: " + str);
+	
+	let replacedStr = str.replace(/"/g, '""');
+	
+	// need to substitute " with ""
+		
+	console.log("After: " + replacedStr);
+
+	return replacedStr;
+
+}

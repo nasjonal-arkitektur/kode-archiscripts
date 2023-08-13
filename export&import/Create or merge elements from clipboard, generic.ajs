@@ -58,6 +58,8 @@ const const_prop_purpose_en_scvColumn = const_prop_ability_en_scvColumn + 1;
 **********/
 
 
+
+
 function getClipboard() {
 	
 	var Toolkit = Java.type("java.awt.Toolkit");
@@ -189,13 +191,13 @@ if (generic) {
 	var prop = null;
 
 	//check property archi:concept_id", if present, we update rather than create the concept
-	//const const_archi_concept_id = "archi:concept_id";
+	//const const_prop_archi_guid = "archi:concept_id";
 	var existingConceptWithConceptId = false;
 	
 	for (var p = 0; p < properties.length; p++) {
 		
 		prop = properties[p];
-		if (prop == const_archi_concept_id) {
+		if (prop == const_prop_archi_guid) {
 			archi_concept_id = columns[p];
 			console.log("* Found archi_concept_id  = " + archi_concept_id);
 			
@@ -204,8 +206,8 @@ if (generic) {
 				if (concept)
 					existingConceptWithConceptId = true;
 				else
-					//console.log("Warning: Given " + const_archi_concept_id + " = " + archi_concept_id + " does not exist in this model");
-					lib_Error("Given " + const_archi_concept_id + " = " + archi_concept_id + " does not exist in this model. Exiting");
+					//console.log("Warning: Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model");
+					lib_Error("Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model. Exiting");
 			}
 			
 			//break;
@@ -226,7 +228,7 @@ if (generic) {
 				concept = model.createElement(elementType, archi_main_name);
 				
 console.log("Trying to set concept.id = " + concept.id);
-				cConcept_SetProperty(concept, const_archi_concept_id, concept.id);
+				cConcept_SetProperty(concept, const_prop_archi_guid, concept.id);
 				//break; // doesn't work?
 			}
 		}
@@ -247,8 +249,8 @@ console.log("Trying to set concept.id = " + concept.id);
 		console.log(property);
 		
 		
-		//if (property != const_arhi_name && property != const_archi_concept_id) {
-		if (property != const_archi_concept_id) {
+		//if (property != const_arhi_name && property != const_prop_archi_guid) {
+		if (property != const_prop_archi_guid) {
 		
 			if (property == const_arhi_name)
 				concept.name = columns[p];

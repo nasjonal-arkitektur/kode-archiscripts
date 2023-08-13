@@ -1,0 +1,145 @@
+﻿load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+
+console.show();
+console.clear();
+console.log("Fetch Github Repository ID");
+
+// Replace with your GitHub Personal Access Token
+var TOKEN = "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";
+
+// Function to send GraphQL requests to GitHub using Java's HttpURLConnection
+function sendGraphQLRequest(query) {
+    var URL = Java.type("java.net.URL");
+    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
+    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
+    var BufferedReader = Java.type("java.io.BufferedReader");
+    var InputStreamReader = Java.type("java.io.InputStreamReader");
+    
+    var url = new URL("https://api.github.com/graphql");
+    var connection = HttpURLConnection.class.cast(url.openConnection());
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+    
+    var writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.write(JSON.stringify({ query: query }));
+    writer.close();
+    
+    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    var response = "";
+    var line;
+    while ((line = reader.readLine()) !== null) {
+        response += line;
+    }
+    reader.close();
+    
+    return JSON.parse(response);
+}
+
+// Function to fetch the GitHub repository ID
+function getRepositoryId() {
+    var query = `
+    {
+      repository(owner: "erikhag1", name: "altinn-test-repo") {
+        id
+      }
+    }
+    `;
+    var response = sendGraphQLRequest(query);
+    return response.data.repository.id;
+}
+
+// Fetch the Epic object from Archi (you might need to adjust this for your specific model)
+var epic = selection.first(); // Assume the Epic object is selected in Archi
+
+// Fetch data from the Epic object
+var archiGUID = epic.id;
+var title = epic.name;
+
+//var issueBody = epic.documentation.replace(/\n/g, '\\n'); // Replace newline characters with \n
+
+// Build the issueBody according to the template
+var issueBody = "### Description\n";
+issueBody += epic.documentation ? epic.documentation.replace(/\n/g, "\\n") : "No description provided."; // Ensure there's always a description and replace newline characters
+
+issueBody += "\n\n### References\n";
+issueBody += "\nArchi Object ID: " + archiGUID; // Placed under "References"
+issueBody += "\nArchi Object ID: " + archiGUID; // Placed under "References"
+
+issueBody += "\n\n### Additional info\n";
+
+
+
+/*
+// Add Acceptance criteria, Tasks, and Additional info based on the Archi object's properties
+// For demonstration purposes, I'm assuming these values are available from the Archi object. You'll need to adjust this based on your actual model.
+issueBody += "\n\n### Acceptance criteria\n";
+issueBody += epic.get("acceptanceCriteria") ? epic.get("acceptanceCriteria").replace(/\n/g, "\\n") : "Not provided.";
+
+issueBody += "\n\n### Tasks\n";
+issueBody += epic.get("tasks") ? epic.get("tasks").replace(/\n/g, "\\n") : "Not provided.";
+
+issueBody += "\n\n### Additional info\n";
+issueBody += epic.get("additionalInfo") ? epic.get("additionalInfo").replace(/\n/g, "\\n") : "Not provided.";
+*/
+
+// Add Archi Object ID
+issueBody += "\n\nArchi Object ID: " + archiGUID;
+
+// ... (rest of the code to create the issue)
+
+
+// Add more fields from the Epic object as needed...
+
+// Fetch the GitHub repository ID
+var repoId = getRepositoryId();
+console.log("RepoId: " + repoId);
+
+// Build the GraphQL mutation to create an issue
+var mutation = `
+  mutation {
+    createIssue(input: {
+      repositoryId: "${repoId}", 
+      title: "${title}", 
+      body: "${issueBody}",
+      # Add more fields as needed...
+    }) {
+      issue {
+        id
+        title
+        body
+      }
+    }
+  }
+`;
+
+// Send the request
+//console.log("Mutation string: " + mutation);
+var response = sendGraphQLRequest(mutation);
+
+// Log the response (you can also handle any errors here)
+//console.log(JSON.stringify(response));
+
+// Check if the issue was created/updated successfully
+if (response.data && response.data.createIssue) {
+	
+	//console.log(response.data);
+
+	
+    // Extract the issue's GraphQL ID (GUID)
+    var issueGUID = response.data.createIssue.issue.id;
+
+    // Store the issue's GUID as a property on the Archi object
+    cConcept_SetProperty(epic, const_prop_githubIssueGUID, issueGUID);
+
+    console.log("Issue created/updated successfully with ID:", issueGUID);
+} else {
+    console.log("Error creating/updating the issue:", JSON.stringify(response.errors));
+}
+
+console.log("Script completed");
+
+

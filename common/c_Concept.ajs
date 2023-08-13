@@ -44,11 +44,23 @@ function cConcept_getCSVPropertiesValues(concept, propList) {
 			if (propList[i] == const_arhi_name)
 				csvValues += concept.name + "\t";
 			else if (propList[i] == const_archi_documentation) {
-				csvValues += concept.documentation + "\t";
+				
+//lib_TestExit("Here!");(
+		
+				var str = lib_FixExcelCellQuotes(concept.documentation);
+				str = "\"" + str + "\"";
+				str = str + "\t";
+				
+				csvValues += str;
+			
 			}
-			else if (propList[i] == const_capability_relation) {
-				var capabilityStr = cConcept_ListRelatedConceptsOfType(concept, const_prop_dct_type_capability);
-				csvValues += capabilityStr + "\t";
+			else if (propList[i] == const_prop_capability_relation) {
+				var relationsStr = cConcept_ListRelatedConceptsOfType(concept, const_prop_dct_type_capability);
+				csvValues += relationsStr + "\t";
+			}
+			else if (propList[i] == const_prop_userstory_relation) {
+				var relationsStr = cConcept_ListRelatedConceptsOfType(concept, const_prop_userstory_relation);
+				csvValues += relationsStr + "\t";
 			}
 			else {
 				//console.log(propList[i] + "=" + concept.prop(propList[i]) );
@@ -86,7 +98,7 @@ function cConcept_getCSVPropertiesValues(concept) {
 			
 			for (var i = 0; i < propList.size(); i++) {
 				
-				//if (propList[i] != const_archi_concept_id) {
+				//if (propList[i] != const_prop_archi_guid) {
 					//console.log(propList[i] + ": " + concept.prop( propList[i]) );
 					//csv += propList[i] + "\t" + concept.prop(propList[i]);
 					csvValues += concept.prop(propList[i]);
@@ -107,13 +119,13 @@ function cConcept_getCSVPropertiesValues(concept) {
 /***
 function cConcept_getCSVPropertiesHeader(concept) {
 
-//const const_archi_concept_id = "archi:concept_id";
+//const const_prop_archi_guid = "archi:concept_id";
 //const const_arhi_name = "archi:name";
 //const const_archi_documentation = "archi:documentation";
 //const const_arhi_type = "archi:type";
 
 	var csvHeader = "";
-	//csvHeader += const_archi_concept_id;
+	//csvHeader += const_prop_archi_guid;
 	//csvHeader += "\t";
 	csvHeader += const_arhi_name;
 	csvHeader += "\t";

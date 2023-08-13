@@ -1,0 +1,186 @@
+﻿load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("Create elements from clipboard, generic.ajs");
+
+// ... [Dine konstanter her] ...
+
+function parseCSV(csvString) {
+    let rows = [];
+    let row = [];
+    let cell = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < csvString.length; i++) {
+        let char = csvString[i];
+
+        if (char === '"') {
+            insideQuotes = !insideQuotes;
+            continue;
+        }
+
+        if (char === '\t' && !insideQuotes) {
+            row.push(cell);
+            cell = '';
+            continue;
+        }
+
+        if (char === '\n' && !insideQuotes) {
+            row.push(cell);
+            rows.push(row);
+            cell = '';
+            row = [];
+            continue;
+        }
+
+        cell += char;
+    }
+
+    if (cell) {
+        row.push(cell);
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+function getClipboard() {
+    var Toolkit = Java.type("java.awt.Toolkit");
+    var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+
+    if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+        return txt;
+    }
+    return "";
+}
+
+// ... [Dine andre funksjoner her] ...
+
+var txt = getClipboard();
+var parsedData = parseCSV(txt);
+
+var selectedViews = $(selection).filter("archimate-diagram-model");
+
+if(selectedViews.size() < 1) {
+    window.alert("No views selected");
+    exit();
+}
+else if(selectedViews.size() > 1) {
+    window.alert("More than one view selected");
+    exit();
+}
+
+var view = selectedViews.first();
+var x = const_x_start;
+var y = const_y_start;
+var elementType = "resource"; // TODO, Erik: Take it from the input, if archi:type is there
+var elementType = window.prompt("Archi concept type?", elementType);
+
+
+// Henter properties fra den første linjen
+var properties = parsedData[0];
+
+// Behandler de gjenværende radene
+for (let i = 1; i < parsedData.length; i++) {
+    let row = parsedData[i];
+
+
+    // ... [Resten av koden din for å behandle hver rad og kolonne] ...
+	var archi_main_name = null;
+	var concept = null;
+	var elm = null;
+	var prop = null;	
+	
+	var existingConceptWithConceptId = false;
+	
+	for (var p = 0; p < properties.length; p++) {
+		
+		prop = properties[p];
+		console.log(prop);
+		
+		
+		if (prop == const_prop_archi_guid) {
+			archi_concept_id = row[p];
+			console.log("* Found archi_concept_id  = " + archi_concept_id);
+			
+			if (archi_concept_id.length() > 0) {
+				concept = cModel_GetConceptWithId(archi_concept_id);
+				if (concept)
+					existingConceptWithConceptId = true;
+				else
+					//console.log("Warning: Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model");
+					lib_Error("Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model. Exiting");
+			}
+			
+			//break;
+		}
+	}
+	
+
+
+	// find the archi main name among the input properties and create the concept
+	if (!existingConceptWithConceptId) {
+		
+		for (var p = 0; p < properties.length; p++) {
+			
+			prop = properties[p];
+			if (prop == const_arhi_name) {
+				archi_main_name = row[p];
+				console.log("* Found " + const_arhi_name + " = " + archi_main_name);
+				concept = model.createElement(elementType, archi_main_name);
+				
+console.log("Trying to set concept.id = " + concept.id);
+				cConcept_SetProperty(concept, const_prop_archi_guid, concept.id);
+				//break; // doesn't work?
+			}
+		}
+		if (!concept)
+			lib_Error("Failed to find the Archi concept main name in the input, row #" + i);
+	}
+
+	
+	if (!concept)
+		lib_Error("Unexpected error - no concept established?" + i);
+	
+	//const const_archi_documentation = "archi:documentation";
+				
+	// update the newly created (or existing) concept with other properties as found in the input
+	for (var p = 0; p < properties.length; p++) {
+		
+		property = properties[p]; 
+		console.log(property);
+		
+		
+		//if (property != const_arhi_name && property != const_prop_archi_guid) {
+		if (property != const_prop_archi_guid) {
+		
+			if (property == const_arhi_name)
+				concept.name = row[p];
+		
+			else if (property == const_archi_documentation)
+				concept.documentation = row[p];
+			else
+					
+				// should we check that the property is valid?
+			
+				cConcept_SetProperty(concept, property, row[p]);
+		}
+	}
+	
+	
+	if (!existingConceptWithConceptId) {
+		elm = view.add(concept, x, y, -1, -1);	
+		//x = const_x_start +  const_x_incr * level;
+		y += const_y_incr; 
+	}
+	
+
+}
+
+console.log("Script completed");
