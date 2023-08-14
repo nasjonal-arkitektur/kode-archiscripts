@@ -7,7 +7,7 @@ console.clear();
 console.log("Fetch Github Repository ID");
 
 // Replace with your GitHub Personal Access Token
-var TOKEN = "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";
+var TOKEN = "--changed--"
 
 // Function to send GraphQL requests to GitHub using Java's HttpURLConnection
 function sendGraphQLRequest(query) {
@@ -27,6 +27,10 @@ function sendGraphQLRequest(query) {
     var writer = new OutputStreamWriter(connection.getOutputStream());
     writer.write(JSON.stringify({ query: query }));
     writer.close();
+    
+    // Log the X-RateLimit-Remaining header
+    var remainingRequests = connection.getHeaderField("X-RateLimit-Remaining");
+    console.log("Remaining GitHub API requests: " + remainingRequests);
     
     var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
     var response = "";
@@ -52,93 +56,109 @@ function getRepositoryId() {
     return response.data.repository.id;
 }
 
-// Fetch the Epic object from Archi (you might need to adjust this for your specific model)
-var epic = selection.first(); // Assume the Epic object is selected in Archi
+function CreateOrUpdateGithubIssueFromArchiConcept(epic) {
+    // Fetch data from the Epic object
+    var archiGUID = epic.id;
+    var title = epic.name;
 
-// Fetch data from the Epic object
-var archiGUID = epic.id;
-var title = epic.name;
+    // Build the issueBody according to the template
+    var issueBody = "### Description\n\n";
+    issueBody += epic.documentation ? epic.documentation.replace(/\n/g, "\\n") : "No description provided."; // Ensure there's always a description and replace newline characters
 
-//var issueBody = epic.documentation.replace(/\n/g, '\\n'); // Replace newline characters with \n
+    issueBody += "\n\n### In scope\n\n_No response_";
+    issueBody += "\n\n### Out of scope\n\n_No response_";
+    issueBody += "\n\n### Additional Information\n";
+    issueBody += "\n- **Archi Object ID**: " + archiGUID;
 
-// Build the issueBody according to the template
-var issueBody = "### Description\n";
-issueBody += epic.documentation ? epic.documentation.replace(/\n/g, "\\n") : "No description provided."; // Ensure there's always a description and replace newline characters
+    // Fetch the GitHub repository ID
+    var repoId = getRepositoryId();
+    console.log("RepoId: " + repoId);
 
-issueBody += "\n\n### References\n";
-issueBody += "\nArchi Object ID: " + archiGUID; // Placed under "References"
-issueBody += "\nArchi Object ID: " + archiGUID; // Placed under "References"
+    // Build the GraphQL mutation to create an issue
+    var mutation = `
+      mutation {
+        createIssue(input: {
+          repositoryId: "${repoId}", 
+          title: "${title}", 
+          body: "${issueBody}",
+          # Add more fields as needed...
+        }) {
+          issue {
+            id
+            title
+            body
+          }
+        }
+      }
+    `;
 
-issueBody += "\n\n### Additional info\n";
+    // Send the request
+    var response = sendGraphQLRequest(mutation);
+
+    // Check if the issue was created/updated successfully
+    if (response.data && response.data.createIssue) {
+        // Extract the issue's GraphQL ID (GUID)
+        var issueGUID = response.data.createIssue.issue.id;
+
+        // Store the issue's GUID as a property on the Archi object
+        cConcept_SetProperty(epic, const_prop_githubIssueGUID, issueGUID);
+
+        console.log("Issue created/updated successfully with ID:", issueGUID);
+        
+        // Update the issue with the GraphQL ID
+        updateIssueWithGraphQLID(issueGUID, issueGUID, issueBody);
+    } else {
+        console.log("Error creating/updating the issue:", JSON.stringify(response.errors));
+    }
+}
 
 
-
-/*
-// Add Acceptance criteria, Tasks, and Additional info based on the Archi object's properties
-// For demonstration purposes, I'm assuming these values are available from the Archi object. You'll need to adjust this based on your actual model.
-issueBody += "\n\n### Acceptance criteria\n";
-issueBody += epic.get("acceptanceCriteria") ? epic.get("acceptanceCriteria").replace(/\n/g, "\\n") : "Not provided.";
-
-issueBody += "\n\n### Tasks\n";
-issueBody += epic.get("tasks") ? epic.get("tasks").replace(/\n/g, "\\n") : "Not provided.";
-
-issueBody += "\n\n### Additional info\n";
-issueBody += epic.get("additionalInfo") ? epic.get("additionalInfo").replace(/\n/g, "\\n") : "Not provided.";
-*/
-
-// Add Archi Object ID
-issueBody += "\n\nArchi Object ID: " + archiGUID;
-
-// ... (rest of the code to create the issue)
-
-
-// Add more fields from the Epic object as needed...
-
-// Fetch the GitHub repository ID
-var repoId = getRepositoryId();
-console.log("RepoId: " + repoId);
-
-// Build the GraphQL mutation to create an issue
-var mutation = `
-  mutation {
-    createIssue(input: {
-      repositoryId: "${repoId}", 
-      title: "${title}", 
-      body: "${issueBody}",
-      # Add more fields as needed...
-    }) {
-      issue {
-        id
-        title
-        body
+function updateIssueWithGraphQLID(issueId, graphQLId, originalBody) {
+    var updatedBody = originalBody + "\n- **GraphQL ID**: " + graphQLId;
+	
+    var query = `
+    mutation {
+      updateIssue(input: {
+        id: "${issueId}",
+        body: "${updatedBody}"
+      }) {
+        issue {
+          id
+          title
+          body
+        }
       }
     }
-  }
-`;
+    `;
 
-// Send the request
-//console.log("Mutation string: " + mutation);
-var response = sendGraphQLRequest(mutation);
-
-// Log the response (you can also handle any errors here)
-//console.log(JSON.stringify(response));
-
-// Check if the issue was created/updated successfully
-if (response.data && response.data.createIssue) {
-	
-	//console.log(response.data);
-
-	
-    // Extract the issue's GraphQL ID (GUID)
-    var issueGUID = response.data.createIssue.issue.id;
-
-    // Store the issue's GUID as a property on the Archi object
-    cConcept_SetProperty(epic, const_prop_githubIssueGUID, issueGUID);
-
-    console.log("Issue created/updated successfully with ID:", issueGUID);
-} else {
-    console.log("Error creating/updating the issue:", JSON.stringify(response.errors));
+    return sendGraphQLRequest(query);
 }
+
+var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability");
+if (!dctConceptTypeFilter) 
+	exit();
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
+if (!selectedConcepts)
+	lib_Error("No concepts selected. Exiting...");
+
+	
+selectedConcepts.each(function(c) {
+	
+	console.log(c.name);
+	
+
+	// If the concept is a user story, first fix the documentation property
+	//if (c.prop(const_prop_dct_type) === const_conceptType_goal__user_story) 
+	//	cConcept_generateUserStoryDescription(c);
+
+	var github_graphqlID = CreateOrUpdateGithubIssueFromArchiConcept(c);
+	//updateIssueWithGraphQLID(github_graphqlID, github_graphqlID);
+
+
+
+});	
+
 
 console.log("Script completed");
 
