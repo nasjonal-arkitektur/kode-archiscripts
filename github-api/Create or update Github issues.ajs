@@ -7,7 +7,7 @@ console.clear();
 console.log("Fetch Github Repository ID");
 
 // Replace with your GitHub Personal Access Token
-var TOKEN = "--changed--"
+var TOKEN = java.lang.System.getenv("MY_PAT");
 
 // Function to send GraphQL requests to GitHub using Java's HttpURLConnection
 function sendGraphQLRequest(query) {
@@ -31,6 +31,10 @@ function sendGraphQLRequest(query) {
     // Log the X-RateLimit-Remaining header
     var remainingRequests = connection.getHeaderField("X-RateLimit-Remaining");
     console.log("Remaining GitHub API requests: " + remainingRequests);
+
+    var remainingTime = connection.getHeaderField("X-RateLimit-Reset");
+    console.log("Remaining time until re-activation of Github API requests: " + remainingTime);
+
     
     var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
     var response = "";
@@ -47,7 +51,7 @@ function sendGraphQLRequest(query) {
 function getRepositoryId() {
     var query = `
     {
-      repository(owner: "erikhag1", name: "altinn-test-repo") {
+      repository(owner: "githagen", name: "altinn-test-repo") {
         id
       }
     }
