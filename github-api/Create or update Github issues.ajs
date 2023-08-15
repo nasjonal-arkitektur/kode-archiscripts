@@ -3,10 +3,10 @@ load(__DIR__ + "../common/c_Selection.ajs");
 
 console.show();
 console.clear();
-console.log("Fetch Github Repository ID");
+console.log("Create or update Github issues");
 
 var TOKEN = java.lang.System.getenv("MY_PAT");
-console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
+//console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
 
 function getRateLimits() {
     var URL = Java.type("java.net.URL");
@@ -141,7 +141,12 @@ function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
     if (response.data) {
         var issueGUID = gitGUID ? response.data.updateIssue.issue.id : response.data.createIssue.issue.id;
         cConcept_SetProperty(ghIssue, const_prop_githubIssueGUID, issueGUID);
-        console.log("Issue created/updated successfully with ID:", issueGUID);
+		
+		if (gitGUID)
+			console.log("Issue with ID:" + issueGUID +  " successfully updated");
+		else
+			console.log("Issue created successfully with ID:", issueGUID);
+			
     } else {
         console.log("Error creating/updating the issue. Unexpected response:", JSON.stringify(response.data));
     }
@@ -195,8 +200,8 @@ processConcepts(selectedConcepts);
 
 // Log the final rate limits
 var finalRateLimits = getRateLimits();
-console.log("Final GitHub API requests remaining: " + finalRateLimits.remaining);
-console.log("Rate limit will finally reset at: " + finalRateLimits.reset);
+console.log("GitHub API requests remaining: " + finalRateLimits.remaining);
+console.log("Rate limit will be reset at: " + finalRateLimits.reset);
 
 
 console.log("Script completed");
