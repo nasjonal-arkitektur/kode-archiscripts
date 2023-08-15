@@ -8,21 +8,39 @@ console.log("Fetch Github Repository ID");
 var TOKEN = java.lang.System.getenv("MY_PAT");
 console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
 
-
 function getRateLimits() {
     var URL = Java.type("java.net.URL");
     var HttpURLConnection = Java.type("java.net.HttpURLConnection");
+    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
+    var BufferedReader = Java.type("java.io.BufferedReader");
+    var InputStreamReader = Java.type("java.io.InputStreamReader");
     
     var url = new URL("https://api.github.com/graphql");
     var connection = HttpURLConnection.class.cast(url.openConnection());
-    connection.setRequestMethod("HEAD"); // Bruk HEAD metoden for å hente bare headers
+    connection.setRequestMethod("POST");
     connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+    
+    // Send a simple GraphQL query to get the viewer's login (just as a placeholder query)
+    var writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.write(JSON.stringify({ query: "{ viewer { login } }" }));
+    writer.close();
+
+    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    var response = "";
+    var line;
+    while ((line = reader.readLine()) !== null) {
+        response += line;
+    }
+    reader.close();
 
     return {
         remaining: connection.getHeaderField("X-RateLimit-Remaining"),
         reset: new Date(parseInt(connection.getHeaderField("X-RateLimit-Reset")) * 1000).toLocaleString()
     };
 }
+
 
 
 function sendGraphQLRequest(query) {
@@ -66,120 +84,71 @@ var repoId = sendGraphQLRequest(`
 }`).data.repository.id;
 console.log("RepoId: " + repoId);
 
-// ... Rest of your code ...
-
-/*
-function getRateLimits() {
-    var URL = Java.type("java.net.URL");
-    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
-    var BufferedReader = Java.type("java.io.BufferedReader");
-    var InputStreamReader = Java.type("java.io.InputStreamReader");
-    
-    var url = new URL("https://api.github.com/rate_limit");
-    var connection = HttpURLConnection.class.cast(url.openConnection());
-    connection.setRequestMethod("GET");
-    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
-    
-    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    var response = "";
-    var line;
-    while ((line = reader.readLine()) !== null) {
-        response += line;
-    }
-    reader.close();
-    
-    var jsonResponse = JSON.parse(response);
-    
-    console.log("Rate Limit Response:", jsonResponse); // Log the entire response
-    
-    return {
-        remaining: jsonResponse.rate ? jsonResponse.rate.remaining : "Unknown",
-        reset: jsonResponse.rate ? new Date(jsonResponse.rate.reset * 1000).toLocaleString() : "Unknown"
-    };
-}
 
 
-
-function sendGraphQLRequest(query) {
-    var URL = Java.type("java.net.URL");
-    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
-    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
-    var BufferedReader = Java.type("java.io.BufferedReader");
-    var InputStreamReader = Java.type("java.io.InputStreamReader");
+function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
+    var archiGUID = ghIssue.id;
+    var gitGUID = cConcept_GetProperty(ghIssue, const_prop_githubIssueGUID);
     
-    var url = new URL("https://api.github.com/graphql");
-    var connection = HttpURLConnection.class.cast(url.openConnection());
-    connection.setRequestMethod("POST");
-    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
-    connection.setRequestProperty("Content-Type", "application/json");
-    connection.setDoOutput(true);
-    
-    var writer = new OutputStreamWriter(connection.getOutputStream());
-    writer.write(JSON.stringify({ query: query }));
-    writer.close();
-
-    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    var response = "";
-    var line;
-    while ((line = reader.readLine()) !== null) {
-        response += line;
-    }
-    reader.close();
-	
-	return JSON.parse(response);
-    
-}
-
-var repoId = sendGraphQLRequest(`
-{
-  repository(owner: "githagen", name: "altinn-test-repo") {
-    id
-  }
-}`).data.repository.id;
-console.log("RepoId: " + repoId);
-*/
-
-
-function CreateOrUpdateGithubIssueFromArchiConcept(epic) {
-    var archiGUID = epic.id;
-    var title = epic.name.replace(/"/g, '\\"'); 
+    var title = ghIssue.name.replace(/"/g, '\\"'); 
     var issueBody = "### Description\n\n";
-    issueBody += epic.documentation ? epic.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
+    issueBody += ghIssue.documentation ? ghIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
     issueBody += "\n\n### In scope\n\n_No response_";
     issueBody += "\n\n### Out of scope\n\n_No response_";
     issueBody += "\n\n### Additional Information\n";
     issueBody += "\n- **Archi Object ID**: " + archiGUID;
-
-    var mutation = `
-      mutation {
-        createIssue(input: {
-          repositoryId: "${repoId}", 
-          title: "${title}", 
-          body: "${issueBody}",
-        }) {
-          issue {
-            id
-            title
-            body
+    if (gitGUID) issueBody += "\n- **GraphQL ID**: " + gitGUID;
+    
+    var mutation;
+    if (gitGUID) {
+        // Update existing issue
+        mutation = `
+        mutation {
+          updateIssue(input: {
+            id: "${gitGUID}",
+            title: "${title}",
+            body: "${issueBody}"
+          }) {
+            issue {
+              id
+              title
+              body
+            }
           }
         }
-      }
-    `;
+        `;
+    } else {
+        // Create new issue
+        mutation = `
+        mutation {
+          createIssue(input: {
+            repositoryId: "${repoId}", 
+            title: "${title}", 
+            body: "${issueBody}",
+          }) {
+            issue {
+              id
+              title
+              body
+            }
+          }
+        }
+        `;
+    }
 
     var response = sendGraphQLRequest(mutation);
     
-    if (response.data && response.data.createIssue && response.data.createIssue.issue) {
-        var issueGUID = response.data.createIssue.issue.id;
-        cConcept_SetProperty(epic, const_prop_githubIssueGUID, issueGUID);
+    if (response.data) {
+        var issueGUID = gitGUID ? response.data.updateIssue.issue.id : response.data.createIssue.issue.id;
+        cConcept_SetProperty(ghIssue, const_prop_githubIssueGUID, issueGUID);
         console.log("Issue created/updated successfully with ID:", issueGUID);
-		
-		// Update the issue with the GraphQL ID
-        updateIssueWithGraphQLID(issueGUID, issueGUID, issueBody);
-		
     } else {
         console.log("Error creating/updating the issue. Unexpected response:", JSON.stringify(response.data));
     }
 }
+
+
+
 
 function updateIssueWithGraphQLID(issueId, graphQLId, originalBody) {
     var updatedBody = originalBody + "\n- **GraphQL ID**: " + graphQLId;
@@ -212,12 +181,15 @@ function processConcepts(concepts) {
 }
 
 var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability");
-if (!dctConceptTypeFilter) 
-    exit();
+if (!dctConceptTypeFilter) {
+	let confirmed = window.confirm("Proceed to process all selected elements without filtering on dct:type?");
+	if (!confirmed)
+		lib_Error("Cancelled by user. Exiting...");;
+}
 
 var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
-if (!selectedConcepts)
-    lib_Error("No concepts selected. Exiting...");
+if (!selectedConcepts || selectedConcepts.size() === 0)
+	lib_Error("No concepts selected. Hint: Check dct:type property. Exiting...");
 
 processConcepts(selectedConcepts);
 

@@ -355,6 +355,8 @@ function CSelection_GetSelectedConcepts(conceptType, namespace, conceptDctType) 
 	
 	else if (conceptDctType != null && conceptDctType != "")
 		selectedConcepts = cCollection_GetItemsOfDctType(selectedConcepts, conceptDctType);
+	else if (conceptDctType == null || conceptDctType === "")// tested? New per 2023-08-15
+		selectedConcepts = directlySelectedConcepts;
 	
 	if (namespace != null && namespace != "")
 		selectedConcepts = cCollection_GetItemsWithNamespace(selectedConcepts, namespace);
