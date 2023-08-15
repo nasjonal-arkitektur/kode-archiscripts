@@ -144,14 +144,15 @@ function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
 		
 		if (gitGUID)
 			console.log("Issue with ID:" + issueGUID +  " successfully updated");
-		else
+		else {
+			updateIssueWithGraphQLID(issueGUID, issueGUID, issueBody);
 			console.log("Issue created successfully with ID:", issueGUID);
+		}
 			
     } else {
         console.log("Error creating/updating the issue. Unexpected response:", JSON.stringify(response.data));
     }
 }
-
 
 
 
