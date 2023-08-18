@@ -1,6 +1,15 @@
 ﻿/*
  * Create elements from clibboard, generic.ajs
  */
+ 
+ 
+ /* Issues
+ 
+ 2023-08-16: Importing concept with blank archi:documentation yield "weird" results (additional object created)
+ 
+ */
+ 
+ 
 load(__DIR__ + "../common/c_Concept.ajs");
 load(__DIR__ + "../common/c_Selection.ajs");
 load(__DIR__ + "../common/c_Clipboard.ajs");

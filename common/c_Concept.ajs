@@ -47,9 +47,13 @@ function cConcept_getCSVPropertiesValues(concept, propList) {
 				
 //lib_TestExit("Here!");(
 		
-				var str = lib_FixExcelCellQuotes(concept.documentation);
-				str = "\"" + str + "\"";
-				str = str + "\t";
+				var str = "";
+				//if (concept.documentation) {	
+					str = lib_FixExcelCellQuotes(concept.documentation);
+					str = "\"" + str + "\"";
+					str = str + "\t";
+				//}
+				
 				
 				csvValues += str;
 			

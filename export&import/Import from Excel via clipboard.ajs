@@ -4,7 +4,7 @@ load(__DIR__ + "../common/c_Clipboard.ajs");
 
 console.show();
 console.clear();
-console.log("Create elements from clipboard, generic.ajs");
+console.log("Import from Excel via clipboard.ajs");
 
 // ... [Dine konstanter her] ...
 
@@ -102,12 +102,13 @@ for (let i = 1; i < parsedData.length; i++) {
 	for (var p = 0; p < properties.length; p++) {
 		
 		prop = properties[p];
-		console.log(prop);
-		
+		//console.log(prop);
+		if (prop == const_arhi_name)
+			console.log(prop);
 		
 		if (prop == const_prop_archi_guid) {
 			archi_concept_id = row[p];
-			console.log("* Found archi_concept_id  = " + archi_concept_id);
+			console.log("*Found archi_concept_id  = " + archi_concept_id);
 			
 			if (archi_concept_id.length() > 0) {
 				concept = cModel_GetConceptWithId(archi_concept_id);

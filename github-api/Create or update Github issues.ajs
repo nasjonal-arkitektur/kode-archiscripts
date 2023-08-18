@@ -5,7 +5,10 @@ console.show();
 console.clear();
 console.log("Create or update Github issues");
 
-var TOKEN = java.lang.System.getenv("MY_PAT");
+var TOKEN = java.lang.System.getenv("MY_PAT"); // all of erikhag1 owned repos
+//var TOKEN = java.lang.System.getenv("eriks_altinn_testrepo_pat"); // altinn owned testrepo-melding-formidling
+
+
 //console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
 
 function getRateLimits() {
@@ -75,20 +78,31 @@ function sendGraphQLRequest(query) {
     return JSON.parse(response);
 }
 
+var gh_repo_owner = "githagen"; var gh_repo_name = "altinn-test-repo";
+//var gh_repo_owner = "erikhag1"; var gh_repo_name = "altinn-test-repo";
+//var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
 
-var repoId = sendGraphQLRequest(`
+var query = `
 {
-  repository(owner: "githagen", name: "altinn-test-repo") {
+  repository(owner: "${gh_repo_owner}", name: "${gh_repo_name}") {
     id
+    name
   }
-}`).data.repository.id;
-console.log("RepoId: " + repoId);
+}`;
 
+var response = sendGraphQLRequest(query).data.repository;
+var repoId = response.id;
+var fetchedRepoName = response.name;
+
+console.log("Fetched repository name:", fetchedRepoName);
+console.log("RepoId: " + repoId);
 
 
 function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
     var archiGUID = ghIssue.id;
     var gitGUID = cConcept_GetProperty(ghIssue, const_prop_githubIssueGUID);
+	//gitGUID = null; // temp to skip update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1erik
+	
     
     var title = ghIssue.name.replace(/"/g, '\\"'); 
     var issueBody = "### Description\n\n";
@@ -139,12 +153,14 @@ function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
     var response = sendGraphQLRequest(mutation);
     
     if (response.data) {
+		
         var issueGUID = gitGUID ? response.data.updateIssue.issue.id : response.data.createIssue.issue.id;
         cConcept_SetProperty(ghIssue, const_prop_githubIssueGUID, issueGUID);
 		
 		if (gitGUID)
 			console.log("Issue with ID:" + issueGUID +  " successfully updated");
 		else {
+			
 			updateIssueWithGraphQLID(issueGUID, issueGUID, issueBody);
 			console.log("Issue created successfully with ID:", issueGUID);
 		}
@@ -186,7 +202,7 @@ function processConcepts(concepts) {
     }
 }
 
-var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability");
+var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "epic");
 if (!dctConceptTypeFilter) {
 	let confirmed = window.confirm("Proceed to process all selected elements without filtering on dct:type?");
 	if (!confirmed)
