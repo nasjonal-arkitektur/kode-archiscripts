@@ -6,9 +6,12 @@ console.show();
 console.clear();
 console.log("Import from Excel via clipboard.ajs");
 
-// ... [Dine konstanter her] ...
+var createdCount = 0;
+var updatedCount = 0;
+
 
 function parseCSV(csvString) {
+	
     let rows = [];
     let row = [];
     let cell = '';
@@ -86,6 +89,8 @@ var elementType = window.prompt("Archi concept type?", elementType);
 // Henter properties fra den første linjen
 var properties = parsedData[0];
 
+console.log("Found " + parsedData.length + " rows (including header row)");
+
 // Behandler de gjenværende radene
 for (let i = 1; i < parsedData.length; i++) {
     let row = parsedData[i];
@@ -112,8 +117,10 @@ for (let i = 1; i < parsedData.length; i++) {
 			
 			if (archi_concept_id.length() > 0) {
 				concept = cModel_GetConceptWithId(archi_concept_id);
-				if (concept)
+				if (concept) {
 					existingConceptWithConceptId = true;
+					updatedCount++;
+				}
 				else
 					//console.log("Warning: Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model");
 					lib_Error("Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model. Exiting");
@@ -124,7 +131,7 @@ for (let i = 1; i < parsedData.length; i++) {
 	}
 	
 
-
+	
 	// find the archi main name among the input properties and create the concept
 	if (!existingConceptWithConceptId) {
 		
@@ -138,7 +145,8 @@ for (let i = 1; i < parsedData.length; i++) {
 				
 console.log("Trying to set concept.id = " + concept.id);
 				cConcept_SetProperty(concept, const_prop_archi_guid, concept.id);
-				//break; // doesn't work?
+				
+				createdCount++;
 			}
 		}
 		if (!concept)
@@ -183,5 +191,9 @@ console.log("Trying to set concept.id = " + concept.id);
 	
 
 }
+
+console.log("Completed importing " + (parsedData.length - 1) + " elements");
+console.log("Created " + createdCount + " new elements and updated " + updatedCount + " existing elements");
+
 
 console.log("Script completed");

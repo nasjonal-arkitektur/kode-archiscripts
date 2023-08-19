@@ -11,7 +11,7 @@ var TOKEN = java.lang.System.getenv("MY_PAT"); // all of erikhag1 owned repos
 
 //console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
 
-function getRateLimits() {
+function getRateLimits(doLogResult) {
     var URL = Java.type("java.net.URL");
     var HttpURLConnection = Java.type("java.net.HttpURLConnection");
     var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
@@ -38,10 +38,17 @@ function getRateLimits() {
     }
     reader.close();
 
-    return {
+    var result =  {
         remaining: connection.getHeaderField("X-RateLimit-Remaining"),
         reset: new Date(parseInt(connection.getHeaderField("X-RateLimit-Reset")) * 1000).toLocaleString()
     };
+	
+	if (doLogResult) {
+		console.log("GitHub API requests remaining: " + result.remaining);
+		console.log("Rate limit will be reset at: " + result.reset);
+	}
+	
+	return result;
 }
 
 
@@ -73,7 +80,9 @@ function sendGraphQLRequest(query) {
     reader.close();
 
     // Log the GraphQL rate limit remaining
-    //console.log("GraphQL API requests points remaining: " + connection.getHeaderField("X-RateLimit-Remaining"));
+	//var rateLimits = getRateLimits();
+	//console.log("GitHub API requests remaining: " + rateLimits.remaining);
+	//console.log("Rate limit will be reset at: " + rateLimits.reset);
 
     return JSON.parse(response);
 }
@@ -101,14 +110,18 @@ console.log("RepoId: " + repoId);
 function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
     var archiGUID = ghIssue.id;
     var gitGUID = cConcept_GetProperty(ghIssue, const_prop_githubIssueGUID);
-	//gitGUID = null; // temp to skip update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1erik
+	
+	
+	gitGUID = null; // temp to skip update!!!!!!!!!!!!!!!!!!!!!
 	
     
     var title = ghIssue.name.replace(/"/g, '\\"'); 
     var issueBody = "### Description\n\n";
+	
     issueBody += ghIssue.documentation ? ghIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
-    issueBody += "\n\n### In scope\n\n_No response_";
-    issueBody += "\n\n### Out of scope\n\n_No response_";
+    //issueBody += "\n\n### In scope\n\n_No response_";
+    //issueBody += "\n\n### Out of scope\n\n_No response_";
+	issueBody += "\n\n### Tasks\n\n_No response_";
     issueBody += "\n\n### Additional Information\n";
     issueBody += "\n- **Archi Object ID**: " + archiGUID;
     if (gitGUID) issueBody += "\n- **GraphQL ID**: " + gitGUID;
@@ -151,23 +164,49 @@ function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
     }
 
     var response = sendGraphQLRequest(mutation);
-    
+ 
+
+	var needToWait = true;
+	var i = 0;
+	var secondsToWait = 65;
+	var timesToRetry = 2;
+	while (needToWait) {
+		if (response.errors && response.errors[0].message === "was submitted too quickly") {
+			
+		
+			console.log("Rate limit hit, assuming per minute request limit (of 20?), so waiting " + secondsToWait + " seconds...");
+			var rateLimits = getRateLimits(true);
+			java.lang.Thread.sleep(secondsToWait * 1000);
+			// Retry the request
+			response = sendGraphQLRequest(mutation);
+		}
+		else
+			needToWait = false;
+			
+		if (i++ > timesToRetry)
+			lib_Error("Retried sendGraphQLRequest to github several times. Consider increasing the secondsToWait value in the script?");
+	}
+
+
     if (response.data) {
 		
-        var issueGUID = gitGUID ? response.data.updateIssue.issue.id : response.data.createIssue.issue.id;
-        cConcept_SetProperty(ghIssue, const_prop_githubIssueGUID, issueGUID);
-		
-		if (gitGUID)
+		if (gitGUID && response.data.updateIssue && response.data.updateIssue.issue) {
+			var issueGUID = response.data.updateIssue.issue.id;
+			cConcept_SetProperty(ghIssue, const_prop_githubIssueGUID, issueGUID);
 			console.log("Issue with ID:" + issueGUID +  " successfully updated");
-		else {
-			
+		} 
+		else if (!gitGUID && response.data.createIssue && response.data.createIssue.issue) {
+			var issueGUID = response.data.createIssue.issue.id;
 			updateIssueWithGraphQLID(issueGUID, issueGUID, issueBody);
 			console.log("Issue created successfully with ID:", issueGUID);
-		}
+		} 
+		else {
+			//console.log("Error creating/updating the issue. Unexpected response:", JSON.stringify(response.data));
+			console.log("Unexpected response structure:", JSON.stringify(response));
+			lib_Error("Script aborting due to unexpected error");
+		}	
+	}	
 			
-    } else {
-        console.log("Error creating/updating the issue. Unexpected response:", JSON.stringify(response.data));
-    }
 }
 
 
@@ -216,9 +255,9 @@ if (!selectedConcepts || selectedConcepts.size() === 0)
 processConcepts(selectedConcepts);
 
 // Log the final rate limits
-var finalRateLimits = getRateLimits();
-console.log("GitHub API requests remaining: " + finalRateLimits.remaining);
-console.log("Rate limit will be reset at: " + finalRateLimits.reset);
+var finalRateLimits = getRateLimits(true);
+//console.log("GitHub API requests remaining: " + finalRateLimits.remaining);
+//console.log("Rate limit will be reset at: " + finalRateLimits.reset);
 
 
 console.log("Script completed");
