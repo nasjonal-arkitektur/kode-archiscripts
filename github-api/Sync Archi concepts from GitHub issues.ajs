@@ -1,0 +1,97 @@
+﻿load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.show();
+console.clear();
+console.log("Sync Archi concepts from GitHub issues");
+
+var gh_repo_owner = "githagen"; // Erstatt med ditt brukernavn
+var gh_repo_name = "altinn-test-repo"; // Erstatt med ditt repositoriums navn
+var TOKEN = java.lang.System.getenv("MY_PAT"); // Tilpass etter behov
+
+var x = 10; // Startposisjon for X-koordinat
+var y = 10; // Startposisjon for Y-koordinat
+var y_incr = 100; // Økning i Y-koordinat for hvert nytt element
+
+function fetchOpenIssues() {
+    var query = `
+    {
+      repository(owner: "${gh_repo_owner}", name: "${gh_repo_name}") {
+        issues(first: 100, states: OPEN) {
+          nodes {
+            id
+            title
+            body
+          }
+        }
+      }
+    }
+    `;
+
+    var response = sendGraphQLRequest(query);
+    if (response.data && response.data.repository && response.data.repository.issues) {
+        return response.data.repository.issues.nodes;
+    } else {
+        console.error("Failed to fetch open issues:", response);
+        return [];
+    }
+}
+
+
+function findConceptByGitHubID(gitHubID) {
+    var allConcepts = $(model).find();
+    for (let concept of allConcepts) {
+        var id = cConcept_GetProperty(concept, "GitHub ID");
+        if (id === gitHubID) {
+            return concept;
+        }
+    }
+    return null;
+}
+
+function findConceptByGitHubID(gitHubID) {
+    var allConcepts = $(model).find();
+    for (let concept of allConcepts) {
+        var id = cConcept_GetProperty(concept, "GitHub ID");
+        if (id === gitHubID) {
+            return concept;
+        }
+    }
+    return null;
+}
+
+function syncArchiConceptsFromGitHubIssues() {
+    var issues = fetchOpenIssues();
+    var selectedViews = $(selection).filter("archimate-diagram-model");
+
+    if(selectedViews.size() !== 1) {
+        window.alert("Please select exactly one view");
+        exit();
+    }
+
+    var view = selectedViews.first();
+
+    for (let issue of issues) {
+        var existingConcept = findConceptByGitHubID(issue.id);
+        if (existingConcept) {
+            // Oppdater eksisterende konsept
+            existingConcept.name = issue.title;
+            existingConcept.documentation = issue.body;
+            console.log("Updated concept:", issue.title);
+        } else {
+            // Opprett nytt konsept
+            var newConcept = model.createElement("goal", issue.title);
+            newConcept.documentation = issue.body;
+            cConcept_SetProperty(newConcept, "GitHub ID", issue.id);
+            console.log("Created new concept:", issue.title);
+
+            // Legg til visuelt element i det valgte viewet
+            view.add(newConcept, x, y, -1, -1);
+            y += y_incr; // Flytt Y-koordinaten nedover for neste element
+        }
+    }
+}
+
+
+syncArchiConceptsFromGitHubIssues();
+console.log("Script completed");

@@ -218,3 +218,37 @@ function lib_FixExcelCellQuotes(str) {
 	return replacedStr;
 
 }
+
+function sendGraphQLRequest(query) {
+    var URL = Java.type("java.net.URL");
+    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
+    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
+    var BufferedReader = Java.type("java.io.BufferedReader");
+    var InputStreamReader = Java.type("java.io.InputStreamReader");
+    
+    var url = new URL("https://api.github.com/graphql");
+    var connection = HttpURLConnection.class.cast(url.openConnection());
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+    
+    var writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.write(JSON.stringify({ query: query }));
+    writer.close();
+
+    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    var response = "";
+    var line;
+    while ((line = reader.readLine()) !== null) {
+        response += line;
+    }
+    reader.close();
+
+    // Log the GraphQL rate limit remaining
+	//var rateLimits = getRateLimits();
+	//console.log("GitHub API requests remaining: " + rateLimits.remaining);
+	//console.log("Rate limit will be reset at: " + rateLimits.reset);
+
+    return JSON.parse(response);
+}

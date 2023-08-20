@@ -123,51 +123,7 @@ function isIssueOpen(issueId) {
     }
 }
 
-
-function getopenIssueWithArchiGUID(archiGUID) {
-    console.log("Sending GraphQL request to fetch issues with ArchiGUID:", archiGUID);
-    
-    var query = `
-    {
-      repository(owner: "${gh_repo_owner}", name: "${gh_repo_name}") {
-        issues(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
-          nodes {
-            id
-            state
-            title
-            body
-          }
-        }
-      }
-    }
-    `;
-
-	//console.log("Sending GraphQL request to fetch issues with ArchiGUID:", archiGUID);
-    var response = sendGraphQLRequest(query);
-    if (response.errors) {
-        console.error("Error in GraphQL response:", JSON.stringify(response));
-        return null;
-    }
-
-    if (response.data && response.data.repository && response.data.repository.issues) {
-        var issues = response.data.repository.issues.nodes;
-        for (let i = 0; i < issues.length; i++) {
-            if (issues[i].body.includes(archiGUID) && issues[i].state === "OPEN") {
-                return issues[i];
-            }
-        }
-    }
-
-    console.log("No matching issue found for ArchiGUID:", archiGUID);
-    return null;
-}
-
-
-function getopenIssueWithPreviousGHGuid(issueId) {
-	
-	// DENNE FUNKSJONEN BØR OPPDATERES FOR Å KUNNE RETURNERE HELE OBJEKTET???
-	
-	
+function getOpenIssue(issueId) {
     var query = `
     {
       node(id: "${issueId}") {
@@ -244,50 +200,29 @@ console.log("RepoId: " + repoId);
 
 
 
-function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
-	
-	var archiGUID = archiGithubIssue.id;
-    var openIssueWithArchiGUID = archiGUID ? getopenIssueWithArchiGUID(archiGUID) : null;
-    if (openIssueWithArchiGUID) {
-        console.log("Found an open issue with id=" + openIssueWithArchiGUID.id + " matching Archi Object ID=" + archiGithubIssue.id);
-		cConcept_SetProperty(archiGithubIssue, const_prop_githubIssueGUID, openIssueWithArchiGUID.id);
-		
-    }
-	else {
-		
-		
-	}
-	
-	
-	
-    //var previousGHGuid = cConcept_GetProperty(archiGithubIssue, const_prop_githubIssueGUID);
-	//var openIssueWithPreviousGHGuid = previousGHGuid ? getopenIssueWithPreviousGHGuid(previousGHGuid) : null;
-	//console.log("Value of openIssueWithPreviousGHGuid:", openIssueWithPreviousGHGuid);
-	
-	
-    var title = archiGithubIssue.name.replace(/"/g, '\\"'); 
+function CreateOrUpdateGithubIssueFromArchiConcept(ghIssue) {
+    var archiGUID = ghIssue.id;
+    var existingGHGuid = cConcept_GetProperty(ghIssue, const_prop_githubIssueGUID);
+	var openIssue = existingGHGuid ? getOpenIssue(existingGHGuid) : null;
+
+    var title = ghIssue.name.replace(/"/g, '\\"'); 
     var issueBody = "### Description\n\n";
-    issueBody += archiGithubIssue.documentation ? archiGithubIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
+    issueBody += ghIssue.documentation ? ghIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
     issueBody += "\n\n### Tasks\n";
-    issueBody += "\n- [x] Completed task";
+    issueBody += "\n- [x] Completed task\n";
     issueBody += "\n- [ ] Incompleted task";
     issueBody += "\n\n### Additional Information\n";
     issueBody += "\n- **Archi Object ID**: " + archiGUID;
-	issueBody += "\n- **GraphQL ID**: "
-    if (openIssueWithArchiGUID) issueBody += openIssueWithArchiGUID.id;
-	issueBody += "\n- Osv. (testlinje)"
-	issueBody += "\n\n### Features\n";
-	issueBody += "\n* Feature 1";
-  	issueBody += "\n    * Feature 1.1";
-	
+    if (existingGHGuid) issueBody += "\n- **GraphQL ID**: " + existingGHGuid;
+
     var mutation;
-	if (openIssueWithArchiGUID) {
+	if (openIssue) {
 		// Oppdater eksisterende åpent issue
 		updatedCount++;
 		mutation = `
 		mutation {
 		  updateIssue(input: {
-			id: "${openIssueWithArchiGUID.id}",
+			id: "${existingGHGuid}",
 			title: "${title}",
 			body: "${issueBody}"
 		  }) {
@@ -347,21 +282,18 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	console.log("Evaluating response conditions...");
 	if (response.data) {
 		console.log("Checking if issue should be updated...");
-		if (openIssueWithArchiGUID && response.data.updateIssue && response.data.updateIssue.issue) {
-			var existingIssueGUID = response.data.updateIssue.issue.id; 
-			
-				if (openIssueWithArchiGUID.id != existingIssueGUID) // verify that this works as expected
-					lib_Error("Unexpected verification result! openIssueWithArchiGUID=" + openIssueWithArchiGUID.id + " should be same as existingIssueGUID=" + existingIssueGUID + "! Exiting...");
-					
-			cConcept_SetProperty(archiGithubIssue, const_prop_githubIssueGUID, existingIssueGUID);
-			console.log("Issue with ID:" + existingIssueGUID +  " successfully updated");
+		console.log("Value of existingGHGuid:", existingGHGuid);
+		if (existingGHGuid && response.data.updateIssue && response.data.updateIssue.issue) {
+			var issueGUID = response.data.updateIssue.issue.id;
+			cConcept_SetProperty(ghIssue, const_prop_githubIssueGUID, issueGUID);
+			console.log("Issue with ID:" + issueGUID +  " successfully updated");
 		} 
 		else {
 			console.log("Checking if a new issue should be created...");
-			if (!openIssueWithArchiGUID && response.data.createIssue && response.data.createIssue.issue) {
-				var newIssueGUID = response.data.createIssue.issue.id;
-				updateIssueWithGraphQLID(newIssueGUID, issueBody);
-				console.log("Issue created successfully with ID:", newIssueGUID);
+			if (!existingGHGuid && response.data.createIssue && response.data.createIssue.issue) {
+				var issueGUID = response.data.createIssue.issue.id;
+				updateIssueWithGraphQLID(issueGUID, issueGUID, issueBody);
+				console.log("Issue created successfully with ID:", issueGUID);
 			} 
 			else {
 				console.log("Unexpected response structure:", JSON.stringify(response, null, 2));
@@ -378,18 +310,14 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 
 
 
-function updateIssueWithGraphQLID(graphQLId, originalBody) {
-	
-	
-	
-	
-    var updatedBody = originalBody + "\n- **GraphQL ID**: " + graphQLId; // Erik TODO: !!!!!!!!!!!!!!!!
+function updateIssueWithGraphQLID(issueId, graphQLId, originalBody) {
+    var updatedBody = originalBody + "\n- **GraphQL ID**: " + graphQLId;
 	
 
     var query = `
     mutation {
       updateIssue(input: {
-        id: "${graphQLId}",
+        id: "${issueId}",
         body: "${updatedBody}"
       }) {
         issue {
@@ -441,7 +369,7 @@ var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilt
 if (!selectedConcepts || selectedConcepts.size() === 0)
 	lib_Error("No concepts selected. Hint: Check dct:type property. Exiting...");
 
-console.log("Processing " + selectedConcepts.length + " concepts...");
+console.log("Processing " + selectedConcepts.length + "concepts...");
 processConcepts(selectedConcepts);
 console.log("Processed " + selectedConcepts.length + "concepts");
 console.log("Created " + createdCount + " new isssues and updated " + updatedCount + " existing issues");
