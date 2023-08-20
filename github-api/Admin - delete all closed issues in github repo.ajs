@@ -1,0 +1,33 @@
+﻿// first draft by chatGPT - work TBD
+
+const axios = require('axios');
+
+async function deleteGitHubIssue(issueId, personalAccessToken) {
+    const clientMutationId = new Date().toISOString();
+    const mutation = `
+        mutation {
+            deleteIssue(input: {issueId: "${issueId}", clientMutationId: "${clientMutationId}"}) {
+                clientMutationId
+            }
+        }
+    `;
+
+    const headers = {
+        'Authorization': `Bearer ${personalAccessToken}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'YourAppName' // Replace 'YourAppName' with your app's name
+    };
+
+    const response = await axios.post('https://api.github.com/graphql', {
+        query: mutation
+    }, {
+        headers: headers
+    });
+
+    return response.data;
+}
+
+// Usage:
+// const personalAccessToken = 'YOUR_PERSONAL_ACCESS_TOKEN';
+// const issueId = 'YOUR_ISSUE_ID';
+// deleteGitHubIssue(issueId, personalAccessToken).then(data => console.log(data));

@@ -5,6 +5,12 @@ console.show();
 console.clear();
 console.log("Create or update Github issues");
 
+
+var const_caption_GithubIssueID = "_GithubIssueID_: ";
+var const_caption_ArchiConceptID = "_ArchiConceptID_: ";
+var const_autofill_placeholder = "[to be autofilled]";
+
+
 var gh_repo_owner = "githagen"; var gh_repo_name = "altinn-test-repo";
 //var gh_repo_owner = "erikhag1"; var gh_repo_name = "altinn-test-repo";
 //var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
@@ -265,17 +271,27 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	//console.log("Value of openIssueWithPreviousGHGuid:", openIssueWithPreviousGHGuid);
 	
 	
-    var title = archiGithubIssue.name.replace(/"/g, '\\"'); 
+	
+    var nameLabel = cConcept_GetProperty(archiGithubIssue, "product-epic-id") 
+		+ " (" + cConcept_GetProperty(archiGithubIssue, "Rolle") + "): " 
+		+ archiGithubIssue.name;
+		
+	title = nameLabel.replace(/"/g, '\\"'); 
+	
     var issueBody = "### Description\n\n";
     issueBody += archiGithubIssue.documentation ? archiGithubIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
     issueBody += "\n\n### Tasks\n";
     issueBody += "\n- [x] Completed task";
     issueBody += "\n- [ ] Incompleted task";
     issueBody += "\n\n### Additional Information\n";
-    issueBody += "\n- **Archi Object ID**: " + archiGUID;
-	issueBody += "\n- **GraphQL ID**: "
-    if (openIssueWithArchiGUID) issueBody += openIssueWithArchiGUID.id;
-	issueBody += "\n- Osv. (testlinje)"
+	
+	issueBody += "\nAutomatically updated properties - not to be edited manually:";
+    issueBody += "\n- " + const_caption_ArchiConceptID + archiGUID;
+    if (openIssueWithArchiGUID) 
+		issueBody += "\n- " + const_caption_GithubIssueID + openIssueWithArchiGUID.id;
+	else
+		issueBody += "\n- " + const_caption_GithubIssueID + const_autofill_placeholder;
+
 	issueBody += "\n\n### Features\n";
 	issueBody += "\n* Feature 1";
   	issueBody += "\n    * Feature 1.1";
@@ -376,15 +392,11 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	
 }
 
-
-
 function updateIssueWithGraphQLID(graphQLId, originalBody) {
-	
-	
-	
-	
-    var updatedBody = originalBody + "\n- **GraphQL ID**: " + graphQLId; // Erik TODO: !!!!!!!!!!!!!!!!
-	
+    // Regex for å finne den eksisterende "const_caption_GithubIssueID"-linjen med const_autofill_placeholder-placeholderen
+	var regex = new RegExp("(\\n- \\*\\*GraphQL ID\\*\\*: )" + const_autofill_placeholder);
+	// Erstatt placeholderen med den faktiske graphQLId-verdien
+    var updatedBody = originalBody.replace(regex, `$1${graphQLId}`);
 
     var query = `
     mutation {
