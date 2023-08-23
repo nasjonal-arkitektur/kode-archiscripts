@@ -248,6 +248,42 @@ console.log("Fetched repository name:", fetchedRepoName);
 console.log("RepoId: " + repoId);
 
 
+function GenerateGithubIssueDocumentation(archiGithubIssue) {
+	
+	archiGithubIssue.documentation = "";
+
+	archiGithubIssue.documentation += "Title: " + archiGithubIssue.name;
+	archiGithubIssue.documentation += "\nIssue type: " + cConcept_GetProperty(archiGithubIssue, const_prop_dct_type);
+	archiGithubIssue.documentation += "\nConcept no: " + cConcept_GetProperty(archiGithubIssue, "concept_no");
+	archiGithubIssue.documentation += "\nStage: " + cConcept_GetProperty(archiGithubIssue, "stage");
+	
+	archiGithubIssue.documentation += "\n\n### Short description\n";	
+	archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "short_description");
+
+
+	archiGithubIssue.documentation += "\n\n###Features\n";	
+	archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "system-features");
+
+    archiGithubIssue.documentation += "\n\n### User Epic\n";	
+	archiGithubIssue.documentation += "\nUser role: " + cConcept_GetProperty(archiGithubIssue, "Rolle");
+	archiGithubIssue.documentation += "\n\nUser-epic: " + cConcept_GetProperty(archiGithubIssue, "user-epic");
+
+
+	archiGithubIssue.documentation += "\n\n### User stories\n";	
+
+	
+	archiGithubIssue.documentation += "\n\n### Tasks (this issue)\n";
+	if (cConcept_GetProperty(archiGithubIssue, "issue-tasks") )
+		archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "issue-tasks");
+	else {
+		archiGithubIssue.documentation += "\nTemporary example:";
+		archiGithubIssue.documentation += "\n- [x] Completed task";
+		archiGithubIssue.documentation += "\n- [ ] Incompleted task";
+	}
+	
+	
+	//lib_TestExit(archiGithubIssue.documentation);
+}
 
 
 function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
@@ -272,18 +308,19 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	
 	
 	
-    var nameLabel = cConcept_GetProperty(archiGithubIssue, "product-epic-id") 
-		+ " (" + cConcept_GetProperty(archiGithubIssue, "Rolle") + "): " 
+    var nameLabel = "[" + cConcept_GetProperty(archiGithubIssue, "concept_no") 
+		+ ":" + cConcept_GetProperty(archiGithubIssue, "Rolle") + "] " 
 		+ archiGithubIssue.name;
 		
 	title = nameLabel.replace(/"/g, '\\"'); 
 	
-    var issueBody = "### Description\n\n";
+	GenerateGithubIssueDocumentation(archiGithubIssue);
+	
+	
+    //var issueBody = "### Description\n\n";
+	var issueBody = "";
     issueBody += archiGithubIssue.documentation ? archiGithubIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
-    issueBody += "\n\n### Tasks\n";
-    issueBody += "\n- [x] Completed task";
-    issueBody += "\n- [ ] Incompleted task";
-    issueBody += "\n\n### Additional Information\n";
+     issueBody += "\n\n### Additional Information\n";
 	
 	issueBody += "\nAutomatically updated properties - not to be edited manually:";
     issueBody += "\n- " + const_caption_ArchiConceptID + archiGUID;
@@ -292,10 +329,7 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	else
 		issueBody += "\n- " + const_caption_GithubIssueID + const_autofill_placeholder;
 
-	issueBody += "\n\n### Features\n";
-	issueBody += "\n* Feature 1";
-  	issueBody += "\n    * Feature 1.1";
-	
+
     var mutation;
 	if (openIssueWithArchiGUID) {
 		// Oppdater eksisterende åpent issue
@@ -424,7 +458,7 @@ function processConcepts(concepts) {
     }
 }
 
-var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "epic");
+var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability"); //epic
 if (!dctConceptTypeFilter) {
 	let confirmed = window.confirm("Proceed to process all selected elements without filtering on dct:type?");
 	if (!confirmed)
@@ -455,7 +489,7 @@ if (!selectedConcepts || selectedConcepts.size() === 0)
 
 console.log("Processing " + selectedConcepts.length + " concepts...");
 processConcepts(selectedConcepts);
-console.log("Processed " + selectedConcepts.length + "concepts");
+console.log("Processed " + selectedConcepts.length + " concepts");
 console.log("Created " + createdCount + " new isssues and updated " + updatedCount + " existing issues");
 
 

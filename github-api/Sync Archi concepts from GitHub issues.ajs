@@ -52,7 +52,7 @@ function findConceptByGitHubID(gitHubID) {
 function findConceptByGitHubID(gitHubID) {
     var allConcepts = $(model).find();
     for (let concept of allConcepts) {
-        var id = cConcept_GetProperty(concept, "GitHub ID");
+        var id = cConcept_GetProperty(concept, const_prop_githubIssueGUID);
         if (id === gitHubID) {
             return concept;
         }

@@ -202,19 +202,19 @@ function lib_Alert(txt) {
 }
 
 
-function lib_FixExcelCellQuotes(str) {
+function lib_FixExcelCell(cellValue) {
 	
-	if (!str)
+	if (!cellValue)
 		return "";
 	
-	//console.log("Before: " + str);
+	//console.log("Before: " + cellValue);
 	
-	let replacedStr = str.replace(/"/g, '""');
+	let replacedStr = cellValue.replace(/"/g, '""');
 	
-	// need to substitute " with ""
-		
-	//console.log("After: " + replacedStr);
-
+	if (replacedStr.includes("\n")) {
+		replacedStr = "\"" + replacedStr + "\""; // support for multiple lines within an Excel cell
+	}		
+	
 	return replacedStr;
 
 }

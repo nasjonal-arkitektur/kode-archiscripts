@@ -29,133 +29,53 @@ function cConcept_generateUserStoryDescription(concept) {
 	
 }
 
-function cConcept_getCSVPropertiesValues(concept, propList) {
+function cConcept_getPropertiesAsExcelRow(concept, propList) {
 	
 	
 	//lib_TestExit(concept.prop("difi:description_en"));
 	
 
-	var csvValues = "";
+	var row = "";
+	var cellValue = "";
 		
 	if (propList) {
 		
 		for (var i = 0; i < propList.length; i++) {
-			
+	
 			if (propList[i] == const_arhi_name)
-				csvValues += concept.name + "\t";
-			else if (propList[i] == const_archi_documentation) {
-				
-//lib_TestExit("Here!");(
-		
-				var str = "";
-				//if (concept.documentation) {	
-					str = lib_FixExcelCellQuotes(concept.documentation);
-					str = "\"" + str + "\"";
-					str = str + "\t";
-				//}
-				
-				
-				csvValues += str;
-			
+				cellValue = concept.name;
+			else if (propList[i] === const_archi_documentation) {
+				cellValue = concept.documentation;
+
 			}
-			else if (propList[i] == const_prop_capability_relation) {
+			else if (propList[i] === const_prop_capability_relation) {
 				var relationsStr = cConcept_ListRelatedConceptsOfType(concept, const_prop_dct_type_capability);
-				csvValues += relationsStr + "\t";
+				cellValue = relationsStr;
 			}
-			else if (propList[i] == const_prop_userstory_relation) {
+			else if (propList[i] === const_prop_userstory_relation) {
 				var relationsStr = cConcept_ListRelatedConceptsOfType(concept, const_prop_userstory_relation);
-				csvValues += relationsStr + "\t";
+				cellValue = relationsStr;
 			}
 			else {
-				//console.log(propList[i] + "=" + concept.prop(propList[i]) );
+				console.log(propList[i] + "=" + concept.prop(propList[i]) );
 				if (concept.prop(propList[i]) != null)
-					csvValues += concept.prop(propList[i]) + "\t";
+					cellValue = concept.prop(propList[i]);
 				else
-					//csvValues += "\t"; //here means the property is not defined? Should we differ vs. property value = ""?
-					csvValues += "***Warning: Missing property***" + "\t"; 
+					cellValue = "***Warning: Missing property***"; 
 			}
-			
-		}
-	}
 
-	
-	csvValues = lib_SliceTrailingCharIfPresent(csvValues, "\t");
-	return csvValues;
-}
-
-/***
-function cConcept_getCSVPropertiesValues(concept) {
-
-	var csvValues = "";
-	
-	//csvValues += concept.id;
-	//csvValues += "\t";
-	csvValues += concept.name;
-	csvValues += "\t";
-	csvValues += concept.documentation;	
-	
-	var propList = cConcept_GetProperties(concept);
-	
-		if (propList) {
+			cellValue = lib_FixExcelCell(cellValue);
+			row += cellValue + "\t";
 		
-			csvValues += "\t";
-			
-			for (var i = 0; i < propList.size(); i++) {
-				
-				//if (propList[i] != const_prop_archi_guid) {
-					//console.log(propList[i] + ": " + concept.prop( propList[i]) );
-					//csv += propList[i] + "\t" + concept.prop(propList[i]);
-					csvValues += concept.prop(propList[i]);
-					if (i < propList.size() - 1)
-						csvValues += "\t";
-				//}
-				
-			}
-			//console.log("csvValues: " + csvValues);
-	}
-	//else
-	//	console.log("\nNo properties");
-	
-	return csvValues;
-}
-**/
-
-/***
-function cConcept_getCSVPropertiesHeader(concept) {
-
-//const const_prop_archi_guid = "archi:concept_id";
-//const const_arhi_name = "archi:name";
-//const const_archi_documentation = "archi:documentation";
-//const const_arhi_type = "archi:type";
-
-	var csvHeader = "";
-	//csvHeader += const_prop_archi_guid;
-	//csvHeader += "\t";
-	csvHeader += const_arhi_name;
-	csvHeader += "\t";
-	csvHeader += const_archi_documentation;
-	
-	var propList = cConcept_GetProperties(concept);
-	
-	if (propList) {
-		
-		csvHeader += "\t";
-	
-		for (var i = 0; i < propList.size(); i++) {
-			//console.log(propList[i] + ": " + concept.prop( propList[i]) );
-			csvHeader += propList[i];
-			if (i < propList.size() - 1)
-				csvHeader += "\t";
-				
 		}
-		//console.log("csvheader: " + csvHeader);
+
 	}
-	else
-		console.log("\nNo properties");
+
 	
-	return csvHeader;
+	row = lib_SliceTrailingCharIfPresent(row, "\t");
+	return row;
 }
-**/
+
 
 
 function cConcept_GetProperties(concept) {  // maybe not needed, but keep it to show...

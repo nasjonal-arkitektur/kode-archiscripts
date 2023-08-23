@@ -15,7 +15,7 @@ console.log("Export selection to CSV via clipboard - script starting");
 
 //var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
 
-var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "user-story");
+var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "epic"); // user-story, epic, capability
 
 var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
 //var selectedViews = CSelection_GetAllSelectedViews();
@@ -45,6 +45,12 @@ var csvString = "";
 csvString += csvHeader;
 csvString += "\n";
 
+// Sort selectedConcepts based on the name property
+selectedConcepts.sort(function(a, b) {
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    return 0;
+});
 	
 var i = 0;	
 selectedConcepts.each(function(c) {
@@ -53,10 +59,10 @@ selectedConcepts.each(function(c) {
 	
 
 	// If the concept is a user story, first fix the documentation property
-	if (c.prop(const_prop_dct_type) === const_conceptType_goal__user_story) 
-		cConcept_generateUserStoryDescription(c);
+	//if (c.prop(const_prop_dct_type) === const_conceptType_goal__user_story) 
+	//	cConcept_generateUserStoryDescription(c);
 
-	csvString += cConcept_getCSVPropertiesValues(c, properties);
+	csvString += cConcept_getPropertiesAsExcelRow(c, properties);
 
 	if (i < selectedConcepts.size() - 1)
 		csvString += "\n";
