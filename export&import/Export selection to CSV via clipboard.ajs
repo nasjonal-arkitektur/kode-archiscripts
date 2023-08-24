@@ -51,11 +51,18 @@ selectedConcepts.sort(function(a, b) {
     if (a.name > b.name) return 1;
     return 0;
 });
-	
-var i = 0;	
+
+// Sort selectedConcepts based on the "concept_no" property
+selectedConcepts.sort(function(a, b) {
+    if (cConcept_GetProperty(a, "concept_no") < cConcept_GetProperty(b, "concept_no")) return -1;
+    if (cConcept_GetProperty(a, "concept_no") > cConcept_GetProperty(b, "concept_no")) return 1;
+    return 0;
+});
+
+var i = 1;	
 selectedConcepts.each(function(c) {
 	
-	console.log(c.name);
+	console.log(i + ": " + c.name);
 	
 
 	// If the concept is a user story, first fix the documentation property

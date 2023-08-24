@@ -57,14 +57,17 @@ function cConcept_getPropertiesAsExcelRow(concept, propList) {
 				cellValue = relationsStr;
 			}
 			else {
-				console.log(propList[i] + "=" + concept.prop(propList[i]) );
+				//console.log(propList[i] + "=" + concept.prop(propList[i]) );
 				if (concept.prop(propList[i]) != null)
 					cellValue = concept.prop(propList[i]);
 				else
 					cellValue = "***Warning: Missing property***"; 
 			}
 
+
+	
 			cellValue = lib_FixExcelCell(cellValue);
+			
 			row += cellValue + "\t";
 		
 		}

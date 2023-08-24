@@ -207,8 +207,6 @@ function lib_FixExcelCell(cellValue) {
 	if (!cellValue)
 		return "";
 	
-	//console.log("Before: " + cellValue);
-	
 	let replacedStr = cellValue.replace(/"/g, '""');
 	
 	if (replacedStr.includes("\n")) {
@@ -251,4 +249,35 @@ function sendGraphQLRequest(query) {
 	//console.log("Rate limit will be reset at: " + rateLimits.reset);
 
     return JSON.parse(response);
+}
+
+function lib_SortConcepts(concepts, property) {
+	
+	// ********** Erik: Not yet tested
+	
+    return concepts.sort((a, b) => {
+		
+		aProperty = cConcept_GetProperty(a, property);
+		bProperty = cConcept_GetProperty(b, property);
+		
+        // If both concepts have the given property
+        if (aProperty && bProperty) {
+            // Compare the value of the property for both concepts
+            if (aProperty < bProperty) return -1;
+            if (aProperty > bProperty) return 1;
+            return 0;
+        }
+        // If only the first concept has the given property
+        else if (aProperty) {
+            return -1;
+        }
+        // If only the second concept has the given property
+        else if (bProperty) {
+            return 1;
+        }
+        // If neither of the concepts have the given property
+        else {
+            return 0;
+        }
+    });
 }

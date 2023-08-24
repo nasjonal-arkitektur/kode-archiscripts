@@ -252,7 +252,8 @@ function GenerateGithubIssueDocumentation(archiGithubIssue) {
 	
 	archiGithubIssue.documentation = "";
 
-	archiGithubIssue.documentation += "Title: " + archiGithubIssue.name;
+	archiGithubIssue.documentation += "\nUser role: " + cConcept_GetProperty(archiGithubIssue, "Rolle");
+	archiGithubIssue.documentation += "\nTitle: " + archiGithubIssue.name;
 	archiGithubIssue.documentation += "\nIssue type: " + cConcept_GetProperty(archiGithubIssue, const_prop_dct_type);
 	archiGithubIssue.documentation += "\nConcept no: " + cConcept_GetProperty(archiGithubIssue, "concept_no");
 	archiGithubIssue.documentation += "\nStage: " + cConcept_GetProperty(archiGithubIssue, "stage");
@@ -261,18 +262,15 @@ function GenerateGithubIssueDocumentation(archiGithubIssue) {
 	archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "short_description");
 
 
-	archiGithubIssue.documentation += "\n\n###Features\n";	
+    archiGithubIssue.documentation += "\n\n### System Epics\n";	
+	archiGithubIssue.documentation += "\n\* " + cConcept_GetProperty(archiGithubIssue, "system-epics");
+	
+	archiGithubIssue.documentation += "\n\n### Features\n";	
 	archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "system-features");
 
-    archiGithubIssue.documentation += "\n\n### User Epic\n";	
-	archiGithubIssue.documentation += "\nUser role: " + cConcept_GetProperty(archiGithubIssue, "Rolle");
-	archiGithubIssue.documentation += "\n\nUser-epic: " + cConcept_GetProperty(archiGithubIssue, "user-epic");
 
 
-	archiGithubIssue.documentation += "\n\n### User stories\n";	
-
-	
-	archiGithubIssue.documentation += "\n\n### Tasks (this issue)\n";
+	archiGithubIssue.documentation += "\n\n### Tasks\n";
 	if (cConcept_GetProperty(archiGithubIssue, "issue-tasks") )
 		archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "issue-tasks");
 	else {
@@ -281,7 +279,7 @@ function GenerateGithubIssueDocumentation(archiGithubIssue) {
 		archiGithubIssue.documentation += "\n- [ ] Incompleted task";
 	}
 	
-	
+	archiGithubIssue.documentation += "\n\n### User stories\n";		
 	//lib_TestExit(archiGithubIssue.documentation);
 }
 
@@ -306,10 +304,14 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	//var openIssueWithPreviousGHGuid = previousGHGuid ? getopenIssueWithPreviousGHGuid(previousGHGuid) : null;
 	//console.log("Value of openIssueWithPreviousGHGuid:", openIssueWithPreviousGHGuid);
 	
+	var prefix = "";
+	if (archiGithubIssue.concept.type === "epic") 
+		prefix = "E";
+	else if (archiGithubIssue.concept.type === "capability")
+		prefix = "C";	
 	
-	
-    var nameLabel = "[" + cConcept_GetProperty(archiGithubIssue, "concept_no") 
-		+ ":" + cConcept_GetProperty(archiGithubIssue, "Rolle") + "] " 
+    var nameLabel = "[" + prefix + cConcept_GetProperty(archiGithubIssue, "concept_no") 
+		+ "-" + cConcept_GetProperty(archiGithubIssue, "Rolle") + "] " 
 		+ archiGithubIssue.name;
 		
 	title = nameLabel.replace(/"/g, '\\"'); 
@@ -452,6 +454,40 @@ function updateIssueWithGraphQLID(graphQLId, originalBody) {
 
 
 function processConcepts(concepts) {
+	
+	//var sortedConcepts = lib_SortConcepts(concepts, "concept_no"); // Erik TODO: Softcode hardcoded value
+	//if (!sortedConcepts)
+	//	lib_Error("Unexpected null value");
+
+	// Sort the Concepts based on the "concept_no" property
+	/*
+	selectedConcepts.sort(function(a, b) {
+		if (cConcept_GetProperty(a, "concept_no") < cConcept_GetProperty(b, "concept_no")) return -1;
+		if (cConcept_GetProperty(a, "concept_no") > cConcept_GetProperty(b, "concept_no")) return 1;
+		return 0;
+	});
+	*/
+	
+	selectedConcepts.sort(function(a, b) {
+		let aProperty = cConcept_GetProperty(a, "concept_no");
+		let bProperty = cConcept_GetProperty(b, "concept_no");
+
+		// Check if the properties are numeric
+		let isNumericA = !isNaN(aProperty) && !isNaN(parseFloat(aProperty));
+		let isNumericB = !isNaN(bProperty) && !isNaN(parseFloat(bProperty));
+
+		// If both properties are numeric, convert them to numbers for comparison
+		if (isNumericA && isNumericB) {
+			return parseFloat(aProperty) - parseFloat(bProperty);
+		}
+
+		// If not numeric, compare as strings
+		if (aProperty < bProperty) return -1;
+		if (aProperty > bProperty) return 1;
+		return 0;
+	});	
+	
+	
     for (let i = 0; i < concepts.length; i++) {
         console.log("\nConcept name: " + concepts[i].name);
         CreateOrUpdateGithubIssueFromArchiConcept(concepts[i]);

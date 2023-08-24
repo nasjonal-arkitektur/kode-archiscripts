@@ -22,7 +22,7 @@ function parseCSV(csvString) {
 
         if (char === '"') {
             insideQuotes = !insideQuotes;
-            continue;
+            // Fjernet "continue"-setningen her for å beholde "
         }
 
         if (char === '\t' && !insideQuotes) {
