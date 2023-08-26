@@ -5,9 +5,9 @@ console.show();
 console.clear();
 console.log("Create or update Github issues");
 
-
-var const_caption_GithubIssueID = "_GithubIssueID_: ";
-var const_caption_ArchiConceptID = "_ArchiConceptID_: ";
+const useBetaTaskList = true;
+var const_caption_GithubIssueID = "GithubIssueID:";
+var const_caption_ArchiConceptID = "ArchiConceptID:";
 var const_autofill_placeholder = "[to be autofilled]";
 
 var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
@@ -264,39 +264,75 @@ console.log("Fetched repository name:", fetchedRepoName);
 console.log("RepoId: " + repoId);
 
 
-function GenerateGithubIssueDocumentation(archiGithubIssue) {
+function GenerateGithubIssueDocumentation(archiGithubIssue, openIssueWithArchiGUID) {
 	
 	archiGithubIssue.documentation = "";
 
-	archiGithubIssue.documentation += "\nUser role: " + cConcept_GetProperty(archiGithubIssue, "Rolle");
-	archiGithubIssue.documentation += "\nTitle: " + archiGithubIssue.name;
-	archiGithubIssue.documentation += "\nIssue type: " + cConcept_GetProperty(archiGithubIssue, const_prop_dct_type);
-	archiGithubIssue.documentation += "\nConcept no: " + cConcept_GetProperty(archiGithubIssue, "concept_no");
-	archiGithubIssue.documentation += "\nStage: " + cConcept_GetProperty(archiGithubIssue, "stage");
+	archiGithubIssue.documentation += "\n\n## Users view\n";
+	archiGithubIssue.documentation += "\nTitle: " + "**" + archiGithubIssue.name + "**";
+	archiGithubIssue.documentation += "\nUser role(s): " + cConcept_GetProperty(archiGithubIssue, "role");	
+	archiGithubIssue.documentation += "\nUsers value statement(s): "
+	archiGithubIssue.documentation += "\n" + cConcept_GetProperty(archiGithubIssue, "value_statement");
+
+
+    archiGithubIssue.documentation += "\n\n## Vendors view\n";
+	archiGithubIssue.documentation += "\nHigh level features (capabilities):";
+	archiGithubIssue.documentation += "\n * " + cConcept_GetProperty(archiGithubIssue, "system-epics");
 	
-	archiGithubIssue.documentation += "\n\n### Short description\n";	
-	archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "short_description");
 
-
-    archiGithubIssue.documentation += "\n\n### System Epics\n";	
-	archiGithubIssue.documentation += "\n\* " + cConcept_GetProperty(archiGithubIssue, "system-epics");
-	
-	archiGithubIssue.documentation += "\n\n### Features\n";	
-	archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "system-features");
-
-
-
-	archiGithubIssue.documentation += "\n\n### Tasks\n";
-	if (cConcept_GetProperty(archiGithubIssue, "issue-tasks") )
-		archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "issue-tasks");
-	else {
-		archiGithubIssue.documentation += "\nTemporary example:";
-		archiGithubIssue.documentation += "\n- [x] Completed task";
-		archiGithubIssue.documentation += "\n- [ ] Incompleted task";
+	if (useBetaTaskList) {
+		archiGithubIssue.documentation += "\n\n```[tasklist]";
+		archiGithubIssue.documentation += "\n### Features ";
+		if (cConcept_GetProperty(archiGithubIssue, "system-features"))
+			archiGithubIssue.documentation += "\n" + cConcept_GetProperty(archiGithubIssue, "system-features");
+		archiGithubIssue.documentation += "\n```";
+	} 
+	else {		
+		archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "system-features");
 	}
 	
-	archiGithubIssue.documentation += "\n\n### User stories\n";		
+
+	if (cConcept_GetProperty(archiGithubIssue, "issue-tasks") ) {
+		if (useBetaTaskList) {
+			archiGithubIssue.documentation += "\n\n```[tasklist]";
+			archiGithubIssue.documentation += "\n### Work items";
+			archiGithubIssue.documentation += "\n" + cConcept_GetProperty(archiGithubIssue, "issue-tasks");
+			archiGithubIssue.documentation += "\n```";
+		} 
+		else {		
+			archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "issue-tasks");
+		}
+	} 
+	else {
+		if (useBetaTaskList) {
+			
+			archiGithubIssue.documentation += "\n\n```[tasklist]";
+			archiGithubIssue.documentation += "\n### Tasks\n";			
+			//archiGithubIssue.documentation += "\n- [ ] Task 1";
+			archiGithubIssue.documentation += "\n```";
+		} 
+		else {
+			archiGithubIssue.documentation += "\nExample:";
+			archiGithubIssue.documentation += "\n- [x] Completed task";
+			archiGithubIssue.documentation += "\n- [ ] Incompleted task";
+		}
+	}
+	
+	//archiGithubIssue.documentation += "\n\n### User stories\n";		
 	//lib_TestExit(archiGithubIssue.documentation);
+	
+	
+	archiGithubIssue.documentation += "\n\n## Item attributes\n";
+	archiGithubIssue.documentation += "\n\n_Note: Automatically updated properties, not intended for change by you;)_\n";	
+	archiGithubIssue.documentation += "\n" + "_" + "Issue type: " + cConcept_GetProperty(archiGithubIssue, const_prop_dct_type) + "_";
+	archiGithubIssue.documentation += "\n" + "_" + "Concept no: " + cConcept_GetProperty(archiGithubIssue, "concept_no") + "_";
+	archiGithubIssue.documentation += "\n" + "_" + "Stage: " + cConcept_GetProperty(archiGithubIssue, "stage") + "_";
+	
+    archiGithubIssue.documentation += "\n" + "_" + const_caption_ArchiConceptID + " " + archiGithubIssue.id + "_";
+    if (openIssueWithArchiGUID) 
+		archiGithubIssue.documentation += "\n" + "_" + const_caption_GithubIssueID + " " + openIssueWithArchiGUID.id + "_";
+	else
+		archiGithubIssue.documentation += "\n" + "_" + const_caption_GithubIssueID + " " + const_autofill_placeholder + "_";
 }
 
 
@@ -332,22 +368,13 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 		
 	title = nameLabel.replace(/"/g, '\\"'); 
 	
-	GenerateGithubIssueDocumentation(archiGithubIssue);
+	GenerateGithubIssueDocumentation(archiGithubIssue, openIssueWithArchiGUID);
 	
 	
     //var issueBody = "### Description\n\n";
 	var issueBody = "";
     issueBody += archiGithubIssue.documentation ? archiGithubIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
-     issueBody += "\n\n### Additional Information\n";
-	
-	issueBody += "\nAutomatically updated properties - not to be edited manually:";
-    issueBody += "\n- " + const_caption_ArchiConceptID + archiGUID;
-    if (openIssueWithArchiGUID) 
-		issueBody += "\n- " + const_caption_GithubIssueID + openIssueWithArchiGUID.id;
-	else
-		issueBody += "\n- " + const_caption_GithubIssueID + const_autofill_placeholder;
-
-
+ 
 	var labelNamesToAttach = ["kind/epic", "area/messaging","product/broker","status/draft"];
 	var labelIdsToAttach = fetchLabelIdsByNames(labelNamesToAttach);
 
@@ -515,7 +542,7 @@ function processConcepts(concepts) {
     }
 }
 
-var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability"); //epic
+var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "epic"); //capability or epic
 if (!dctConceptTypeFilter) {
 	let confirmed = window.confirm("Proceed to process all selected elements without filtering on dct:type?");
 	if (!confirmed)
@@ -547,7 +574,7 @@ if (!selectedConcepts || selectedConcepts.size() === 0)
 console.log("Processing " + selectedConcepts.length + " concepts...");
 processConcepts(selectedConcepts);
 console.log("Processed " + selectedConcepts.length + " concepts");
-console.log("Created " + createdCount + " new isssues and updated " + updatedCount + " existing issues");
+console.log("Created " + createdCount + " new issues and updated " + updatedCount + " existing issues");
 
 
 

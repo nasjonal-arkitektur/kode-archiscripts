@@ -22,7 +22,7 @@ function parseCSV(csvString) {
 
         if (char === '"') {
             insideQuotes = !insideQuotes;
-            // Fjernet "continue"-setningen her for å beholde "
+			continue; // Erik: NEI! Fjernet "continue"-setningen her for å beholde "
         }
 
         if (char === '\t' && !insideQuotes) {
@@ -63,7 +63,6 @@ function getClipboard() {
     return "";
 }
 
-// ... [Dine andre funksjoner her] ...
 
 var txt = getClipboard();
 var parsedData = parseCSV(txt);
