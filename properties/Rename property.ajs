@@ -1,0 +1,28 @@
+﻿console.show();
+console.clear();
+console.log("Rename property for Archi selection");
+
+// Spør brukeren om navnet på den eksisterende egenskapen
+var oldPropName = window.prompt("Which property do you want to rename (leave empty to cancel)?", "");
+if (!oldPropName) {
+    console.log("Operation cancelled by user.");
+    exit();
+}
+
+// Spør brukeren om det nye navnet for egenskapen
+var newPropName = window.prompt("What is the new name for the property?", "");
+if (!newPropName) {
+    console.log("Operation cancelled by user.");
+    exit();
+}
+
+// For hvert valgt konsept, sjekk og endre egenskapens navn
+$(selection).each(function(concept) {
+    var propValue = concept.prop(oldPropName);
+    if (propValue !== null) {
+        concept.prop(newPropName, propValue);
+    }
+    concept.removeProp(oldPropName);
+});
+
+console.log("Renamed property '" + oldPropName + "' to '" + newPropName + "' completed");

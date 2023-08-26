@@ -10,17 +10,20 @@ var const_caption_GithubIssueID = "_GithubIssueID_: ";
 var const_caption_ArchiConceptID = "_ArchiConceptID_: ";
 var const_autofill_placeholder = "[to be autofilled]";
 
-
-var gh_repo_owner = "githagen"; var gh_repo_name = "altinn-test-repo";
+var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
+//var gh_repo_owner = "githagen"; var gh_repo_name = "altinn-test-repo";
 //var gh_repo_owner = "erikhag1"; var gh_repo_name = "altinn-test-repo";
-//var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
+//var gh_repo_owner = "altinn"; var gh_repo_name = "altinn-broker";
 var createdCount = 0;
 var updatedCount = 0;
 
-
-var TOKEN = java.lang.System.getenv("MY_PAT"); // all of erikhag1 owned repos
-//var TOKEN = java.lang.System.getenv("eriks_altinn_testrepo_pat"); // altinn owned testrepo-melding-formidling
+// Powershell command to set system enironment variabels: [Environment]::SetEnvironmentVariable("erikhag1_classical_token_1", "SystemValue", "Machine")
+//var TOKEN = java.lang.System.getenv("MY_PAT"); // all of erikhag1 owned repos
+var TOKEN = java.lang.System.getenv("erikhag1_classical_token_1"); // classical PAT
+if (!TOKEN)
+	lib_Error("TOKEN is null, Exiting...");
 //console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
+//console.log("TOKEN:" + TOKEN);
 
 function fetchLabels() {
     //see global var: var gh_repo_owner = "githagen"; // Erstatt med ditt brukernavn
@@ -43,7 +46,7 @@ function fetchLabels() {
     if (response.data && response.data.repository && response.data.repository.labels) {
         return response.data.repository.labels.nodes;
     } else {
-        console.error("Failed to fetch labels:", response);
+        console.error("Failed to fetch labels:" + response);
         return [];
     }
 }
@@ -64,10 +67,23 @@ function fetchLabelIdByName(labelName) {
     if (response.data && response.data.repository && response.data.repository.label) {
         return response.data.repository.label.id;
     } else {
-        console.error("Failed to fetch label ID:", response);
+        console.error("Failed to fetch label ID for label with name: " + labelName);
         return null;
     }
 }
+
+function fetchLabelIdsByNames(labelNames) {
+    var labelIds = [];
+    for (let name of labelNames) {
+        let id = fetchLabelIdByName(name);
+        if (id) {
+            labelIds.push(id);
+        }
+    }
+    return labelIds;
+}
+
+
 
 function getRateLimits(doLogResult) {
     var URL = Java.type("java.net.URL");
@@ -124,7 +140,7 @@ function isIssueOpen(issueId) {
     if (response.data && response.data.repository && response.data.repository.issue) {
         return response.data.repository.issue.state === "OPEN";
     } else {
-        console.error("Failed to fetch issue state:", response);
+        console.error("Failed to fetch issue state:" + response);
         return false;
     }
 }
@@ -151,7 +167,7 @@ function getopenIssueWithArchiGUID(archiGUID) {
 	//console.log("Sending GraphQL request to fetch issues with ArchiGUID:", archiGUID);
     var response = sendGraphQLRequest(query);
     if (response.errors) {
-        console.error("Error in GraphQL response:", JSON.stringify(response));
+        console.error("Error in GraphQL response:" + JSON.stringify(response));
         return null;
     }
 
@@ -311,7 +327,7 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 		prefix = "C";	
 	
     var nameLabel = "[" + prefix + cConcept_GetProperty(archiGithubIssue, "concept_no") 
-		+ "-" + cConcept_GetProperty(archiGithubIssue, "Rolle") + "] " 
+		+ "-" + cConcept_GetProperty(archiGithubIssue, "role") + "] " 
 		+ archiGithubIssue.name;
 		
 	title = nameLabel.replace(/"/g, '\\"'); 
@@ -330,6 +346,11 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 		issueBody += "\n- " + const_caption_GithubIssueID + openIssueWithArchiGUID.id;
 	else
 		issueBody += "\n- " + const_caption_GithubIssueID + const_autofill_placeholder;
+
+
+	var labelNamesToAttach = ["kind/epic", "area/messaging","product/broker","status/draft"];
+	var labelIdsToAttach = fetchLabelIdsByNames(labelNamesToAttach);
+
 
 
     var mutation;
@@ -418,7 +439,7 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 			else {
 				console.log("Unexpected response structure:", JSON.stringify(response, null, 2));
 				if (response.errors && response.errors.length > 0) {
-					console.error("Errors from GitHub:", JSON.stringify(response.errors, null, 2));
+					console.error("Errors from GitHub:" + JSON.stringify(response.errors, null, 2));
 				}
 				lib_Error("Script aborting due to unexpected error");
 			}
