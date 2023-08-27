@@ -649,23 +649,35 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 			console.error(" Comment was:\n" + fetchCommentText(ghCommentId));
 		deleteComment(ghCommentId);
 	}
+	
+	var hasComments = true;
     if (initialCommentViaArchi) {
         if (openIssueWithArchiGUID) {
 
 			if (!existingIssueGUID)
 				lib_Error("Unexpected missing existingIssueGUID");
 			
-			if (issueHasComments(existingIssueGUID) )
-				console.log("Updated initial comment:" + initialCommentViaArchi);
-			else
+			if (issueHasComments(existingIssueGUID) ) {
+				console.log("Updating initial comment:" + initialCommentViaArchi);
+				// Oppdater eksisterende kommentar 
+				ghCommentId = cConcept_GetProperty(archiGithubIssue, const_githubInitialCommentId);
+				if (ghCommentId)
+					updateComment(ghCommentId, initialCommentViaArchi);
+				else
+					lib_TestExit("Failed to find previos commentId, so need to delete previous initial comment? Work in progress...");
+				}
+			else {
+				hasComments = false;
 				console.log("Issue has no comments.");
+				// Opprett ny kommentar
 
-            // Oppdater eksisterende kommentar 
-            ghCommentId = cConcept_GetProperty(archiGithubIssue, const_githubInitialCommentId);
-			if (ghCommentId)
-				updateComment(ghCommentId, initialCommentViaArchi);
-			else
-				lib_TestExit("Failed to find previos commentId, so need to delete previous initial comment? Work in progress...");
+				var response = createCommentOnIssue(existingIssueGUID, initialCommentViaArchi);
+				var newGhCommentId = response.data.addComment.commentEdge.node.id;
+				cConcept_SetProperty(archiGithubIssue, const_githubInitialCommentId, newGhCommentId);
+				console.log("Created initial comment om existing github issue with id:" + newGhCommentId);
+			
+			}
+
 			
         } else {
             // Opprett ny kommentar
