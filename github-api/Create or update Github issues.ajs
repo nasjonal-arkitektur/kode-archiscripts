@@ -9,6 +9,7 @@ const useBetaTaskList = true;
 var const_caption_GithubIssueID = "GithubIssueID:";
 var const_caption_ArchiConceptID = "ArchiConceptID:";
 var const_autofill_placeholder = "[to be autofilled]";
+const const_githubInitialCommentId = "github_initial_comment_id";
 
 var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
 //var gh_repo_owner = "githagen"; var gh_repo_name = "altinn-test-repo";
@@ -77,12 +78,176 @@ function fetchLabelIdsByNames(labelNames) {
     for (let name of labelNames) {
         let id = fetchLabelIdByName(name);
         if (id) {
-            labelIds.push(id);
+            labelIds.push(id);CreateOrUpdateGithubIssueFromArchiConcept
         }
     }
     return labelIds;
 }
 
+function createCommentOnIssue(issueId, commentBody) {
+    var mutation = `
+    mutation {
+      addComment(input: {
+        subjectId: "${issueId}",
+        body: "${commentBody}"
+      }) {
+        commentEdge {
+          node {
+            id
+            body
+          }
+        }
+      }
+    }
+    `;
+
+    return sendGraphQLRequest(mutation);
+}
+
+function updateComment(commentId, updatedBody) {
+    var mutation = `
+    mutation {
+      updateIssueComment(input: {
+        id: "${commentId}",
+        body: "${updatedBody}"
+      }) {
+        issueComment {
+          id
+          body
+        }
+      }
+    }
+    `;
+
+    return sendGraphQLRequest(mutation);
+}
+
+function fetchCommentText(commentId) {
+    var URL = Java.type("java.net.URL");
+    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
+    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
+    var BufferedReader = Java.type("java.io.BufferedReader");
+    var InputStreamReader = Java.type("java.io.InputStreamReader");
+
+    var url = new URL("https://api.github.com/graphql");
+    var connection = HttpURLConnection.class.cast(url.openConnection());
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+
+    var query = `
+    {
+      node(id: "${commentId}") {
+        ... on IssueComment {
+          body
+        }
+      }
+    }
+    `;
+
+    var writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.write(JSON.stringify({ query: query }));
+    writer.close();
+
+    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    var response = "";
+    var line;
+    while ((line = reader.readLine()) !== null) {
+        response += line;
+    }
+    reader.close();
+
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.data && parsedResponse.data.node && parsedResponse.data.node.body) {
+        return parsedResponse.data.node.body;
+    } else {
+        //console.error("Failed to fetch comment text:" + JSON.stringify(parsedResponse, null, 2));
+        return null;
+    }
+}
+
+
+function fetchCommentsForIssue(issueId) {
+    var query = `
+    {
+      node(id: "${issueId}") {
+        ... on Issue {
+          comments(first: 100) {
+            nodes {
+              id
+              body
+              author {
+                login
+              }
+            }
+          }
+        }
+      }
+    }
+    `;
+
+    var response = sendGraphQLRequest(query);
+
+    // Legg til feilhåndtering her
+    if (!response || !response.data || !response.data.node) {
+        console.error("Failed to fetch comments for issue:", issueId);
+        console.error("Response:", JSON.stringify(response));
+        return null;
+    }
+
+    return response;
+}
+
+
+function issueHasComments(issueId) {
+    var commentsResponse = fetchCommentsForIssue(issueId);
+    
+    // Sjekk om vi fikk en gyldig respons
+    if (!commentsResponse) {
+        return false;
+    }
+
+    var comments = commentsResponse.data.node.comments.nodes;
+    return comments.length > 0;
+}
+
+function deleteComment(commentId) {
+    var URL = Java.type("java.net.URL");
+    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
+    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
+    var BufferedReader = Java.type("java.io.BufferedReader");
+    var InputStreamReader = Java.type("java.io.InputStreamReader");
+
+    var url = new URL("https://api.github.com/graphql");
+    var connection = HttpURLConnection.class.cast(url.openConnection());
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+
+    var mutation = `
+    mutation {
+      deleteIssueComment(input: {id: "${commentId}"}) {
+        clientMutationId
+      }
+    }
+    `;
+
+    var writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.write(JSON.stringify({ query: mutation }));
+    writer.close();
+
+    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    var response = "";
+    var line;
+    while ((line = reader.readLine()) !== null) {
+        response += line;
+    }
+    reader.close();
+
+    return JSON.parse(response);
+}
 
 
 function getRateLimits(doLogResult) {
@@ -444,11 +609,12 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 			lib_Error("Retried sendGraphQLRequest to github several times. Consider increasing the secondsToWait value in the script?");
 	}
 
+	var existingIssueGUID = null;
 	console.log("Evaluating response conditions...");
 	if (response.data) {
 		console.log("Checking if issue should be updated...");
 		if (openIssueWithArchiGUID && response.data.updateIssue && response.data.updateIssue.issue) {
-			var existingIssueGUID = response.data.updateIssue.issue.id; 
+			existingIssueGUID = response.data.updateIssue.issue.id; 
 			
 				if (openIssueWithArchiGUID.id != existingIssueGUID) // verify that this works as expected
 					lib_Error("Unexpected verification result! openIssueWithArchiGUID=" + openIssueWithArchiGUID.id + " should be same as existingIssueGUID=" + existingIssueGUID + "! Exiting...");
@@ -472,6 +638,45 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 			}
 		}
 	}
+	
+	// add or update initial comment
+	var initialCommentViaArchi = cConcept_GetProperty(archiGithubIssue, "notes");
+	var ghCommentId = cConcept_GetProperty(archiGithubIssue, const_githubInitialCommentId);
+	if (ghCommentId && !initialCommentViaArchi) {
+		//initialCommentViaArchi = "_Initial comment deleted in Archi (so consider delting this comment also in github vs. restoring a previously gitgub edited note)_"
+		console.error("Warning: Deleting initial github comment, considering Archi master for the initial comment.");
+		if (fetchCommentText(ghCommentId) )
+			console.error(" Comment was:\n" + fetchCommentText(ghCommentId));
+		deleteComment(ghCommentId);
+	}
+    if (initialCommentViaArchi) {
+        if (openIssueWithArchiGUID) {
+
+			if (!existingIssueGUID)
+				lib_Error("Unexpected missing existingIssueGUID");
+			
+			if (issueHasComments(existingIssueGUID) )
+				console.log("Updated initial comment:" + initialCommentViaArchi);
+			else
+				console.log("Issue has no comments.");
+
+            // Oppdater eksisterende kommentar 
+            ghCommentId = cConcept_GetProperty(archiGithubIssue, const_githubInitialCommentId);
+			if (ghCommentId)
+				updateComment(ghCommentId, initialCommentViaArchi);
+			else
+				lib_TestExit("Failed to find previos commentId, so need to delete previous initial comment? Work in progress...");
+			
+        } else {
+            // Opprett ny kommentar
+			var newIssueId = response.data.createIssue.issue.id;
+			var response = createCommentOnIssue(newIssueId, initialCommentViaArchi);
+			var newGhCommentId = response.data.addComment.commentEdge.node.id;
+			cConcept_SetProperty(archiGithubIssue, const_githubInitialCommentId, newGhCommentId);
+			console.log("Created initial comment with id:" + newGhCommentId);
+
+        }
+    }
 
 	
 }
