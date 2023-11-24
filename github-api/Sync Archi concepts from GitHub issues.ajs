@@ -5,8 +5,9 @@ console.show();
 console.clear();
 console.log("Sync Archi concepts from GitHub issues");
 
-var gh_repo_owner = "githagen"; // Erstatt med ditt brukernavn
-var gh_repo_name = "altinn-test-repo"; // Erstatt med ditt repositoriums navn
+var gh_repo_owner = "altinn"; var gh_repo_name = "altinn-broker";
+//var gh_repo_owner = "githagen"; // Erstatt med ditt brukernavn
+//var gh_repo_name = "altinn-test-repo"; // Erstatt med ditt repositoriums navn
 var TOKEN = java.lang.System.getenv("MY_PAT"); // Tilpass etter behov
 
 var x = 10; // Startposisjon for X-koordinat

@@ -11,10 +11,10 @@ var const_caption_ArchiConceptID = "ArchiConceptID:";
 var const_autofill_placeholder = "[to be autofilled]";
 const const_githubInitialCommentId = "github_initial_comment_id";
 
-var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
+//var gh_repo_owner = "altinn"; var gh_repo_name = "testrepo-melding-formidling";
 //var gh_repo_owner = "githagen"; var gh_repo_name = "altinn-test-repo";
 //var gh_repo_owner = "erikhag1"; var gh_repo_name = "altinn-test-repo";
-//var gh_repo_owner = "altinn"; var gh_repo_name = "altinn-broker";
+var gh_repo_owner = "altinn"; var gh_repo_name = "altinn-broker";
 var createdCount = 0;
 var updatedCount = 0;
 
@@ -25,6 +25,99 @@ if (!TOKEN)
 	lib_Error("TOKEN is null, Exiting...");
 //console.log("Token Length: " + (TOKEN ? TOKEN.length : "Token is null"));
 //console.log("TOKEN:" + TOKEN);
+
+function NOT_YET_WORKING_createGithubLabel(labelName, labelColor, labelDescription) {
+    var URL = Java.type("java.net.URL");
+    var HttpURLConnection = Java.type("java.net.HttpURLConnection");
+    var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
+    var BufferedReader = Java.type("java.io.BufferedReader");
+    var InputStreamReader = Java.type("java.io.InputStreamReader");
+
+    // Først, sjekk om labelen allerede eksisterer
+    var query = `
+    {
+      repository(owner: "${gh_repo_owner}", name: "${gh_repo_name}") {
+        label(name: "${labelName}") {
+          id
+        }
+      }
+    }
+    `;
+
+    var url = new URL("https://api.github.com/graphql");
+    var connection = HttpURLConnection.class.cast(url.openConnection());
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+
+    var writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.write(JSON.stringify({ query: query }));
+    writer.close();
+
+    var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    var response = "";
+    var line;
+    while ((line = reader.readLine()) !== null) {
+        response += line;
+    }
+    reader.close();
+
+    var parsedResponse = JSON.parse(response);
+    var labelId = parsedResponse.data.repository.label ? parsedResponse.data.repository.label.id : null;
+
+    // Hvis labelen ikke eksisterer, opprett den
+    if (!labelId) {
+        var mutation = `
+        mutation {
+          createLabel(input: {
+            repositoryId: "${repoId}",
+            name: "${labelName}",
+            color: "${labelColor}",
+            description: "${labelDescription}"
+          }) {
+            label {
+              id
+              name
+              color
+              description
+            }
+          }
+        }
+        `;
+
+        // Opprett en ny HttpURLConnection for denne forespørselen
+        connection = HttpURLConnection.class.cast(url.openConnection());
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+
+        writer = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(JSON.stringify({ query: mutation }));
+        writer.close();
+
+        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        response = "";
+        while ((line = reader.readLine()) !== null) {
+            response += line;
+        }
+        reader.close();
+
+        parsedResponse = JSON.parse(response);
+        if (parsedResponse.data.createLabel && parsedResponse.data.createLabel.label) {
+            return parsedResponse.data.createLabel.label;
+        } else {
+            console.error("Failed to create label:", JSON.stringify(parsedResponse, null, 2));
+            return null;
+        }
+    } else {
+        console.log("Label with name", labelName, "already exists.");
+        return null;
+    }
+}
+
+
 
 function fetchLabels() {
     //see global var: var gh_repo_owner = "githagen"; // Erstatt med ditt brukernavn
@@ -83,6 +176,28 @@ function fetchLabelIdsByNames(labelNames) {
     }
     return labelIds;
 }
+
+
+function setLabelsForIssue(issueId, labels) {
+
+    var mutation = `
+    mutation {
+        addLabelsToLabelable(input: {labelableId: "${issueId}", labelIds: ${JSON.stringify(labels)}}) {
+            clientMutationId
+        }
+    }
+    `;
+
+    var response = sendGraphQLRequest(mutation);
+    if (response.data && response.data.addLabelsToLabelable) {
+        return response.data.addLabelsToLabelable.clientMutationId;
+    } else {
+        console.error("Failed to set labels for issue with number: " + issueNumber);
+        return null;
+    }
+}
+
+
 
 function createCommentOnIssue(issueId, commentBody) {
     var mutation = `
@@ -440,10 +555,14 @@ function GenerateGithubIssueDocumentation(archiGithubIssue, openIssueWithArchiGU
 	archiGithubIssue.documentation += "\n" + cConcept_GetProperty(archiGithubIssue, "value_statement");
 
 
-    archiGithubIssue.documentation += "\n\n## Vendors view\n";
-	archiGithubIssue.documentation += "\nHigh level features (capabilities):";
+
+    archiGithubIssue.documentation += "\n\n## Vendors view";
+	archiGithubIssue.documentation += "\n### Description";
+	archiGithubIssue.documentation += "\n#### High level features (capabilities):";
 	archiGithubIssue.documentation += "\n * " + cConcept_GetProperty(archiGithubIssue, "system-epics");
 	
+	archiGithubIssue.documentation += "\n#### Additional information";
+	archiGithubIssue.documentation += "\nTBD"; // TBD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	if (useBetaTaskList) {
 		archiGithubIssue.documentation += "\n\n```[tasklist]";
@@ -464,7 +583,8 @@ function GenerateGithubIssueDocumentation(archiGithubIssue, openIssueWithArchiGU
 			archiGithubIssue.documentation += "\n" + cConcept_GetProperty(archiGithubIssue, "issue-tasks");
 			archiGithubIssue.documentation += "\n```";
 		} 
-		else {		
+		else {
+			archiGithubIssue.documentation += "\n### Work items";
 			archiGithubIssue.documentation += cConcept_GetProperty(archiGithubIssue, "issue-tasks");
 		}
 	} 
@@ -472,11 +592,12 @@ function GenerateGithubIssueDocumentation(archiGithubIssue, openIssueWithArchiGU
 		if (useBetaTaskList) {
 			
 			archiGithubIssue.documentation += "\n\n```[tasklist]";
-			archiGithubIssue.documentation += "\n### Tasks\n";			
+			archiGithubIssue.documentation += "\n### Work items\n";			
 			//archiGithubIssue.documentation += "\n- [ ] Task 1";
 			archiGithubIssue.documentation += "\n```";
 		} 
 		else {
+			archiGithubIssue.documentation += "\n### Work items";
 			archiGithubIssue.documentation += "\nExample:";
 			archiGithubIssue.documentation += "\n- [x] Completed task";
 			archiGithubIssue.documentation += "\n- [ ] Incompleted task";
@@ -527,9 +648,11 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	else if (archiGithubIssue.concept.type === "capability")
 		prefix = "C";	
 	
-    var nameLabel = "[" + prefix + cConcept_GetProperty(archiGithubIssue, "concept_no") 
-		+ "-" + cConcept_GetProperty(archiGithubIssue, "role") + "] " 
-		+ archiGithubIssue.name;
+    var nameLabel = "[" ;
+	//nameLabel += prefix + cConcept_GetProperty(archiGithubIssue, "concept_no") + "-";
+	nameLabel += cConcept_GetProperty(archiGithubIssue, "role");
+	nameLabel +=  "] ";
+	nameLabel += archiGithubIssue.name;
 		
 	title = nameLabel.replace(/"/g, '\\"'); 
 	
@@ -540,11 +663,6 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	var issueBody = "";
     issueBody += archiGithubIssue.documentation ? archiGithubIssue.documentation.replace(/\n/g, "\\n").replace(/"/g, '\\"') : "No description provided."; 
  
-	var labelNamesToAttach = ["kind/epic", "area/messaging","product/broker","status/draft"];
-	var labelIdsToAttach = fetchLabelIdsByNames(labelNamesToAttach);
-
-
-
     var mutation;
 	if (openIssueWithArchiGUID) {
 		// Oppdater eksisterende åpent issue
@@ -610,6 +728,7 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 	}
 
 	var existingIssueGUID = null;
+	var resultingGithubIssueGUID = null;
 	console.log("Evaluating response conditions...");
 	if (response.data) {
 		console.log("Checking if issue should be updated...");
@@ -621,6 +740,9 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 					
 			cConcept_SetProperty(archiGithubIssue, const_prop_githubIssueGUID, existingIssueGUID);
 			console.log("Issue with ID:" + existingIssueGUID +  " successfully updated");
+			
+			resultingGithubIssueGUID = existingIssueGUID;
+
 		} 
 		else {
 			console.log("Checking if a new issue should be created...");
@@ -628,6 +750,7 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 				var newIssueGUID = response.data.createIssue.issue.id;
 				updateIssueWithGraphQLID(newIssueGUID, issueBody);
 				console.log("Issue created successfully with ID:", newIssueGUID);
+				resultingGithubIssueGUID = newIssueGUID;
 			} 
 			else {
 				console.log("Unexpected response structure:", JSON.stringify(response, null, 2));
@@ -689,6 +812,10 @@ function CreateOrUpdateGithubIssueFromArchiConcept(archiGithubIssue) {
 
         }
     }
+	
+	var labelNamesToAttach = ["kind/epic", "status/draft"]; // "area/messaging","solution/broker"
+	var labelIdsToAttach = fetchLabelIdsByNames(labelNamesToAttach);
+	var result = setLabelsForIssue(resultingGithubIssueGUID, labelIdsToAttach);
 
 	
 }
@@ -781,12 +908,23 @@ function ghLabelsexperiment() {
 //ghLabelsexperiment();
 //lib_TestExit("Exiting after experiment...");
 
-
+/*
+// Start out by basic configuration (to be moved to a function)
+var labelName = "kind/epic";
+var labelColor = "#1D76DB"; // Hex-kode uten '#'
+var labelDescription = "Din labelbeskrivelse her";
+var newLabel = NOT_YET_WORKING_createGithubLabel(labelName, labelColor, labelDescription);
+if (newLabel)
+	console.log("Created new label: " + newLabel);
+*/
 
 
 var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
 if (!selectedConcepts || selectedConcepts.size() === 0)
 	lib_Error("No concepts selected. Hint: Check dct:type property. Exiting...");
+
+
+
 
 console.log("Processing " + selectedConcepts.length + " concepts...");
 processConcepts(selectedConcepts);
