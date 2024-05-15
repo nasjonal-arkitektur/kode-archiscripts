@@ -293,6 +293,36 @@ function CSelection_GetAllItemsOfGivenTypeAndNameInSelectedViews(itemType, itemN
 }
 
 
+function CSelection_GetAllDirectlySelectedNotes() {
+	var resultingItems = null;
+	var selectedItems = null;
+
+console.log("CSelection_GetAllDirectlySelectedNotes");
+
+	selectedItems = $(selection).filter("diagram-model-note");
+	selectedItems.each(function(item) {	
+
+//console.log("Note: " + item.text);
+
+
+		if (resultingItems == null) {
+			resultingItems = $(item);
+		}
+		else {
+			
+			var itemInList = cCollection_GetItemsWithGivenId(resultingItems, item);
+			
+			if (itemInList.size() < 1)
+				resultingItems.add($(item));
+		}
+			
+	});
+	
+	return resultingItems;
+	
+}
+
+
 function CSelection_GetAllDirectlySelectedConcepts() {
 	var resultingItems = null;
 	var selectedItems = null;

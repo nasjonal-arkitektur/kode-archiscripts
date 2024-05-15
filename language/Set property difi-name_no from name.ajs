@@ -5,6 +5,56 @@ load(__DIR__ + "../common/c_Selection.ajs");
 
 console.log("Running script Set property difi:name_no from name");
 
+var concepts = 0;
+var notes = 0;
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	//window.alert("No concepts selected. Looking for notes...");
+	//exit();
+}
+else {
+
+	selectedConcepts.each(function(concept) {
+		
+		// don't change an already set const_prop_name_no, since ...
+		if (cConcept_GetProperty(concept, const_prop_name_no))
+			console.log("Skipping " + concept.name + " with " + const_prop_name_no + ": " + cConcept_GetProperty(concept, const_prop_name_no)  );
+		else {
+			cConcept_SetProperty(concept, const_prop_name_no, concept.name);
+			cConcept_SetProperty(concept, const_prop_description_no, concept.documentation);
+		}
+		
+		//cConcept_UpdateLabel(concept);
+		
+	});
+}
+
+var selectedNotes = CSelection_GetAllDirectlySelectedNotes();
+selectedNotes.each(function(note) {
+	
+	notes++;
+	
+	if (cConcept_GetProperty(note, const_prop_name_no))
+		console.log("Skipping " + note.name + " with " + const_prop_name_no + ": " + cConcept_GetProperty(note, const_prop_name_no)  );
+	else {
+		cConcept_SetProperty(note, const_prop_name_no, note.text);
+		//cConcept_SetProperty(note, const_prop_description_no, concept.documentation);
+	}	
+	
+	
+	//cConcept_SetProperty(note, const_prop_name_no, note.text);
+	//xxx cConcept_SetProperty(note, const_prop_description_no, note.documentation);
+	//xxx cConcept_UpdateLabel(note);
+	
+});
+
+console.log("Processed " + concepts + " concepts and " + notes + " notes");
+console.log("Script completed");
+
+
+/*
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
 {
@@ -15,11 +65,17 @@ if (selectedConcepts == null || selectedConcepts.size() < 1)
 
 selectedConcepts.each(function(concept) {
 	
-	cConcept_SetProperty(concept, const_prop_name_no, concept.name);
-	cConcept_SetProperty(concept, const_prop_description_no, concept.documentation);
+	if (cConcept_GetProperty(concept, const_prop_name_no))
+		console.log("Skipping " + concept.name + " with " + const_prop_name_no + ": " + cConcept_GetProperty(concept, const_prop_name_no)  );
+	else {
+		cConcept_SetProperty(concept, const_prop_name_no, concept.name);
+		cConcept_SetProperty(concept, const_prop_description_no, concept.documentation);
+	}
 	
-	cConcept_UpdateLabel(concept);
+	//cConcept_UpdateLabel(concept);
 	
 });
 
 console.log("Script completed");
+
+*/

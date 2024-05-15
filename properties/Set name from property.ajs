@@ -1,0 +1,38 @@
+﻿
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.log("Running script Set name from property");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+// Which property
+var propName = window.prompt("Name of property to use as source for updating the concept name (leave empty to cancel)?", "");
+if (!propName) {
+    console.log("Operation cancelled by user.");
+    exit();
+}
+
+selectedConcepts.each(function(concept) {
+
+	//propName = "system-epics"; // test!!!!!!!!!!!!!!!!!!!!
+
+	var newName = cConcept_GetProperty(concept, propName);
+	if (!newName)
+	{
+		window.alert("Failed to find a value for the given property for concept with name " + concept.name + ". Exiting...");
+		exit();
+	}
+
+	console.log("Changing name from " + concept.name + " to " + newName);
+	concept.name = newName;
+		
+});
+
+console.log("Script completed");

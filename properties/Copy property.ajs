@@ -1,21 +1,40 @@
- 
-console.log("Copy property starting...");
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.log("Running script Copy property");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "");
+if (selectedConcepts == null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	exit();
+}
+
+// Which property to copy from?
+var fromProp = window.prompt("Name of existing property to copy from (leave empty to cancel)?", "");
+if (!fromProp) {
+    console.log("Operation cancelled by user.");
+    exit();
+}
+
+var toProp = window.prompt("Name of new or existing property to copy to (leave empty to cancel)?", "");
+if (!toProp) {
+    console.log("Operation cancelled by user.");
+    exit();
+}
 
 
-var selectedConcepts = CSelection_GetSelectedConcepts("","");
-/*	
-	var fromProp = "replace-label";
-	var toProp = "label";
+selectedConcepts.each(function(concept) {
+
+	var propValue = cConcept_GetProperty(concept, fromProp);
+
+	if (propValue) 
+		cConcept_SetProperty(concept, toProp, propValue);
+	else
+		console.log("Skipping concept (" + concept.name + ")due to missing property");
 	
-	var num = 0;
-	selectedConcepts.each(function(concept) {
-		if (cConcept_GetProperty(concept, prop) === oldPropValue) {
-			cConcept_SetProperty(concept, prop, newPropValue);
-			num++;
-		}
-			
-	});
+});
 
-	window.alert(num + " labels copied");
-*/	
-console.log("Script in work...");
+console.log("Script completed");

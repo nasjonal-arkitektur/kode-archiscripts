@@ -5,7 +5,7 @@ if (!proceed) {
 	window.alert("Cancelled ok");
 	exit();
 }
-
+	
 if (model == null || model.id == null)  
     fatal("You must select a model or some Archimate elements.");
 

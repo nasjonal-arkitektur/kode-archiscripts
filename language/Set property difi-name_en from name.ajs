@@ -5,20 +5,38 @@ load(__DIR__ + "../common/c_Selection.ajs");
 
 console.log("Running script Set property difi:name_en from name");
 
+var concepts = 0;
+var notes = 0;
+
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
 {
-	window.alert("No concepts selected. Exiting...");
-	exit();
+	//window.alert("No concepts selected. Looking for notes...");
+	//exit();
+}
+else {
+
+	selectedConcepts.each(function(concept) {
+
+		concepts++;
+
+		cConcept_SetProperty(concept, const_prop_name_en, concept.name);
+		cConcept_SetProperty(concept, const_prop_description_en, concept.documentation);
+		cConcept_UpdateLabel(concept);
+
+	});
 }
 
-
-selectedConcepts.each(function(concept) {
+var selectedNotes = CSelection_GetAllDirectlySelectedNotes();
+selectedNotes.each(function(note) {
 	
-	cConcept_SetProperty(concept, const_prop_name_en, concept.name);
-	cConcept_SetProperty(concept, const_prop_description_en, concept.documentation);
-	cConcept_UpdateLabel(concept);
+	notes++;
+	
+	cConcept_SetProperty(note, const_prop_name_en, note.text);
+	//cConcept_SetProperty(note, const_prop_description_en, note.documentation);
+	//cConcept_UpdateLabel(note);
 	
 });
 
+console.log("Processed " + concepts + " concepts and " + notes + " notes");
 console.log("Script completed");

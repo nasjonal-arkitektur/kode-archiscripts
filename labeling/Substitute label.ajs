@@ -1,0 +1,48 @@
+﻿"use strict";
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.clear();
+
+function SubstituteLabels() {
+
+	var occurences = CSelection_GetDirectlySelectedOccurences();
+	lib_VerifyNotNull(occurences, "No objects selected");
+
+
+	var oldLabel = window.prompt("Label text to be replaced (leave empty to cancel)?", "");
+	if (oldLabel === null || oldLabel === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	var newLabel = window.prompt("Text to use instead of '" + oldLabel + "' (leave empty to cancel)?", "");
+	if (newLabel === null || newLabel === "") {
+		window.alert("Cancelled - exiting...");	
+		exit();
+	}
+	
+	
+	var num = 0;
+	occurences.each(function(o) {
+
+		//console.log(o.type + "\t" + o.name + "\t" + o.id);
+
+		var e = o;
+		
+		var labelExpr = e.getLabelExpression();
+		console.log("oldLabelExpr = " + labelExpr );
+		
+		if (labelExpr === oldLabel) {
+			num++;
+			e.setLabelExpression(newLabel);
+		}
+	
+	});		
+
+	window.alert(num + " substitutions done");
+
+}
+
+
+SubstituteLabels();	
