@@ -1,0 +1,35 @@
+﻿
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.log("Running script Set name from label");
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+lib_VerifyNotNull(selectedOccurences, "No objects selected");
+
+selectedOccurences.each(function(occurence) {
+
+
+//console.log(occurence.labelValue);
+	
+
+	var newName = occurence.getLabelExpression();
+	
+	//console.log("Changing name from " + occurence.name + " to " + newName);
+	
+	//var newName = occurence.labelValue;
+	
+	
+	if (newName)
+	{
+		console.log("Changing name from " + occurence.name + " to " + newName);
+		occurence.name = newName;
+	}
+	else
+		console.log("Skipping " + occurence.name + " due to empty label");
+
+		
+});
+
+console.log("Script completed");

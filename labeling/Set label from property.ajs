@@ -1,0 +1,49 @@
+﻿
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.log("Running script Set label from name");
+
+var newLabel;
+
+
+// erik: late evening, to be continued
+
+var propName = window.prompt("Name of property to use as input for setting the label (leave empty to cancel):", "");
+if (propName === null || propName === "") {
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
+lib_VerifyNotNull(selectedOccurences, "No objects selected");
+
+selectedOccurences.each(function(occurence) {
+
+
+//console.log(occurence.labelValue);
+	
+	var newName = cConcept_GetProperty(occurence.concept, propName);
+	var labelExpression = occurence.getLabelExpression();
+	
+	//console.log("Changing name from " + occurence.name + " to " + newName);
+	
+	//var newName = occurence.labelValue;
+	
+	
+	if (!labelExpression){
+		console.log("Setting previously empty label to " + newName);
+		occurence.setLabelExpression(newName);
+	}
+	else {
+		console.log("Setting previously NOT empty label to " + occnewNameurence.name);
+		occurence.setLabelExpression(newName);
+	}	
+	
+	// console.log("Skipping " + occurence.name + " due to existing labelExpression");
+
+		
+});
+
+console.log("Script completed");
