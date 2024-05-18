@@ -37,7 +37,7 @@ selectedOccurences.each(function(occurence) {
 		occurence.setLabelExpression(newName);
 	}
 	else {
-		console.log("Setting previously NOT empty label to " + occnewNameurence.name);
+		console.log("Setting previously NOT empty label to " + newName);
 		occurence.setLabelExpression(newName);
 	}	
 	
