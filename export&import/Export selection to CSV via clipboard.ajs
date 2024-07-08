@@ -15,7 +15,7 @@ console.log("Export selection to CSV via clipboard - script starting");
 
 //var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
 
-var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "epic"); // user-story, epic, capability
+var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability"); // user-story, epic, capability
 
 var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
 //var selectedViews = CSelection_GetAllSelectedViews();
@@ -42,7 +42,7 @@ var properties = csvColumnSpecString.split("\t");
 
 var csvString = ""; 
 
-csvString += csvHeader;
+csvString += "\t" + "\t" + csvHeader;
 csvString += "\n";
 
 // Sort selectedConcepts based on the name property
@@ -62,18 +62,50 @@ selectedConcepts.sort(function(a, b) {
 var i = 1;	
 selectedConcepts.each(function(c) {
 	
-	console.log(i + ": " + c.name);
+	//console.log(i + ": " + c.name);
 	
 
 	// If the concept is a user story, first fix the documentation property
 	//if (c.prop(const_prop_dct_type) === const_conceptType_goal__user_story) 
 	//	cConcept_generateUserStoryDescription(c);
 
-	csvString += cConcept_getPropertiesAsExcelRow(c, properties);
 
-	if (i < selectedConcepts.size() - 1)
-		csvString += "\n";
-	i++;
+	var level = cConcept_GetProperty(c, "grouping-level");
+	if (!level)
+		level = 1;
+	
+	if (level == 1) {
+		
+		console.log(i + ": " + "level " + level + " name: " + c.name);
+		csvString += c.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(c, properties);
+		if (i < selectedConcepts.size())
+			csvString += "\n";
+		i++;
+
+		
+		var subConcepts = cConcept_getSubConcepts(c);
+		if (subConcepts)
+		subConcepts.each(function(sub) {
+			console.log("level " + cConcept_GetProperty(sub, "grouping-level") + " name: " + sub.name);
+			csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub, properties);
+			if (i < selectedConcepts.size())
+				csvString += "\n";
+			i++;
+			
+			var l3concepts = cConcept_getSubConcepts(sub);
+			if (l3concepts)
+				l3concepts.each(function(sub3) {
+					console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
+					csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+					if (i < selectedConcepts.size())
+						csvString += "\n";
+					i++;
+				});	
+			
+		});	
+	}
+	//lib_TestExit("Testexit");	
+
 	
 
 	

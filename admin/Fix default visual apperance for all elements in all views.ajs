@@ -1,0 +1,45 @@
+﻿console.clear(); 
+console.log("Fix default visual apperance for all elements in all views");
+
+//var oldFontSize = 12;
+var newFontSize = 9;
+
+var level = 0;
+
+// Iterate through all views and their child object
+$("view").children().each(function(child) {
+	level = 0;
+    setFontSize(child);
+});
+
+console.log ("Script completed");
+
+// if font size == oldFontSize set it to newFontSize
+function setFontSize(child) {
+	
+	if ($(child).children().size() > 0 ) {
+	//if (child.type === "grouping") {
+		child.textAlignment = TEXT_ALIGNMENT.CENTER;
+		child.textPosition  = TEXT_POSITION.TOP;
+		if (level === 0)
+			child.fontStyle = "bold";
+		else
+			child.fontStyle = "normal";
+	}
+	else {
+		child.textAlignment = TEXT_ALIGNMENT.CENTER;
+		child.textPosition  = TEXT_POSITION.CENTER;
+	}
+	
+	child.fontName = "Segoe UI";
+    //if(child.fontSize == oldFontSize) {
+        child.fontSize = newFontSize;
+    //}
+
+
+	level++;
+    // children of children
+    $(child).children().each(function(c) {
+        setFontSize(c);
+    });
+}

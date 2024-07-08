@@ -314,8 +314,6 @@ var const_conceptType_requirement__control_measure = "difi:control-measure"; // 
 var const_conceptType_principle__security_principle = "difi:security-principle";
 
 
-
-
 // Strategy
 var const_conceptType_resource = "archi:resource";
 var const_conceptType_capability = "archi:capability";
