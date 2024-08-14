@@ -65,14 +65,12 @@ selectedConcepts.each(function(c) {
 	//console.log(i + ": " + c.name);
 	
 
-	// If the concept is a user story, first fix the documentation property
-	//if (c.prop(const_prop_dct_type) === const_conceptType_goal__user_story) 
-	//	cConcept_generateUserStoryDescription(c);
 
 
 	var level = cConcept_GetProperty(c, "grouping-level");
+	
 	if (!level)
-		level = 1;
+		lib_Error("Missing required property 'grouping-level' for element " + c.name + ". Exiting...");
 	
 	if (level == 1) {
 		
@@ -82,27 +80,34 @@ selectedConcepts.each(function(c) {
 			csvString += "\n";
 		i++;
 
-		
 		var subConcepts = cConcept_getSubConcepts(c);
-		if (subConcepts)
-		subConcepts.each(function(sub) {
-			console.log("level " + cConcept_GetProperty(sub, "grouping-level") + " name: " + sub.name);
-			csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub, properties);
-			if (i < selectedConcepts.size())
-				csvString += "\n";
-			i++;
-			
-			var l3concepts = cConcept_getSubConcepts(sub);
-			if (l3concepts)
-				l3concepts.each(function(sub3) {
-					console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
-					csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+		if (subConcepts) {
+			subConcepts.each(function(sub) {
+				// Sjekk om subConcept er med i selectedConcepts
+				if (selectedConcepts.contains(sub)) {
+					console.log("level " + cConcept_GetProperty(sub, "grouping-level") + " name: " + sub.name);
+					csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub, properties);
 					if (i < selectedConcepts.size())
 						csvString += "\n";
 					i++;
-				});	
-			
-		});	
+					
+					var l3concepts = cConcept_getSubConcepts(sub);
+					if (l3concepts) {
+						l3concepts.each(function(sub3) {
+							// Sjekk om sub3Concept er med i selectedConcepts
+							if (selectedConcepts.contains(sub3)) {
+								console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
+								csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+								if (i < selectedConcepts.size())
+									csvString += "\n";
+								i++;
+							}
+						});
+					}
+				}
+			});
+		}	
+
 	}
 	//lib_TestExit("Testexit");	
 

@@ -273,8 +273,10 @@ function cModel_GetConceptWithId(id) {
 	var elm = null;
 	
    var elms =  $("concept").filter(function(o) {
-        return ( (o.id == id) );
+        return ( (o.id === id) );
     });
+	
+	//console.log("elms.size() FOR ID = " + id + " = " + elms.size());
 	
 	if (elms.size() < 1) {
 		

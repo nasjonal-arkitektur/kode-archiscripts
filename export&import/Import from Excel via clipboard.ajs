@@ -81,7 +81,9 @@ else if(selectedViews.size() > 1) {
 var view = selectedViews.first();
 var x = const_x_start;
 var y = const_y_start;
-var elementType = "resource"; // TODO, Erik: Take it from the input, if archi:type is there
+
+
+var elementType = "business-service"; // TODO, Erik: Take it from the input, if archi:type is there?
 var elementType = window.prompt("Archi concept type?", elementType);
 
 
@@ -110,17 +112,29 @@ for (let i = 1; i < parsedData.length; i++) {
 		
 		if (prop == const_prop_archi_guid) {
 			archi_concept_id = row[p];
-			//console.log("*Found archi_concept_id  = " + archi_concept_id);
 			
+			//console.log("*Importing " + " archi_concept_id  = " + archi_concept_id);
+			
+
 			if (archi_concept_id.length() > 0) {
+
 				concept = cModel_GetConceptWithId(archi_concept_id);
 				if (concept) {
-					existingConceptWithConceptId = true;
-					updatedCount++;
+					
+					//console.log("Found " + concept.name + "(" + concept.type + "), id = " + concept.id);
+					
+					if ( !elementType || (elementType && elementType === concept.type) ) {
+					
+						//console.log("Updating " + concept.name + "(" + concept.type + ")" +  ", id = " + concept.id);
+					
+						existingConceptWithConceptId = true;
+						updatedCount++;
+					}
 				}
-				else
+				else {
 					//console.log("Warning: Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model");
 					lib_Error("Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model. Exiting");
+				}
 			}
 			
 			//break;
@@ -168,7 +182,7 @@ for (let i = 1; i < parsedData.length; i++) {
 		
 			if (property == const_arhi_name) {
 				concept.name = row[p];
-				console.log(i + ". " + "Updating archi concept: " + concept.name);
+				console.log(i + ". " + "Updating archi concept: " + concept.name + "(" + concept.id + ")" );
 			}
 			else if (property == const_archi_documentation)
 				concept.documentation = row[p];
