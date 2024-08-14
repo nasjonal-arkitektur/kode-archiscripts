@@ -123,13 +123,11 @@ for (let i = 1; i < parsedData.length; i++) {
 					
 					//console.log("Found " + concept.name + "(" + concept.type + "), id = " + concept.id);
 					
-					if ( !elementType || (elementType && elementType === concept.type) ) {
-					
-						//console.log("Updating " + concept.name + "(" + concept.type + ")" +  ", id = " + concept.id);
+					//if ( !elementType || (elementType && elementType === concept.type) ) {
 					
 						existingConceptWithConceptId = true;
 						updatedCount++;
-					}
+					//}
 				}
 				else {
 					//console.log("Warning: Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model");
@@ -146,13 +144,24 @@ for (let i = 1; i < parsedData.length; i++) {
 	// find the archi main name among the input properties and create the concept
 	if (!existingConceptWithConceptId) {
 		
+		var conceptType = elementType; // default as set by user initially 
+
+		// first check for a row-specific elementType (archi:type)
+		for (var p = 0; p < properties.length; p++) {
+			prop = properties[p];
+			if (prop == const_arhi_type) {
+				conceptType = row[p];
+			}
+		}
+
+		
 		for (var p = 0; p < properties.length; p++) {
 			
 			prop = properties[p];
 			if (prop == const_arhi_name) {
 				archi_main_name = row[p];
 				console.log(i + ". " + "Creating archi concept: " + archi_main_name);
-				concept = model.createElement(elementType, archi_main_name);
+				concept = model.createElement(conceptType, archi_main_name);
 				
 //console.log("Trying to set concept.id = " + concept.id);
 				cConcept_SetProperty(concept, const_prop_archi_guid, concept.id);
