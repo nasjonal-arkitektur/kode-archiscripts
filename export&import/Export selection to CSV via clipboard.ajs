@@ -42,7 +42,7 @@ var properties = csvColumnSpecString.split("\t");
 
 var csvString = ""; 
 
-csvString += "\t" + "\t" + csvHeader;
+csvString += "level 1" + "\t" + "level 2" + "\t" + "level 3" + "\t" + csvHeader;
 csvString += "\n";
 
 // Sort selectedConcepts based on the name property
@@ -75,29 +75,31 @@ selectedConcepts.each(function(c) {
 	if (level == 1) {
 		
 		console.log(i + ": " + "level " + level + " name: " + c.name);
-		csvString += c.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(c, properties);
+		csvString += c.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(c, properties);
 		if (i < selectedConcepts.size())
 			csvString += "\n";
 		i++;
 
 		var subConcepts = cConcept_getSubConcepts(c);
 		if (subConcepts) {
-			subConcepts.each(function(sub) {
+			subConcepts.each(function(sub2) {
 				// Sjekk om subConcept er med i selectedConcepts
-				if (selectedConcepts.contains(sub)) {
-					console.log("level " + cConcept_GetProperty(sub, "grouping-level") + " name: " + sub.name);
-					csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub, properties);
+				if (selectedConcepts.contains(sub2)) {
+					console.log("level " + cConcept_GetProperty(sub2, "grouping-level") + " name: " + sub2.name);
+					//csvString += c.name + "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
+					csvString += "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
 					if (i < selectedConcepts.size())
 						csvString += "\n";
 					i++;
 					
-					var l3concepts = cConcept_getSubConcepts(sub);
+					var l3concepts = cConcept_getSubConcepts(sub2);
 					if (l3concepts) {
 						l3concepts.each(function(sub3) {
 							// Sjekk om sub3Concept er med i selectedConcepts
 							if (selectedConcepts.contains(sub3)) {
 								console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
-								csvString += c.name + "\t" + sub.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+								//csvString += c.name + "\t" + sub2.name + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+								csvString += "\t" + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
 								if (i < selectedConcepts.size())
 									csvString += "\n";
 								i++;

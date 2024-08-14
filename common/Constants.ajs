@@ -163,7 +163,7 @@ var const_prop_source = "dct:BibliographicResource"; //added 2019-08-20
 // see const_prop_archi_guid... var const_prop_archi_guid = "archi:concept_id";
 var const_arhi_name = "archi:name";
 var const_archi_documentation = "archi:documentation";
-var const_arhi_type = "archi:type";
+var const_prop_archi_type = "archi:type";
 
 /***/
 

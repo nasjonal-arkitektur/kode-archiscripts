@@ -149,7 +149,7 @@ for (let i = 1; i < parsedData.length; i++) {
 		// first check for a row-specific elementType (archi:type)
 		for (var p = 0; p < properties.length; p++) {
 			prop = properties[p];
-			if (prop == const_arhi_type) {
+			if (prop == const_prop_archi_type) {
 				conceptType = row[p];
 			}
 		}
