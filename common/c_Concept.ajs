@@ -1059,13 +1059,14 @@ function cConcept_getSubConcepts(concpt) {
 
 	});
 
+/*
 	// Sort selectedConcepts based on the "digdir:sequence_no" property, if it is present
 	subConcepts.sort(function(a, b) {
 		if (cConcept_GetProperty(a, "digdir:sequence_no") < cConcept_GetProperty(b, "digdir:sequence_no")) return -1;
 		if (cConcept_GetProperty(a, "digdir:sequence_no") > cConcept_GetProperty(b, "digdir:sequence_no")) return 1;
 		return 0;
 	});
-
+*/
 	return subConcepts;
 }
 

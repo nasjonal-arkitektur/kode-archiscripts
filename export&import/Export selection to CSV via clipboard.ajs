@@ -11,16 +11,61 @@ load(__DIR__ + "../common/c_Clipboard.ajs");
 console.clear();
 console.log("Export selection to CSV via clipboard - script starting");
 
+function getLevel1Concepts(concepts){
+	if (!concepts)
+		return concepts;
+	
+	var lev1Concepts = null;
+		
+	concepts.each(function(c) {
+
+		var level = c.prop("grouping-level");
+		
+		if (!level)
+			lib_Error("Missing required property 'grouping-level' for concept " + c.name + ". Exiting...");
+		
+		if (level == 1) {
+			
+			if (lev1Concepts == null) {
+				lev1Concepts = $(c);
+			}
+			else {
+				lev1Concepts.add($(c));
+			}
+		}
+	});
+	
+	return lev1Concepts;
+}
 
 
-//var selectedConcepts = cModel_GetAllDirectlySelectedConcepts();
+function sortConceptsOnSequenceNo(concepts) {
+	
+	if (!concepts || concepts.size() < 2)
+		return concepts;
+
+	var sortedConcepts = concepts;
+	
+	sortedConcepts.sort(function(a, b) {
+		var seqA = parseInt(cConcept_GetProperty(a, "digdir:sequence_no"), 10);
+		var seqB = parseInt(cConcept_GetProperty(b, "digdir:sequence_no"), 10);
+		
+		if (seqA < seqB) return -1;
+		if (seqA > seqB) return 1;
+		return 0;
+	});
+	
+	return sortedConcepts;
+}
 
 var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability"); // user-story, epic, capability
 
-var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
-//var selectedViews = CSelection_GetAllSelectedViews();
-//var selectedFolders = CSelection_getSelectedFoldersAndSubfolders();
 
+var selectedElements = CSelection_GetDirectlySelectedOccurences(); //erik
+if (!selectedElements)
+	lib_Error("No elements selected. Exiting...");
+
+var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
 if (!selectedConcepts)
 	lib_Error("No concepts selected. Exiting...");
 
@@ -71,10 +116,163 @@ selectedConcepts.each(function(c) {
 	console.log(c.name + ": " + cConcept_GetProperty(c, "digdir:sequence_no"));
 });	
 lib_TestExit("Testexit");	
+
+selectedElements.sort(function(a, b) {
+    if (a.bounds.y < b.bounds.y) return -1;
+    if (a.bounds.y > b.bounds.y) return 1;
+    return 0;
+});
+selectedElements.each(function(e) {
+	console.log(e.name + ": " + e.bounds.y);
+});	
+lib_TestExit("Testexit");
+
 */
 
 
-var lev1Concepts = 0;
+//var noOflev1Concepts = 0;
+var i = 1;	
+
+var level1Concepts = getLevel1Concepts(selectedConcepts);
+if (!level1Concepts || level1Concepts < 1)
+	lib_Error("Missing any level 1 concepts" + ". Exiting...");
+
+level1Concepts = sortConceptsOnSequenceNo(level1Concepts);
+
+level1Concepts.each(function(lev1Concept) {
+	
+
+	console.log(i + ": " + "level " + cConcept_GetProperty(lev1Concept, "grouping-level") + " name: " + lev1Concept.name);
+	csvString += lev1Concept.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(lev1Concept, properties);
+	if (i < selectedElements.size())
+		csvString += "\n";
+	i++;
+
+	var subConcepts = cConcept_getSubConcepts(lev1Concept)
+	subConcepts = sortConceptsOnSequenceNo(subConcepts);
+	
+	//if (!subConcepts || subConcepts.size() < 1)
+	//	lib_Error("Missing any level 2 concepts" + ". Exiting...");
+
+	
+	if (subConcepts) {
+		
+
+		subConcepts.each(function(sub2) {
+			// Sjekk if subConcept is aming the selectedConcepts
+			if (selectedConcepts.contains(sub2)) {
+				console.log("level " + cConcept_GetProperty(sub2, "grouping-level") + " name: " + sub2.name);
+				//csvString += sub2.name + "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
+				csvString += "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
+				if (i < selectedElements.size())
+					csvString += "\n";
+				i++;
+				
+				var l3concepts = cConcept_getSubConcepts(sub2);
+				l3concepts = sortConceptsOnSequenceNo(l3concepts);
+				
+				
+				if (l3concepts) {
+					l3concepts.each(function(sub3) {
+						// Sjekk om sub3Concept er med i selectedConcepts
+						if (selectedConcepts.contains(sub3)) {
+							console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
+							//csvString += sub3.name + "\t" + sub2.name + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+							csvString += "\t" + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+							if (i < selectedElements.size())
+								csvString += "\n";
+							i++;
+						}
+					});
+				}
+			}
+		});	
+	}
+});
+		
+/*
+##########
+
+
+	var level = e.prop("grouping-level");
+	
+	if (!level)
+		lib_Error("Missing required property 'grouping-level' for element " + e.name + ". Exiting...");
+	
+	if (level == 1) {
+		
+		noOflev1Concepts++;
+		
+		console.log(i + ": " + "level " + level + " name: " + e.name);
+		csvString += e.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(e.concept, properties);
+		if (i < selectedElements.size())
+			csvString += "\n";
+		i++;
+
+		var subConcepts = cConcept_getSubConcepts(e.concept)
+		subConcepts = sortConceptsOnSequenceNo(subConcepts);
+		
+		//if (!subConcepts || subConcepts.size() < 1)
+		//	lib_Error("Missing any level 2 concepts" + ". Exiting...");
+
+		
+		if (subConcepts) {
+			
+	
+			subConcepts.each(function(sub2) {
+				// Sjekk if subConcept is aming the selectedConcepts
+				if (selectedConcepts.contains(sub2)) {
+					console.log("level " + cConcept_GetProperty(sub2, "grouping-level") + " name: " + sub2.name);
+					//csvString += e.name + "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
+					csvString += "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
+					if (i < selectedElements.size())
+						csvString += "\n";
+					i++;
+					
+					var l3concepts = cConcept_getSubConcepts(sub2);
+					l3concepts = sortConceptsOnSequenceNo(l3concepts);
+					
+					
+					if (l3concepts) {
+						l3concepts.each(function(sub3) {
+							// Sjekk om sub3Concept er med i selectedConcepts
+							if (selectedConcepts.contains(sub3)) {
+								console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
+								//csvString += e.name + "\t" + sub2.name + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+								csvString += "\t" + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
+								if (i < selectedElements.size())
+									csvString += "\n";
+								i++;
+							}
+						});
+					}
+				}
+			});
+		}	
+
+	}
+
+	
+	//lib_TestExit("Testexit");	
+	
+});	
+
+
+#############	
+*/
+
+
+//if (noOflev1Concepts < 1)
+//	lib_Error("Missing any level 1 concepts" + ". Exiting...");
+
+cClipboard_SetClipboardString(csvString);
+//console.log("csvString:\n" + csvString);
+
+console.log("Script completed. You may paste the resulting string into your spreadsheet, e.g. Excel");
+
+
+/*
+var noOflev1Concepts = 0;
 var i = 1;	
 selectedConcepts.each(function(c) {
 	
@@ -90,7 +288,7 @@ selectedConcepts.each(function(c) {
 	
 	if (level == 1) {
 		
-		lev1Concepts++;
+		noOflev1Concepts++;
 		
 		console.log(i + ": " + "level " + level + " name: " + c.name);
 		csvString += c.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(c, properties);
@@ -140,10 +338,12 @@ selectedConcepts.each(function(c) {
 	
 });	
 
-if (lev1Concepts < 1)
+if (noOflev1Concepts < 1)
 	lib_Error("Missing any level 1 concepts" + ". Exiting...");
 
 cClipboard_SetClipboardString(csvString);
 //console.log("csvString:\n" + csvString);
 
 console.log("Script completed. You may paste the resulting string into your spreadsheet, e.g. Excel");
+
+*/
