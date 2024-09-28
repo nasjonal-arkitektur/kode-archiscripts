@@ -11,6 +11,9 @@ load(__DIR__ + "../common/c_Clipboard.ajs");
 console.clear();
 console.log("Export selection to CSV via clipboard - script starting");
 
+
+
+/*******************************************  ERIK's HARD CODED SOLUTION (works) */
 function getLevel1Concepts(concepts){
 	if (!concepts)
 		return concepts;
@@ -71,7 +74,6 @@ if (!selectedConcepts)
 
 
 var csvColumnSpecString = cClipboard_GetClipboardString();
-//lib_TestExit("'" + csvColumnSpecString + "'"); // shows there's an extra "\n" after the last ...
 csvColumnSpecString = lib_SliceTrailingCharIfPresent(csvColumnSpecString, "\n"); //there's an extra "\n" at the end of the string when copied from Excel!
 
 
@@ -90,47 +92,6 @@ var csvString = "";
 csvString += "level 1" + "\t" + "level 2" + "\t" + "level 3" + "\t" + csvHeader;
 csvString += "\n";
 
-/*
-// Sort selectedConcepts based on the name property
-selectedConcepts.sort(function(a, b) {
-    if (a.name < b.name) return -1;
-    if (a.name > b.name) return 1;
-    return 0;
-});
-
-// Sort selectedConcepts based on the "concept_no" property
-selectedConcepts.sort(function(a, b) {
-    if (cConcept_GetProperty(a, "concept_no") < cConcept_GetProperty(b, "concept_no")) return -1;
-    if (cConcept_GetProperty(a, "concept_no") > cConcept_GetProperty(b, "concept_no")) return 1;
-    return 0;
-});
-
-
-// Sort selectedConcepts based on the "digdir:sequence_no" property
-selectedConcepts.sort(function(a, b) {
-    if (cConcept_GetProperty(a, "digdir:sequence_no") < cConcept_GetProperty(b, "digdir:sequence_no")) return -1;
-    if (cConcept_GetProperty(a, "digdir:sequence_no") > cConcept_GetProperty(b, "digdir:sequence_no")) return 1;
-    return 0;
-});
-selectedConcepts.each(function(c) {
-	console.log(c.name + ": " + cConcept_GetProperty(c, "digdir:sequence_no"));
-});	
-lib_TestExit("Testexit");	
-
-selectedElements.sort(function(a, b) {
-    if (a.bounds.y < b.bounds.y) return -1;
-    if (a.bounds.y > b.bounds.y) return 1;
-    return 0;
-});
-selectedElements.each(function(e) {
-	console.log(e.name + ": " + e.bounds.y);
-});	
-lib_TestExit("Testexit");
-
-*/
-
-
-//var noOflev1Concepts = 0;
 var i = 1;	
 
 var level1Concepts = getLevel1Concepts(selectedConcepts);
@@ -190,160 +151,277 @@ level1Concepts.each(function(lev1Concept) {
 	}
 });
 		
-/*
-##########
-
-
-	var level = e.prop("grouping-level");
-	
-	if (!level)
-		lib_Error("Missing required property 'grouping-level' for element " + e.name + ". Exiting...");
-	
-	if (level == 1) {
-		
-		noOflev1Concepts++;
-		
-		console.log(i + ": " + "level " + level + " name: " + e.name);
-		csvString += e.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(e.concept, properties);
-		if (i < selectedElements.size())
-			csvString += "\n";
-		i++;
-
-		var subConcepts = cConcept_getSubConcepts(e.concept)
-		subConcepts = sortConceptsOnSequenceNo(subConcepts);
-		
-		//if (!subConcepts || subConcepts.size() < 1)
-		//	lib_Error("Missing any level 2 concepts" + ". Exiting...");
-
-		
-		if (subConcepts) {
-			
-	
-			subConcepts.each(function(sub2) {
-				// Sjekk if subConcept is aming the selectedConcepts
-				if (selectedConcepts.contains(sub2)) {
-					console.log("level " + cConcept_GetProperty(sub2, "grouping-level") + " name: " + sub2.name);
-					//csvString += e.name + "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
-					csvString += "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
-					if (i < selectedElements.size())
-						csvString += "\n";
-					i++;
-					
-					var l3concepts = cConcept_getSubConcepts(sub2);
-					l3concepts = sortConceptsOnSequenceNo(l3concepts);
-					
-					
-					if (l3concepts) {
-						l3concepts.each(function(sub3) {
-							// Sjekk om sub3Concept er med i selectedConcepts
-							if (selectedConcepts.contains(sub3)) {
-								console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
-								//csvString += e.name + "\t" + sub2.name + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
-								csvString += "\t" + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
-								if (i < selectedElements.size())
-									csvString += "\n";
-								i++;
-							}
-						});
-					}
-				}
-			});
-		}	
-
-	}
-
-	
-	//lib_TestExit("Testexit");	
-	
-});	
-
-
-#############	
-*/
-
-
-//if (noOflev1Concepts < 1)
-//	lib_Error("Missing any level 1 concepts" + ". Exiting...");
 
 cClipboard_SetClipboardString(csvString);
 //console.log("csvString:\n" + csvString);
 
 console.log("Script completed. You may paste the resulting string into your spreadsheet, e.g. Excel");
 
+**/
 
-/*
-var noOflev1Concepts = 0;
-var i = 1;	
-selectedConcepts.each(function(c) {
-	
-	//console.log(i + ": " + c.name);
-	
+/**
+
+// Function to check if one element is graphically contained within another
+function isContainedWithin(parentBounds, childBounds) {
+    return (
+        childBounds.x >= parentBounds.x &&
+        childBounds.y >= parentBounds.y &&
+        (childBounds.x + childBounds.width) <= (parentBounds.x + parentBounds.width) &&
+        (childBounds.y + childBounds.height) <= (parentBounds.y + parentBounds.height)
+    );
+}
+
+// Sorting function that prioritizes y position, then x position
+function sortByYThenX(a, b) {
+    var boundsA = a.bounds;
+    var boundsB = b.bounds;
+
+    // First, compare by y position
+    if (boundsA.y !== boundsB.y) {
+        return boundsA.y - boundsB.y; // Sort by y (ascending)
+    }
+
+    // If y positions are the same, sort by x position
+    return boundsA.x - boundsB.x; // Sort by x (ascending)
+}
+
+
+// Function to check if an element is truly a top-level element
+function isTopLevelElement(element, allElements) {
+    var elementBounds = element.bounds;
+
+    // Check if the element is contained by any other element in the view
+    for (var i = 0; i < allElements.length; i++) {
+        var otherElement = allElements[i];
+        if (otherElement.id !== element.id) {  // Skip self-comparison
+            var otherBounds = otherElement.bounds;
+            if (isContainedWithin(otherBounds, elementBounds)) {
+                return false; // If the element is contained by another, it is not top-level
+            }
+        }
+    }
+    return true; // If no other element contains this element, it is top-level
+}
+
+// Recursive function to find all elements graphically contained by the given element, sorted by y first, then x
+function findContainedElementsSorted(parentElement, allElements) {
+    var parentBounds = parentElement.bounds;
+
+    // Find elements contained within the parent element, but skip self-comparison
+    var containedElements = allElements.filter(function(e) {
+        if (e.id === parentElement.id) {
+            return false; // Skip if the element is the same as the parent
+        }
+        var childBounds = e.bounds;
+        return isContainedWithin(parentBounds, childBounds);
+    });
+
+    // Only log if there are contained elements
+    if (containedElements.length > 0) {
+        console.log("Contained elements for parent:", parentElement.name);
+        containedElements.forEach(function(e) {
+            console.log(" - " + e.name);
+        });
+    }
+
+    // If no contained elements are found, return to avoid unnecessary recursion
+    if (containedElements.length === 0) {
+        return; // Safeguard to stop recursion
+    }
+
+    // Sort contained elements by y position, then x position
+    containedElements.sort(sortByYThenX);
+
+    // Process each contained element
+    containedElements.forEach(function (e) {
+        console.log("Element contained by:", parentElement.name, "->", e.name);
+
+        // Recursively check for and sort child elements of the contained element
+        findContainedElementsSorted(e, allElements);
+    });
+}
+
+// Main function to identify and process top-level elements, sorted by y first, then x
+function processViewElementsSorted(view) {
+    // Get all elements from the view
+    var allElements = cView_GetElementsInView(view);
+
+    // Find top-level elements (those not contained by any other element)
+    var topLevelElements = allElements.filter(function (element) {
+        return isTopLevelElement(element, allElements);
+    });
+
+    // Sort top-level elements by y position, then x position
+    topLevelElements.sort(sortByYThenX);
+
+    // Log top-level elements for debugging
+    console.log("Top-level elements:");
+    topLevelElements.forEach(function(e) {
+        console.log(" - " + e.name);
+    });
+
+    // Process each top-level element
+    topLevelElements.forEach(function (element) {
+        console.log("Top-level element found:", element.name);
+
+        // Recursively find and process contained elements, sorted by y first, then x
+        findContainedElementsSorted(element, allElements);
+    });
+}
+
+// Start with the current view
+var view = CSelection_GetTheSelectedView();
+processViewElementsSorted(view);
+
+/*************************************************************************/
 
 
 
-	var level = cConcept_GetProperty(c, "grouping-level");
-	
-	if (!level)
-		lib_Error("Missing required property 'grouping-level' for element " + c.name + ". Exiting...");
-	
-	if (level == 1) {
-		
-		noOflev1Concepts++;
-		
-		console.log(i + ": " + "level " + level + " name: " + c.name);
-		csvString += c.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(c, properties);
-		if (i < selectedConcepts.size())
-			csvString += "\n";
-		i++;
+/*******************************************  ERIK's RECURSIVE SOLUTION (structure works, but output yetto be fixed)
+// Sorting function that prioritizes y position, then x position
+function sortByYThenX(a, b) {
+    var boundsA = a.bounds;
+    var boundsB = b.bounds;
 
-		var subConcepts = cConcept_getSubConcepts(c);
-		
-		if (subConcepts) {
-			
-	
-			subConcepts.each(function(sub2) {
+    // First, compare by y position
+    if (boundsA.y !== boundsB.y) {
+        return boundsA.y - boundsB.y; // Sort by y (ascending)
+    }
 
-				// Sjekk om subConcept er med i selectedConcepts
-				if (selectedConcepts.contains(sub2)) {
-					console.log("level " + cConcept_GetProperty(sub2, "grouping-level") + " name: " + sub2.name);
-					//csvString += c.name + "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
-					csvString += "\t" + sub2.name + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(sub2, properties);
-					if (i < selectedConcepts.size())
-						csvString += "\n";
-					i++;
-					
-					var l3concepts = cConcept_getSubConcepts(sub2);
-					if (l3concepts) {
-						l3concepts.each(function(sub3) {
-							// Sjekk om sub3Concept er med i selectedConcepts
-							if (selectedConcepts.contains(sub3)) {
-								console.log("level " + cConcept_GetProperty(sub3, "grouping-level") + " name: " + sub3.name);
-								//csvString += c.name + "\t" + sub2.name + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
-								csvString += "\t" + "\t" + sub3.name + "\t" + cConcept_getPropertiesAsExcelRow(sub3, properties);
-								if (i < selectedConcepts.size())
-									csvString += "\n";
-								i++;
-							}
-						});
-					}
-				}
-			});
-		}	
+    // If y positions are the same, sort by x position
+    return boundsA.x - boundsB.x; // Sort by x (ascending)
+}
 
-	}
-	
-	
-	
-	//lib_TestExit("Testexit");	
-	
-});	
+// Function to get top-level elements based on composition/aggregation relationships
+function getTopLevelElements(view) {
+    var elms = cView_GetElementsInView(view);
 
-if (noOflev1Concepts < 1)
-	lib_Error("Missing any level 1 concepts" + ". Exiting...");
+    if (!elms) {
+        console.log("Error: getTopLevelElements");
+        return null;
+    }
 
-cClipboard_SetClipboardString(csvString);
-//console.log("csvString:\n" + csvString);
+    var topLevelElements = null;
 
-console.log("Script completed. You may paste the resulting string into your spreadsheet, e.g. Excel");
+    elms.each(function(e) {
+        var doesCompose = false;
+        var soleToplevel = true;
+        var isTopLevel = true;
 
-*/
+        var ownViewRels = $(e).rels();
+        ownViewRels.each(function(r) {
+            if ((r.type == "composition-relationship" || r.type == "aggregation-relationship") && r.source.id === e.id) {
+                doesCompose = true; // The element is the source in a composition or aggregation, so it may contain others
+            } else if ((r.type == "composition-relationship" || r.type == "aggregation-relationship") && r.target.id === e.id) {
+                soleToplevel = false; // The element is the target in a relationship, so it is contained by another
+            }
+        });
+
+        // If the element is a source and does not have any incoming composition relationships, it's top-level
+        if (doesCompose) {
+            ownViewRels.each(function(r) {
+                if (r.type == "composition-relationship" && r.target.id === e.id) {
+                    isTopLevel = false; // If the element is a target in a composition relationship, it's not top-level
+                }
+            });
+        } else if (!soleToplevel) {
+            isTopLevel = false; // If it's not the sole top-level element, it's not top-level
+        }
+
+        // If the element is top-level, add it to the list
+        if (isTopLevel) {
+            if (topLevelElements == null) {
+                topLevelElements = $(e);
+            } else {
+                topLevelElements.add($(e));
+            }
+        }
+    });
+
+    return topLevelElements;
+}
+
+// Function to get child elements in the view based on relationships
+function getSubElementsInView(parentElement, view) {
+    var subElements = null;
+
+    // Get relationships of the parent element
+    var ownRels = $(parentElement).rels();
+
+    // Get all elements in the view
+    var elmsInView = cView_GetElementsInView(view);
+
+    // Loop through relationships to find children (composition/aggregation relationships)
+    ownRels.each(function(r) {
+        if ((r.type == "composition-relationship" || r.type == "aggregation-relationship") && r.source.id === parentElement.id) {
+            // Check if the target element is also in the current view
+            elmsInView.each(function(e) {
+                if (e.id === r.target.id) {
+                    // Add the target element as a child element
+                    if (subElements == null) {
+                        subElements = $(e);
+                    } else {
+                        subElements.add($(e));
+                    }
+                }
+            });
+        }
+    });
+
+    // Return the visible child elements (if any)
+    return subElements;
+}
+
+// Recursive function to process contained elements (visible in the view)
+function findContainedElementsSortedUsingRelationshipsAndView(parentElement, view) {
+    // Get child elements visible in the view
+    var subElements = getSubElementsInView(parentElement, view);
+
+    // Only proceed if there are sub-elements
+    if (subElements != null && subElements.length > 0) {
+        // Sort sub-elements by y position, then x position
+        subElements.sort(sortByYThenX);
+
+        // Log the contained elements for debugging
+        console.log("Contained elements for parent:", parentElement.name);
+        subElements.each(function(e) {
+            console.log(" - " + e.name);
+        });
+
+        // Recursively process each sub-element
+        subElements.each(function(e) {
+            console.log("Element contained by:", parentElement.name, "->", e.name);
+            findContainedElementsSortedUsingRelationshipsAndView(e, view);
+        });
+    }
+}
+
+// Main function to process the view elements using relationships and view visibility
+function processViewElementsUsingRelationshipsAndView(view) {
+    // Get top-level elements based on relationships
+    var topLevelElements = getTopLevelElements(view);
+
+    if (!topLevelElements) {
+        console.log("No top-level elements found");
+        return;
+    }
+
+    // Sort top-level elements by y position, then x position
+    topLevelElements.sort(sortByYThenX);
+
+    // Log top-level elements for debugging
+    console.log("Top-level elements:");
+    topLevelElements.each(function(e) {
+        console.log(" - " + e.name);
+    });
+
+    // Process each top-level element
+    topLevelElements.each(function(element) {
+        console.log("Top-level element found:", element.name);
+        findContainedElementsSortedUsingRelationshipsAndView(element, view);
+    });
+}
+
+// Start with the current view
+var view = CSelection_GetTheSelectedView();
+processViewElementsUsingRelationshipsAndView(view);
