@@ -188,7 +188,7 @@ function lib_Warning(warningTxt) {
 
 	var logTxt = "Warning: " + warningTxt + "\n";
 	console.log(logTxt);
-	window.alert(logTxt);
+	//window.alert(logTxt);
 }
 
 function lib_Log(txt) {

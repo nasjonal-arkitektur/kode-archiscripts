@@ -118,6 +118,27 @@ function cView_GetSelectedRelationship() {
 
 }
 
+function cView_IsConceptPresentInView (view, concept) {
+	
+	var conceptFound = false;
+	
+	var viewItems = null;
+	viewItems = $(view).find().filter("element");
+	
+	
+	// Iterate over all elements in the view
+	if (viewItems)
+		viewItems.each(function(element) {
+			if (element.concept.id == concept.id) {
+				conceptFound = true;
+				return false; // Exits the loop when the concept is found
+			}
+		});	
+	
+	return conceptFound;
+}
+
+
 function cView_GetSelectedConcepts() {
 
 
@@ -130,7 +151,8 @@ function cView_GetSelectedConcepts() {
 	*/
 	
 }	
-	
+
+
 var cView_GetElementsInView = function(v) {
 
 	//var elements = $(v).children().filter("element");
@@ -1149,3 +1171,12 @@ function cView_ShowHiddenRelationships(v) {
 	
 }
 
+function cView_IsEmpty(view) {
+
+	var elms = cView_GetElementsInView(view);
+	
+	if (!elms)
+		return true;
+	else
+		return false;
+}

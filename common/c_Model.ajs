@@ -220,7 +220,7 @@ var cModel_FindAllModelElementsWithName = function(elementName) {
         return ( (o.name == elementName) );
     });
 }
-	
+
 function cModel_GetElementWithId(id) {
 	
    var elms =  $("element").filter(function(o) {
@@ -673,3 +673,22 @@ function CModel_CreateMissingAutobookProperties(model) {
 	cModel_CreateMissingProperty(model, const_prop_web_browser, const_prop_web_browser_value_default);
 	cModel_CreateMissingProperty(model, const_prop_cmd_line_app, const_prop_cmd_line_app_value_default);	
 }
+
+
+function CModel_ConceptWithSameNameAndTypeExists(name, type) {
+	
+	var allConcepts = cModel_GetAllModelConcepts();
+	
+	var found = false;
+
+	// Iterate over all elements and check their names
+	allConcepts.each(function(concept) {
+		if (concept.name == name && concept.type == type) {
+			found = true;
+			return false; // Exit the loop once an element is found
+		}
+	});
+
+	return found;
+}
+

@@ -45,6 +45,7 @@ var csvString = "";
 csvString += "level 1" + "\t" + "level 2" + "\t" + "level 3" + "\t" + csvHeader;
 csvString += "\n";
 
+/*
 // Sort selectedConcepts based on the name property
 selectedConcepts.sort(function(a, b) {
     if (a.name < b.name) return -1;
@@ -59,6 +60,21 @@ selectedConcepts.sort(function(a, b) {
     return 0;
 });
 
+
+// Sort selectedConcepts based on the "digdir:sequence_no" property
+selectedConcepts.sort(function(a, b) {
+    if (cConcept_GetProperty(a, "digdir:sequence_no") < cConcept_GetProperty(b, "digdir:sequence_no")) return -1;
+    if (cConcept_GetProperty(a, "digdir:sequence_no") > cConcept_GetProperty(b, "digdir:sequence_no")) return 1;
+    return 0;
+});
+selectedConcepts.each(function(c) {
+	console.log(c.name + ": " + cConcept_GetProperty(c, "digdir:sequence_no"));
+});	
+lib_TestExit("Testexit");	
+*/
+
+
+var lev1Concepts = 0;
 var i = 1;	
 selectedConcepts.each(function(c) {
 	
@@ -74,6 +90,8 @@ selectedConcepts.each(function(c) {
 	
 	if (level == 1) {
 		
+		lev1Concepts++;
+		
 		console.log(i + ": " + "level " + level + " name: " + c.name);
 		csvString += c.name + "\t" + "\t" + "\t" + cConcept_getPropertiesAsExcelRow(c, properties);
 		if (i < selectedConcepts.size())
@@ -81,8 +99,12 @@ selectedConcepts.each(function(c) {
 		i++;
 
 		var subConcepts = cConcept_getSubConcepts(c);
+		
 		if (subConcepts) {
+			
+	
 			subConcepts.each(function(sub2) {
+
 				// Sjekk om subConcept er med i selectedConcepts
 				if (selectedConcepts.contains(sub2)) {
 					console.log("level " + cConcept_GetProperty(sub2, "grouping-level") + " name: " + sub2.name);
@@ -111,13 +133,15 @@ selectedConcepts.each(function(c) {
 		}	
 
 	}
-	//lib_TestExit("Testexit");	
-
 	
-
+	
+	
+	//lib_TestExit("Testexit");	
 	
 });	
 
+if (lev1Concepts < 1)
+	lib_Error("Missing any level 1 concepts" + ". Exiting...");
 
 cClipboard_SetClipboardString(csvString);
 //console.log("csvString:\n" + csvString);

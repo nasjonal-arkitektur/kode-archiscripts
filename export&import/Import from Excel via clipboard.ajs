@@ -6,12 +6,11 @@ console.show();
 console.clear();
 console.log("Import from Excel via clipboard.ajs");
 
-var createdCount = 0;
-var updatedCount = 0;
 
+const CONST_GROUPING_LEVEL = "grouping-level"; // Erik TBD: Move to constants.ajs
 
+/** OLD 2
 function parseCSV(csvString) {
-	
     let rows = [];
     let row = [];
     let cell = '';
@@ -21,33 +20,192 @@ function parseCSV(csvString) {
         let char = csvString[i];
 
         if (char === '"') {
-            insideQuotes = !insideQuotes;
-			continue; // Erik: NEI! Fjernet "continue"-setningen her for å beholde "
+            // Handle case where there are quotes inside quoted text
+            if (insideQuotes && csvString[i + 1] === '"') {
+                cell += '"';  // Add a literal quote to the cell
+                i++;  // Skip the next quote
+            } else {
+                // Toggle inside/outside quotes
+                insideQuotes = !insideQuotes;
+            }
+            continue;
         }
 
+        // Handle tab characters (end of cell) outside of quotes
         if (char === '\t' && !insideQuotes) {
-            row.push(cell);
-            cell = '';
+            row.push(cell.trim());  // Add the current cell to the row
+            cell = '';  // Reset cell variable
             continue;
         }
 
+        // Handle newlines (end of row) outside of quotes
         if (char === '\n' && !insideQuotes) {
-            row.push(cell);
-            rows.push(row);
-            cell = '';
-            row = [];
+            row.push(cell.trim());  // Add the last cell to the row
+            if (row.length > 1) {  // Ensure we don't add empty rows
+                rows.push(row);  // Add the row to the rows array
+            }
+            cell = '';  // Reset cell for the next row
+            row = [];  // Reset row for the next row
             continue;
         }
 
+        // Add the current character to the cell, including newlines inside quotes
         cell += char;
     }
 
+    // Add the last row after finishing the loop
     if (cell) {
-        row.push(cell);
+        row.push(cell.trim());
         rows.push(row);
     }
 
     return rows;
+}
+**/
+
+function parseCSV(csvString) {
+    let rows = [];
+    let row = [];
+    let cell = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < csvString.length; i++) {
+        let char = csvString[i];
+
+        if (char === '"') {
+            // Handle escaped double quotes ("")
+            if (insideQuotes && csvString[i + 1] === '"') {
+                cell += '"';
+                i++;  // Skip the next quote
+            } else {
+                insideQuotes = !insideQuotes;
+            }
+            continue;
+        }
+
+        // If we encounter a tab character and we are not inside quotes, this marks the end of a cell
+        if (char === '\t' && !insideQuotes) {
+            // Check if the cell contains a newline character
+            if (cell.includes('\n') || cell.includes('\r\n')) {
+                // The cell contains a newline, so we add quotes around it
+                cell = `"${cell}"`;
+            } else if (cell.includes('"') && !cell.startsWith('"')) {
+                // The cell contains quotes but is not surrounded by them, add quotes manually
+                cell = `"${cell}"`;
+            }
+            row.push(cell.trim());  // Add the current cell to the row
+            cell = '';  // Reset the cell variable for the next cell
+            continue;
+        }
+
+        // If we encounter a newline character and we are not inside quotes, this marks the end of a row
+        if (char === '\n' && !insideQuotes) {
+            // Same check for the last cell in the row
+            if (cell.includes('\n') || cell.includes('\r\n')) {
+                cell = `"${cell}"`;
+            } else if (cell.includes('"') && !cell.startsWith('"')) {
+                cell = `"${cell}"`;
+            }
+            row.push(cell.trim());  // Add the last cell to the row
+            if (row.length > 0) {   // Ensure we don't add empty rows
+                rows.push(row);     // Add the row to the rows array
+            }
+            cell = '';  // Reset the cell for the next row
+            row = [];  // Reset the row for the next row
+            continue;
+        }
+
+        // Add character to cell, including newlines inside quotes
+        cell += char;
+    }
+
+    // Add the last row after finishing the loop
+    if (cell) {
+        if (cell.includes('\n') || cell.includes('\r\n')) {
+            cell = `"${cell}"`;
+        } else if (cell.includes('"') && !cell.startsWith('"')) {
+            cell = `"${cell}"`;
+        }
+        row.push(cell.trim());
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+/** OLD
+function parseCSV(csvString) {
+    let rows = [];
+    let row = [];
+    let cell = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < csvString.length; i++) {
+        let char = csvString[i];
+
+	    if (char === '"') {
+            if (insideQuotes && csvString[i + 1] === '"') {
+                // Handle escaped double quotes ("")
+                cell += '"';
+                i++;  // Skip the next quote
+            } else {
+                // Toggle the insideQuotes flag
+                insideQuotes = !insideQuotes;
+            }
+            continue;
+        }
+
+        // If we encounter a tab character and we are not inside quotes, this marks the end of a cell
+        if (char === '\t' && !insideQuotes) {
+            row.push(cell.trim());  // Add the current cell to the row
+            cell = '';  // Reset the cell variable for the next cell
+            continue;
+        }
+
+        // If we encounter a newline character and we are not inside quotes, this marks the end of a row
+        if (char === '\n' && !insideQuotes) {
+            row.push(cell.trim());  // Add the last cell to the row
+            if (row.length > 1) {   // Ensure we don't add empty rows
+                rows.push(row);     // Add the row to the rows array
+            }
+            cell = '';  // Reset the cell for the next row
+            row = [];  // Reset the row for the next row
+            continue;
+        }
+
+        // Add character to cell, including newlines inside quotes
+        cell += char;
+    }
+
+    // Add the last row after finishing the loop
+    if (cell) {
+        row.push(cell.trim());
+        rows.push(row);
+    }
+
+    return rows;
+}
+** OLD */
+
+var createdCount = 0;
+var updatedCount = 0;
+
+
+function getClipboardFormats() {
+    var Toolkit = Java.type("java.awt.Toolkit");
+    var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+
+    if (t != null) {
+        // Hent tilgjengelige formater
+        var availableDataFlavors = t.getTransferDataFlavors();
+        for (var i = 0; i < availableDataFlavors.length; i++) {
+            console.log("Available format: " + availableDataFlavors[i]);
+        }
+    } else {
+        console.log("Clipboard is empty or unavailable.");
+    }
 }
 
 function getClipboard() {
@@ -56,13 +214,115 @@ function getClipboard() {
 
     var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
-    if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        var txt = t.getTransferData(DataFlavor.stringFlavor);
-        return txt;
+    if (t != null) {
+        // Prøv å hente HTML-innholdet
+        var htmlFlavor = new DataFlavor("text/html;class=java.lang.String");
+        if (t.isDataFlavorSupported(htmlFlavor)) {
+            var htmlTxt = t.getTransferData(htmlFlavor);
+			// Normalize newlines to Unix format (\n)
+			htmlTxt = htmlTxt.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+            console.log("Clipboard HTML content:", htmlTxt);
+            return htmlTxt;
+        } 
+        // Hvis HTML ikke er tilgjengelig, prøv vanlig tekst
+        else if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            var txt = t.getTransferData(DataFlavor.stringFlavor);
+			// Normalize newlines to Unix format (\n)
+			txt = txt.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+            console.log("Clipboard text:", txt);
+            return txt;
+        } else {
+            console.log("No supported text format found in clipboard.");
+        }
     }
     return "";
 }
 
+
+/** OLD
+function getClipboard() {
+
+//getClipboardFormats();
+//exit();
+
+
+    var Toolkit = Java.type("java.awt.Toolkit");
+    var DataFlavor = Java.type("java.awt.datatransfer.DataFlavor");
+
+    var t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+
+    if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        var txt = t.getTransferData(DataFlavor.stringFlavor);
+		txt = txt.replace(/\r\n/g, "\n"); // Windows line break
+		console.log("Clipboard content:", txt);  // Legg til logging he
+        return txt;
+    }
+    return "";
+}
+** OLD */ 
+
+
+function parseClipboardData(clipboardText) {
+    const parsedData = [];
+    let row = [];
+    let cell = '';
+    let insideQuotes = false;
+
+    // Iterate through the clipboard content character by character
+    for (let i = 0; i < clipboardText.length; i++) {
+        const char = clipboardText[i];
+        const nextChar = clipboardText[i + 1];
+
+        if (char === '"') {
+            if (insideQuotes && nextChar === '"') {
+                // Handle escaped quote ("")
+                cell += '"';
+                i++; // Skip the next character
+            } else {
+                // Toggle the insideQuotes flag
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === '\t' && !insideQuotes) {
+            // Tab character ends the cell when not inside quotes
+            row.push(cell);
+console.log(cell);
+            cell = '';
+        } else if (char === '\n' && !insideQuotes) {
+            // Newline character ends the row when not inside quotes
+            row.push(cell);
+console.log(cell);
+            parsedData.push(row);
+            row = [];
+            cell = '';
+        } else {
+            // Regular character, add it to the current cell
+            cell += char;
+        }
+    }
+
+    // Push any remaining cell/row data
+    if (cell) {
+console.log(cell);		
+        row.push(cell);
+    }
+    if (row.length > 0) {
+        parsedData.push(row);
+    }
+
+    return parsedData;
+}
+
+/* ERIK, SEPT. 2024 - DEBUGGING IN-WORK 
+// Example usage:
+const clipboardContent = 'Cell 1\t"Cell with\nline break"\t"Cell with ""quotes"""\tCell 4\nRow 2 Cell 1\tRow 2 "Normal" Cell 2\tRow 2 Cell 3';
+const parsed = parseClipboardData(clipboardContent);
+
+// Now you can work with the parsed data in jArchi
+parsed.forEach(row => {
+    console.log(row); // Process each row, e.g., create/update elements in Archi
+});
+exit();
+*/
 
 var txt = getClipboard();
 var parsedData = parseCSV(txt);
@@ -79,6 +339,8 @@ else if(selectedViews.size() > 1) {
 }
 
 var view = selectedViews.first();
+var viewWasEmpty = cView_IsEmpty(view);
+
 var x = const_x_start;
 var y = const_y_start;
 
@@ -105,20 +367,22 @@ for (let i = 1; i < parsedData.length; i++) {
 	
 	var existingConceptWithConceptId = false;
 	
+	var imported_archi_concept_id = null;
+	
 	for (var p = 0; p < properties.length; p++) {
 		
 		prop = properties[p];
 		//console.log(prop);
 		
 		if (prop == const_prop_archi_guid) {
-			archi_concept_id = row[p];
+			imported_archi_concept_id = row[p];
 			
-			//console.log("*Importing " + " archi_concept_id  = " + archi_concept_id);
+			//console.log("*Importing " + " imported_archi_concept_id  = " + imported_archi_concept_id);
 			
 
-			if (archi_concept_id.length() > 0) {
+			if (imported_archi_concept_id.length() > 0) {
 
-				concept = cModel_GetConceptWithId(archi_concept_id);
+				concept = cModel_GetConceptWithId(imported_archi_concept_id);
 				if (concept) {
 					
 					//console.log("Found " + concept.name + "(" + concept.type + "), id = " + concept.id);
@@ -130,8 +394,8 @@ for (let i = 1; i < parsedData.length; i++) {
 					//}
 				}
 				else {
-					//console.log("Warning: Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model");
-					lib_Error("Given " + const_prop_archi_guid + " = " + archi_concept_id + " does not exist in this model. Exiting");
+					//console.log("Warning: Given " + const_prop_archi_guid + " = " + imported_archi_concept_id + " does not exist in this model");
+					lib_Error("Given " + const_prop_archi_guid + " = " + imported_archi_concept_id + " does not exist in this model. Exiting");
 				}
 			}
 			
@@ -139,12 +403,13 @@ for (let i = 1; i < parsedData.length; i++) {
 		}
 	}
 	
-
+	var warningConceptWithSameNameAndTypeExists = false;
 	
-	// find the archi main name among the input properties and create the concept
+	// find the archi main name among the input properties and create the concept if it doesn't already exit in the model
 	if (!existingConceptWithConceptId) {
 		
 		var conceptType = elementType; // default as set by user initially 
+
 
 		// first check for a row-specific elementType (archi:type)
 		for (var p = 0; p < properties.length; p++) {
@@ -154,13 +419,33 @@ for (let i = 1; i < parsedData.length; i++) {
 			}
 		}
 
-		
 		for (var p = 0; p < properties.length; p++) {
 			
 			prop = properties[p];
 			if (prop == const_arhi_name) {
 				archi_main_name = row[p];
 				console.log(i + ". " + "Creating archi concept: " + archi_main_name);
+
+				if (!conceptType)
+					lib_Error("Missing conceptType for " + archi_main_name + "! Should be set either by default as prompted initially in this script, or for each row by the 'archi:type' property." +  " Exiting...");
+
+				if (!imported_archi_concept_id)  {
+					
+					// importing a record without the GUID set in the spreadsheet - could be an acually new concept, or the spreadsheet wasn't updated
+			
+					if (CModel_ConceptWithSameNameAndTypeExists(archi_main_name, conceptType)) {
+						warningConceptWithSameNameAndTypeExists = true;
+						lib_Warning("Import from spreadsheet via clipboard; Label text: NO CONCEPT GUID, HOWEVER EXISTING NAME:\n" + archi_main_name
+							+ "\nSuggestion: Check if the spreadsheet should be updated prior to import?");
+					}
+					
+				}
+		
+
+
+
+
+
 				concept = model.createElement(conceptType, archi_main_name);
 				
 //console.log("Trying to set concept.id = " + concept.id);
@@ -179,6 +464,7 @@ for (let i = 1; i < parsedData.length; i++) {
 	
 	//const const_archi_documentation = "archi:documentation";
 				
+				
 	// update the newly created (or existing) concept with other properties as found in the input
 	for (var p = 0; p < properties.length; p++) {
 		
@@ -189,6 +475,8 @@ for (let i = 1; i < parsedData.length; i++) {
 		//if (property != const_arhi_name && property != const_prop_archi_guid) {
 		if (property != const_prop_archi_guid) {
 		
+		
+		
 			if (property == const_arhi_name) {
 				concept.name = row[p];
 				console.log(i + ". " + "Updating archi concept: " + concept.name + "(" + concept.id + ")" );
@@ -196,18 +484,40 @@ for (let i = 1; i < parsedData.length; i++) {
 			else if (property == const_archi_documentation)
 				concept.documentation = row[p];
 			else
-					
-				// should we check that the property is valid?
-			
+				// TODO:  check that the property is valid?
 				cConcept_SetProperty(concept, property, row[p]);
+				
 		}
 	}
 	
 	
-	if (!existingConceptWithConceptId) {
-		elm = view.add(concept, x, y, -1, -1);	
-		//x = const_x_start +  const_x_incr * level;
+	// Add the newly created concept to this view if it doesn't already exist here (though it could exist in another view of the model|)
+	if (!cView_IsConceptPresentInView (view, concept) ) {  // previous logic: if (!existingConceptWithConceptId) {
+
+		var groupingLevel = cConcept_GetProperty(concept, CONST_GROUPING_LEVEL);
+		
+		if (groupingLevel)
+			x = const_x_start  +  const_x_incr * groupingLevel;
+		else
+			x = const_x_start;
+		
+		elm = view.add(concept, x, y, -1, -1);
+		
+		if (!existingConceptWithConceptId) {
+			
+			if (warningConceptWithSameNameAndTypeExists) {
+				elm.labelExpression = "Warning (label text): NEW CONCEPT GUID, EXISTING NAME:\n" + elm.name;
+				elm.fontColor = "#fb0100"; // red
+			}
+			else if (!viewWasEmpty) {
+				elm.labelExpression = "Label text: NEW CONCEPT GUID:\n" + elm.name;
+				//elm.fillColor = "#03fa00"; // green
+				elm.fontColor = "#fb0100"; // red
+			}
+		}
+		
 		y += const_y_incr; 
+		x = const_x_start;
 	}
 	
 
