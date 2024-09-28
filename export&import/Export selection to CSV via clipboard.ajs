@@ -12,8 +12,313 @@ console.clear();
 console.log("Export selection to CSV via clipboard - script starting");
 
 
+// Sorting function that prioritizes y position, then x position
+function sortByYThenX(a, b) {
+    var boundsA = a.bounds;
+    var boundsB = b.bounds;
 
-/*******************************************  ERIK's HARD CODED SOLUTION (works) */
+    // First, compare by y position
+    if (boundsA.y !== boundsB.y) {
+        return boundsA.y - boundsB.y; // Sort by y (ascending)
+    }
+
+    // If y positions are the same, sort by x position
+    return boundsA.x - boundsB.x; // Sort by x (ascending)
+}
+
+// Structure Detection: Builds hierarchy based on graphical positions and relationships
+function buildConceptHierarchy(view) {
+    var hierarchy = [];
+
+    // Detect top-level elements based on relationships and graphical positions
+    var topLevelElements = getTopLevelElements(view);
+
+    if (!topLevelElements) {
+        console.log("No top-level elements found.");
+        return hierarchy;
+    }
+
+    // Sort top-level elements based on graphical x and y positions
+    topLevelElements.sort(sortByYThenX);
+
+    // Recursively build the hierarchy for top-level and contained elements
+    topLevelElements.each(function(element) {
+        var elementHierarchy = buildElementHierarchy(element, view, 1); // Start with level 1
+        hierarchy.push(elementHierarchy);
+    });
+
+    return hierarchy;
+}
+
+// Recursive function to build element hierarchy, auto-assign sequence_no and grouping-level
+function buildElementHierarchy(element, view, level) {
+	
+	console.log("\t".repeat(level - 1) + element.name);
+	
+    var structure = {
+        concept: element,
+        children: [],
+        level: level,
+        sequence_no: level // Assign grouping-level and sequence_no automatically
+    };
+
+    // Get child elements visible in the view
+    var subElements = getSubElementsInView(element, view);
+    
+    // Check if subElements is not null before trying to sort it
+    if (subElements != null && subElements.length > 0) {
+        subElements.sort(sortByYThenX); // Sort children by graphical position
+    }
+
+    // Assign sequence numbers and recurse into child elements
+    var seqNo = 1;
+    if (subElements) {
+        subElements.each(function(subElement) {
+            var childStructure = buildElementHierarchy(subElement, view, level + 1); // Recursive call for next level
+            childStructure.sequence_no = seqNo++;
+            structure.children.push(childStructure);
+        });
+    }
+
+    return structure;
+}
+
+// Recursive function to format an element and its children with dynamic tab-indented names, properties, level, and seq-no
+function formatElementToCSV(structure, properties, csvString, maxLevel, seqNoAtLevel) {
+    var tabs = "\t".repeat(structure.level - 1); // Create tab indents for the current level
+    var trailingTabs = "\t".repeat(maxLevel - structure.level); // Add trailing tabs for level columns
+
+    // Use your custom function cConcept_getPropertiesAsExcelRow for property formatting
+    // Level and seq-no columns are placed right after the hierarchy levels and before the properties
+    csvString += tabs + structure.concept.name + trailingTabs + "\t" + structure.level + "\t" + seqNoAtLevel + "\t" + cConcept_getPropertiesAsExcelRow(structure.concept, properties) + "\n";
+
+    // Recursively format children
+    var seqNo = 1; // Track sequence number within this level
+    structure.children.forEach(function(childStructure) {
+        csvString = formatElementToCSV(childStructure, properties, csvString, maxLevel, seqNo++);
+    });
+
+    return csvString;
+}
+
+
+// Function to calculate the maximum depth (level) of the hierarchy
+function calculateMaxLevel(hierarchy) {
+    var maxLevel = 0;
+
+    function findMaxLevel(structure) {
+        if (structure.level > maxLevel) {
+            maxLevel = structure.level;
+        }
+        structure.children.forEach(findMaxLevel);
+    }
+
+    hierarchy.forEach(findMaxLevel);
+    return maxLevel;
+}
+
+// Function to generate the CSV header dynamically based on the number of levels
+function generateCSVHeader(maxLevel, properties) {
+    var header = [];
+
+    // Dynamically create level headers based on maxLevel
+    for (var i = 1; i <= maxLevel; i++) {
+        header.push("level " + i);
+    }
+
+    // Add properties to the header
+    header = header.concat(properties);
+
+    // Join the header with tabs
+    return header.join("\t") + "\n";
+}
+
+// String Formatting: Generates a CSV-friendly output from the built structure with dynamic levels, properties, level, and seq-no
+function formatHierarchyToCSV(hierarchy, properties) {
+    // Calculate the maximum number of levels in the hierarchy for trailing tabs
+    var maxLevel = calculateMaxLevel(hierarchy);
+
+    // Generate the CSV header dynamically
+    // Level and seq-no columns are placed after the last level column but before the properties
+    var csvString = generateCSVHeader(maxLevel, properties) + "\tlevel\tseq-no\t" + properties.join("\t") + "\n";
+
+    // Recursively format each element and its children
+    var seqNo = 1; // Sequence number for the top-level elements
+    hierarchy.forEach(function(elementStructure) {
+        csvString = formatElementToCSV(elementStructure, properties, csvString, maxLevel, seqNo++);
+    });
+
+    return csvString;
+}
+
+
+
+function getTopLevelElements(view) {
+    var elms = cView_GetElementsInView(view);
+
+    if (!elms) {
+        console.log("Error: getTopLevelElements");
+        return null;
+    }
+
+    var topLevelElements = null;
+
+    elms.each(function(e) {
+        var doesCompose = false;
+        var soleToplevel = true;
+        var isTopLevel = true;
+
+        var ownViewRels = $(e).rels();
+        ownViewRels.each(function(r) {
+            if ((r.type == "composition-relationship" || r.type == "aggregation-relationship") && r.source.id === e.id) {
+                doesCompose = true; // The element is the source in a composition or aggregation, so it may contain others
+            } else if ((r.type == "composition-relationship" || r.type == "aggregation-relationship") && r.target.id === e.id) {
+                soleToplevel = false; // The element is the target in a relationship, so it is contained by another
+            }
+        });
+
+        // If the element is a source and does not have any incoming composition relationships, it's top-level
+        if (doesCompose) {
+            ownViewRels.each(function(r) {
+                if (r.type == "composition-relationship" && r.target.id === e.id) {
+                    isTopLevel = false; // If the element is a target in a composition relationship, it's not top-level
+                }
+            });
+        } else if (!soleToplevel) {
+            isTopLevel = false; // If it's not the sole top-level element, it's not top-level
+        }
+
+        // If the element is top-level, add it to the list
+        if (isTopLevel) {
+            if (topLevelElements == null) {
+                topLevelElements = $(e);
+            } else {
+                topLevelElements.add($(e));
+            }
+        }
+    });
+
+    return topLevelElements;
+}
+
+// Helper function to get child elements in the view based on relationships
+function getSubElementsInView(parentElement, view) {
+    var subElements = null;
+
+    // Get relationships of the parent element
+    var ownRels = $(parentElement).rels();
+
+    // Get all elements in the view
+    var elmsInView = cView_GetElementsInView(view);
+
+    // Loop through relationships to find children (composition/aggregation relationships)
+    ownRels.each(function(r) {
+        if ((r.type == "composition-relationship" || r.type == "aggregation-relationship") && r.source.id === parentElement.id) {
+            // Check if the target element is also in the current view
+            elmsInView.each(function(e) {
+                if (e.id === r.target.id) {
+                    // Add the target element as a child element
+                    if (subElements == null) {
+                        subElements = $(e);
+                    } else {
+                        subElements.add($(e));
+                    }
+                }
+            });
+        }
+    });
+
+    // Return the visible child elements (if any)
+    return subElements;
+}
+
+// Main function to tie everything together
+function generateConceptCSV() {
+	
+	/*
+    var dctConceptTypeFilter = window.prompt("dct:type concept type filter", "capability");
+    var selectedElements = CSelection_GetDirectlySelectedOccurences();
+    if (!selectedElements) lib_Error("No elements selected. Exiting...");
+
+    var selectedConcepts = CSelection_GetSelectedConcepts("", "", dctConceptTypeFilter);
+    if (!selectedConcepts) lib_Error("No concepts selected. Exiting...");
+*/
+
+    var csvColumnSpecString = cClipboard_GetClipboardString();
+    csvColumnSpecString = lib_SliceTrailingCharIfPresent(csvColumnSpecString, "\n");
+
+    if (!csvColumnSpecString) lib_Error("Missing csvColumnSpecification from clipboard. Exiting...");
+    
+    var properties = csvColumnSpecString.split("\t");
+
+    // Build the structure (detect and assign hierarchy based on positions and relations)
+    var view = CSelection_GetTheSelectedView();
+    var hierarchy = buildConceptHierarchy(view);
+
+    // Format the structure into CSV
+
+	//var csvString = simpleFormatHierarchyToCSV(hierarchy);
+    var csvString = formatHierarchyToCSV(hierarchy, properties);
+
+    // Output the CSV string to clipboard
+    cClipboard_SetClipboardString(csvString);
+    console.log("CSV generation completed. You may paste the result into Excel.");
+}
+
+// Simple String Formatting: Generates a CSV-like output with just names and tab-indentation for hierarchy levels
+function simpleFormatHierarchyToCSV(hierarchy) {
+    var simpleCsvString = ""; // Initialize simple CSV string
+
+    // Recursively format each element and its children
+    hierarchy.forEach(function(elementStructure) {
+        simpleCsvString = simpleFormatElementToCSV(elementStructure, simpleCsvString);
+    });
+
+    return simpleCsvString;
+}
+
+// Recursive function to format an element and its children with tab-indented names
+function simpleFormatElementToCSV(structure, simpleCsvString) {
+    var tabs = "\t".repeat(structure.level - 1); // Create tab indents for each level
+    simpleCsvString += tabs + structure.concept.name + "\n"; // Add the element name with indentation
+
+    // Recursively format children
+    structure.children.forEach(function(childStructure) {
+        simpleCsvString = simpleFormatElementToCSV(childStructure, simpleCsvString);
+    });
+
+    return simpleCsvString;
+}
+
+// Main function to tie everything together for the simplified CSV
+function generateSimpleConceptCSV() {
+    // Build the structure (detect and assign hierarchy based on positions and relations)
+    var view = CSelection_GetTheSelectedView();
+    var hierarchy = buildConceptHierarchy(view);
+
+    // Generate the simplified CSV string with only names and indentation
+    var simpleCsvString = simpleFormatHierarchyToCSV(hierarchy);
+
+    // Output the CSV string to clipboard
+    cClipboard_SetClipboardString(simpleCsvString);
+    console.log("Simple CSV generation completed. You may paste the result to verify the structure.");
+}
+
+// Start the process
+//generateSimpleConceptCSV();
+generateConceptCSV();
+
+
+
+
+
+
+
+
+
+
+
+/*******************************************  ERIK's HARD CODED SOLUTION (works) 
 function getLevel1Concepts(concepts){
 	if (!concepts)
 		return concepts;
@@ -425,3 +730,5 @@ function processViewElementsUsingRelationshipsAndView(view) {
 // Start with the current view
 var view = CSelection_GetTheSelectedView();
 processViewElementsUsingRelationshipsAndView(view);
+
+*******************************************  ERIK's RECURSIVE SOLUTION (structure works, but output yetto be fixed) */
