@@ -34,7 +34,7 @@ function buildConceptHierarchy(view) {
     var topLevelElements = getTopLevelElements(view);
 
     if (!topLevelElements) {
-        console.log("No top-level elements found.");
+        console.log("No top-level elements found in this view.");
         return hierarchy;
     }
 
@@ -43,6 +43,7 @@ function buildConceptHierarchy(view) {
 
     // Recursively build the hierarchy for top-level and contained elements
     topLevelElements.each(function(element) {
+		
         var elementHierarchy = buildElementHierarchy(element, view, 1); // Start with level 1
         hierarchy.push(elementHierarchy);
     });
@@ -126,6 +127,9 @@ function generateCSVHeader(maxLevel, properties) {
         header.push("level " + i);
     }
 
+	header.push(CONST_GROUPING_LEVEL);
+	header.push("seq-no");
+
     // Add properties to the header
     header = header.concat(properties);
 
@@ -134,18 +138,20 @@ function generateCSVHeader(maxLevel, properties) {
 }
 
 // String Formatting: Generates a CSV-friendly output from the built structure with dynamic levels, properties, level, and seq-no
-function formatHierarchyToCSV(hierarchy, properties) {
+function formatHierarchyToCSV(hierarchy, properties, selectedElements) { // erik 2024-10-01: just added selectedElements, but not yet implemented filtering of not selected elements (unclear how to deal with missing levels and so on...)
     // Calculate the maximum number of levels in the hierarchy for trailing tabs
     var maxLevel = calculateMaxLevel(hierarchy);
 
     // Generate the CSV header dynamically
     // Level and seq-no columns are placed after the last level column but before the properties
-    var csvString = generateCSVHeader(maxLevel, properties) + "\tlevel\tseq-no\t" + properties.join("\t") + "\n";
+    var csvString = generateCSVHeader(maxLevel, properties); // + "\tlevel\tseq-no\t" + properties.join("\t") + "\n";
+	console.log("formatHierarchyToCSV, header:" + csvString);
 
     // Recursively format each element and its children
     var seqNo = 1; // Sequence number for the top-level elements
     hierarchy.forEach(function(elementStructure) {
-        csvString = formatElementToCSV(elementStructure, properties, csvString, maxLevel, seqNo++);
+		// if (selectedElements
+        csvString = formatElementToCSV(elementStructure, properties, csvString, maxLevel, seqNo++);  
     });
 
     return csvString;
@@ -250,15 +256,24 @@ function generateConceptCSV() {
     if (!csvColumnSpecString) lib_Error("Missing csvColumnSpecification from clipboard. Exiting...");
     
     var properties = csvColumnSpecString.split("\t");
+	//console.log("generateConceptCSV, properties = " + properties);
 
     // Build the structure (detect and assign hierarchy based on positions and relations)
-    var view = CSelection_GetTheSelectedView();
+	var view = null;
+	var selectedElements = CSelection_GetDirectlySelectedElements();
+	if (selectedElements && selectedElements.size() > 0) {
+		view = cElement_GetView(selectedElements.first() );
+	}
+	else
+		view = CSelection_GetTheSelectedView();
+	
+
     var hierarchy = buildConceptHierarchy(view);
 
     // Format the structure into CSV
 
 	//var csvString = simpleFormatHierarchyToCSV(hierarchy);
-    var csvString = formatHierarchyToCSV(hierarchy, properties);
+    var csvString = formatHierarchyToCSV(hierarchy, properties, selectedElements);
 
     // Output the CSV string to clipboard
     cClipboard_SetClipboardString(csvString);
@@ -294,6 +309,7 @@ function simpleFormatElementToCSV(structure, simpleCsvString) {
 function generateSimpleConceptCSV() {
     // Build the structure (detect and assign hierarchy based on positions and relations)
     var view = CSelection_GetTheSelectedView();
+	//var selectedElements = CSelection_GetDirectlySelectedElements();
     var hierarchy = buildConceptHierarchy(view);
 
     // Generate the simplified CSV string with only names and indentation

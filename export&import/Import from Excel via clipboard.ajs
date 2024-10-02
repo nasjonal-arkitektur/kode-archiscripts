@@ -7,8 +7,6 @@ console.clear();
 console.log("Import from Excel via clipboard.ajs");
 
 
-const CONST_GROUPING_LEVEL = "grouping-level"; // Erik TBD: Move to constants.ajs
-
 /** OLD 2
 function parseCSV(csvString) {
     let rows = [];
@@ -361,6 +359,7 @@ for (let i = 1; i < parsedData.length; i++) {
 
     // ... [Resten av koden din for å behandle hver rad og kolonne] ...
 	var archi_main_name = null;
+	var groupingLevel = null;
 	var concept = null;
 	var elm = null;
 	var prop = null;	
@@ -373,6 +372,11 @@ for (let i = 1; i < parsedData.length; i++) {
 		
 		prop = properties[p];
 		//console.log(prop);
+		
+		if (prop === CONST_GROUPING_LEVEL) {
+			groupingLevel = row[p];
+console.log("groupingLevel=" + groupingLevel);
+		}
 		
 		if (prop == const_prop_archi_guid) {
 			imported_archi_concept_id = row[p];
@@ -422,6 +426,7 @@ for (let i = 1; i < parsedData.length; i++) {
 		for (var p = 0; p < properties.length; p++) {
 			
 			prop = properties[p];
+			
 			if (prop == const_arhi_name) {
 				archi_main_name = row[p];
 				console.log(i + ". " + "Creating archi concept: " + archi_main_name);
@@ -441,11 +446,6 @@ for (let i = 1; i < parsedData.length; i++) {
 					
 				}
 		
-
-
-
-
-
 				concept = model.createElement(conceptType, archi_main_name);
 				
 //console.log("Trying to set concept.id = " + concept.id);
@@ -494,7 +494,7 @@ for (let i = 1; i < parsedData.length; i++) {
 	// Add the newly created concept to this view if it doesn't already exist here (though it could exist in another view of the model|)
 	if (!cView_IsConceptPresentInView (view, concept) ) {  // previous logic: if (!existingConceptWithConceptId) {
 
-		var groupingLevel = cConcept_GetProperty(concept, CONST_GROUPING_LEVEL);
+		// see new solution above, i.e. not to be treated as a concept property....var groupingLevel = cConcept_GetProperty(concept, CONST_GROUPING_LEVEL);
 		
 		if (groupingLevel)
 			x = const_x_start  +  const_x_incr * groupingLevel;

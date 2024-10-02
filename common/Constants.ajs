@@ -210,7 +210,7 @@ var const_prop_detailed_description_no = "digdir:detaild_description_no";
 var const_prop_detailed_description_en = "digdir:detailed_description_en";
 
 
-
+var CONST_GROUPING_LEVEL = "grouping-level";
 
 var const_prop_link1_text = "difi:link1-text";
 var const_prop_link1_address = "difi:link1-address";
