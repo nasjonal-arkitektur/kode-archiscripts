@@ -28,6 +28,8 @@ else {
 }
 
 var selectedNotes = CSelection_GetAllDirectlySelectedNotes();
+
+if (selectedNotes)
 selectedNotes.each(function(note) {
 	
 	notes++;

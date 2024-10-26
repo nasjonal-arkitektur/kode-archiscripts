@@ -1,0 +1,118 @@
+﻿load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("Layout - distribute horizontally.ajs");
+
+// Sorting function that prioritizes y position, then x position
+function sortByYThenX(a, b) {
+    var boundsA = a.bounds;
+    var boundsB = b.bounds;
+
+    // First, compare by y position
+    if (boundsA.y !== boundsB.y) {
+        return boundsA.y - boundsB.y; // Sort by y (ascending)
+    }
+
+    // If y positions are the same, sort by x position
+    return boundsA.x - boundsB.x; // Sort by x (ascending)
+}
+
+var selectedElements = CSelection_GetDirectlySelectedElements();
+if (!selectedElements || selectedElements.size() < 2) {
+    lib_Error("Less than two elements selected. Exiting...");
+}
+
+selectedElements.sort(sortByYThenX);
+
+var x_start = selectedElements.first().bounds.x;
+var y_start = selectedElements.first().bounds.y;
+var view = selectedElements.first().view;
+
+var prevElement = selectedElements.first();
+
+var prevX = selectedElements.first().bounds.x;
+var prevY = selectedElements.first().bounds.y;
+var prevW = selectedElements.first().bounds.width;
+var prevH = selectedElements.first().bounds.height;
+
+var y = y_start; // Align to the same y position
+var x = x_start;
+
+var i = 0;
+selectedElements.each(function (element) {
+	
+	var newElement = null;
+	if (i > 0) {
+		x = prevX + prevW + 20; // Erik: fix hard coding
+		newElement = view.add(element.concept, x, y, element.bounds.width, element.bounds.height); 
+		prevX = newElement.bounds.x;
+		prevY = newElement.bounds.y;
+		prevW = newElement.bounds.width;
+		prevH = newElement.bounds.height;
+
+		element.delete();
+	}
+		
+	i++;
+});
+
+console.log("Horizontal distribution of the selected " + selectedElements.size() + " elements done.");
+
+
+
+/***
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("Layout -  distribute horizontally.ajs");
+
+
+// Sorting function that prioritizes y position, then x position
+function sortByYThenX(a, b) {
+    var boundsA = a.bounds;
+    var boundsB = b.bounds;
+
+    // First, compare by y position
+    if (boundsA.y !== boundsB.y) {
+        return boundsA.y - boundsB.y; // Sort by y (ascending)
+    }
+
+    // If y positions are the same, sort by x position
+    return boundsA.x - boundsB.x; // Sort by x (ascending)
+}
+
+var selectedElements = CSelection_GetDirectlySelectedElements();
+if (!selectedElements || selectedElements < 2)
+	lib_Error("Less than two elements selected. Exiting...");
+
+selectedElements.sort(sortByYThenX);
+
+x_start = selectedElements.first().bounds.x;
+y_start = selectedElements.first().bounds.y;
+
+var prevElement = null;
+selectedElements.each(function(element) 
+{
+	element.bounds.y = y_start;
+
+	if (prevElement) {
+		element.bounds.x += element.bounds.x + prevElement.bounds.width + 20; // erik: fix hardcoding...
+	}
+	
+	prevElement = element;
+});
+
+console.log("Horizontal distribution of the selected " + selectedElements.size() + " done.");
+
+
+
+
+#################
+***/
+

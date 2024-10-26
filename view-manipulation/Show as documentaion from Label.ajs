@@ -1,0 +1,21 @@
+﻿load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.show();
+console.clear();
+console.log("Layout - distribute horizontally.ajs");
+
+var selectedElements = CSelection_GetDirectlySelectedElements();
+if (!selectedElements || selectedElements.size() < 1)
+    lib_Error("No elements selected. Exiting...");
+
+selectedElements.each(function (element) {
+	
+	element.setLabelExpression("${documentation}");
+	element.opacity = 0;
+	element.outlineOpacity = 0;
+	element.textAlignment = TEXT_ALIGNMENT.CENTER;
+	element.textPosition = TEXT_POSITION.TOP;
+
+});
