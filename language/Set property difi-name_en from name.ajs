@@ -8,6 +8,22 @@ console.log("Running script Set property difi:name_en from name");
 var concepts = 0;
 var notes = 0;
 
+
+var overwiteExistingProp = false;
+let optionoverwiteExistingProp = window.prompt("Overwrite existing property? (yes/no)", "no");
+if (optionoverwiteExistingProp !== null) {  // This ensures the user didn't cancel
+    if (optionoverwiteExistingProp.toLowerCase() === "yes") {
+        console.log("User chose yes");
+		overwiteExistingProp = true;
+	}
+} else {
+    console.log("User cancelled the prompt.");
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+
+
 var selectedConcepts = CSelection_GetSelectedConcepts("", "");
 if (selectedConcepts == null || selectedConcepts.size() < 1)
 {
@@ -20,10 +36,28 @@ else {
 
 		concepts++;
 
+		var doIt = false;
+		
+		// don't change an already set const_prop_name_no, since ...
+		if (cConcept_GetProperty(concept, const_prop_name_en)) {
+			if (overwiteExistingProp)
+				doIt = true;
+				//console.log("Skipping " + concept.name + " with " + const_prop_name_no + ": " + cConcept_GetProperty(concept, const_prop_name_no)  );
+		}
+		else {
+			doIt = true;
+		}
+
+		if (doIt) {
+			cConcept_SetProperty(concept, const_prop_name_en, concept.name);
+			cConcept_SetProperty(concept, const_prop_description_en, concept.documentation);
+		}
+
+/*
 		cConcept_SetProperty(concept, const_prop_name_en, concept.name);
 		cConcept_SetProperty(concept, const_prop_description_en, concept.documentation);
 		cConcept_UpdateLabel(concept);
-
+*/
 	});
 }
 

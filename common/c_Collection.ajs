@@ -5,6 +5,30 @@
 
 load(__DIR__ + "Constants.ajs");
 
+function cCollection_sortByName(a, b) {
+
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+}
+
+// Sorting function that prioritizes y position, then x position
+function cCollection_sortByYThenX(a, b) {
+    var boundsA = a.bounds;
+    var boundsB = b.bounds;
+
+    // First, compare by y position
+    if (boundsA.y !== boundsB.y) {
+        return boundsA.y - boundsB.y; // Sort by y (ascending)
+    }
+
+    // If y positions are the same, sort by x position
+    return boundsA.x - boundsB.x; // Sort by x (ascending)
+}
 
 var cCollection_GetDuplicateItems = function(coll, obj) {
 
@@ -51,8 +75,10 @@ var cCollection_GetItemsOfDctType = function(coll, dctType) {
 
 var cCollection_GetItemsWithNamespace = function(coll, namespace){
 
+//console.log("namespace=" + namespace);
+
     return coll.filter(function(o) {
-        return ( o.prop(const_prop_namespace) == namespace );
+        return ( o.prop(const_prop_namespace) === namespace );
     });
 }
 

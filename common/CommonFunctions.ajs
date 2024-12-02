@@ -281,3 +281,18 @@ function lib_SortConcepts(concepts, property) {
         }
     });
 }
+
+function lib_sortConceptsByName(concepts) {
+    if (!concepts || concepts.size() === 0) {
+        console.log("No concepts provided or the collection is empty.");
+        return [];
+    }
+
+    // Convert Archi Collection to a JavaScript array
+    //concepts = concepts.toArray();
+
+    // Sort the array by concept name
+    return concepts.sort(function(a, b) {
+        return a.name.localeCompare(b.name);
+    });
+}

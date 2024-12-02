@@ -81,6 +81,33 @@ function CSelection_findFolderAndSubfoldersOfSelectedFolders()  {
 }
 
 
+function CSelection_findConceptsWithGivenTypeUnderSelectedFolders(itemType)  {
+
+	var selectedFolders = $(selection).filter("folder");
+	var itemList = cFolder_GetAllItemsUnderGivenFoldersForGivenType(selectedFolders, itemType);
+	
+	var resultingConcepts = null;
+	itemList.each(function(item) {	
+	
+		if (resultingConcepts == null) {
+			resultingConcepts = $(item.concept);
+		}
+		else {
+			
+			var conceptInList = cCollection_GetItemsWithGivenId(resultingConcepts, item.concept);
+			
+			if (conceptInList.size() < 1)
+				resultingConcepts.add($(item.concept));
+		}
+
+	});			
+	
+	var sortedConcepts = lib_sortConceptsByName(resultingConcepts);
+
+	return sortedConcepts;
+
+}
+
 function CSelection_findItemsWithGivenTypeAndNameUnderSelectedFolders(itemType, itemName, completeName, caseSensitiveName)  {
 	
 	var strComplete = "complete string"
@@ -385,8 +412,8 @@ function CSelection_GetSelectedConcepts(conceptType, namespace, conceptDctType) 
 	
 	else if (conceptDctType != null && conceptDctType != "")
 		selectedConcepts = cCollection_GetItemsOfDctType(selectedConcepts, conceptDctType);
-	else if (conceptDctType == null || conceptDctType === "")// tested? New per 2023-08-15
-		selectedConcepts = directlySelectedConcepts;
+	//else if (conceptDctType == null || conceptDctType === "")// tested? New per 2023-08-15
+	//	selectedConcepts = directlySelectedConcepts;
 	
 	if (namespace != null && namespace != "")
 		selectedConcepts = cCollection_GetItemsWithNamespace(selectedConcepts, namespace);
@@ -416,7 +443,7 @@ function CSelection_GetDirectlySelectedRelations() {
 
 
 
-function CSelection_GetTheSelectedView() { 
+function 	() { 
 
 	var selectedViews = $(selection).filter("view");
 

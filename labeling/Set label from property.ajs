@@ -10,35 +10,56 @@ var newLabel;
 
 // erik: late evening, to be continued
 
+/*
 var propName = window.prompt("Name of property to use as input for setting the label (leave empty to cancel):", "");
 if (propName === null || propName === "") {
 	window.alert("Cancelled - exiting...");	
 	exit();
 }
+*/
 
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
 lib_VerifyNotNull(selectedOccurences, "No objects selected");
 
+var property = window.prompt("New label expression" + "' (leave empty to cancel)?", "");
+if (property === null || property === "") {
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+var newLabel = "${property:" + property + "}";
+
+
+var overwriteExistingLabels = false;
+let optionoverwiteExistingLabels = window.prompt("Overwrite existing labels? (yes/no)", "no");
+
+if (optionoverwiteExistingLabels !== null) {  // This ensures the user didn't cancel
+    if (optionoverwiteExistingLabels.toLowerCase() === "yes") {
+        console.log("User chose yes");
+		overwriteExistingLabels = true;
+	}
+} else {
+    console.log("User cancelled the prompt.");
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+
 selectedOccurences.each(function(occurence) {
 
-
-//console.log(occurence.labelValue);
-	
-	var newName = cConcept_GetProperty(occurence.concept, propName);
 	var labelExpression = occurence.getLabelExpression();
-	
-	//console.log("Changing name from " + occurence.name + " to " + newName);
-	
-	//var newName = occurence.labelValue;
 	
 	
 	if (!labelExpression){
-		console.log("Setting previously empty label to " + newName);
-		occurence.setLabelExpression(newName);
+		console.log("Setting previously empty label to " + newLabel);
+		occurence.setLabelExpression(newLabel);
 	}
-	else {
-		console.log("Setting previously NOT empty label to " + newName);
-		occurence.setLabelExpression(newName);
+	else if (labelExpression == " "){
+		console.log("WARNING: Not changing dummy space char label for  " + occurence.name);
+	}			
+	else if (overwriteExistingLabels) {
+		console.log("Setting previously NOT empty label to " + newLabel);
+		occurence.setLabelExpression(newLabel);
 	}	
 	
 	// console.log("Skipping " + occurence.name + " due to existing labelExpression");

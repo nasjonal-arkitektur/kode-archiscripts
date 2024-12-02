@@ -1,0 +1,64 @@
+﻿"use strict";
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+load(__DIR__ + "../common/c_Concept.ajs");
+load(__DIR__ + "../common/CommonFunctions.ajs");
+load(__DIR__ + "../common/c_Clipboard.ajs");
+
+console.clear();
+lib_Log("Find concepts of given type");
+
+function sortByName(a, b) {
+
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+}
+
+
+var conceptType = window.prompt("Please specify concept-type:", "business-actor");
+if (conceptType === null || conceptType === "") {
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+var namespace = window.prompt("Specify namespace if you want to filter selection based on a given namespace (or leave empty and click OK to proceed)", null);
+if (namespace == null) // means user hit Cancel
+	lib_Error("Cancelled by user");
+else if (namespace == "")
+	namespace = null;
+
+//var selectedConcepts = CSelection_findConceptsWithGivenTypeUnderSelectedFolders(conceptType);
+//var selectedConcepts = CSelection_GetSelectedConcepts(conceptType, namespace, null);
+var selectedConcepts = CSelection_GetSelectedConcepts(conceptType, namespace, null);
+
+
+if (selectedConcepts === null || selectedConcepts.size() < 1)
+{
+	window.alert("No concepts selected. Exiting...");
+	lib_Error("No concepts selected");
+
+}
+
+selectedConcepts.sort(cCollection_sortByName);
+	
+var clibBoardString= "";
+selectedConcepts.each(function(concept) {
+	
+	console.log(concept.name + "\t" + concept.prop(const_prop_namespace) + "\t" + concept.type + "\t" + concept.id);
+	clibBoardString += concept.id + "\n";
+});
+
+// remove the last "\n"
+clibBoardString = clibBoardString.substring(0, clibBoardString.length - 1);
+cClipboard_SetClipboardString(clibBoardString);
+	
+		
+console.log("\nCopied " +  selectedConcepts.size() +  " concepts to the cliboard");
+
+console.log("Script completed");

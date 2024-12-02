@@ -7,6 +7,7 @@ console.clear();
 console.log("Layout - distribute horizontally.ajs");
 
 // Sorting function that prioritizes y position, then x position
+// Erik: Remove and use cCollection_sortByYThenX
 function sortByYThenX(a, b) {
     var boundsA = a.bounds;
     var boundsB = b.bounds;
@@ -26,6 +27,7 @@ if (!selectedElements || selectedElements.size() < 2) {
 }
 
 selectedElements.sort(sortByYThenX);
+//To be tested: selectedElements.sort(cCollection_sortByYThenX); 
 
 var x_start = selectedElements.first().bounds.x;
 var y_start = selectedElements.first().bounds.y;
@@ -46,7 +48,7 @@ selectedElements.each(function (element) {
 	
 	var newElement = null;
 	if (i > 0) {
-		x = prevX + prevW + 20; // Erik: fix hard coding
+		x = prevX + prevW + 40; // Erik: fix hard coding
 		newElement = view.add(element.concept, x, y, element.bounds.width, element.bounds.height); 
 		prevX = newElement.bounds.x;
 		prevY = newElement.bounds.y;

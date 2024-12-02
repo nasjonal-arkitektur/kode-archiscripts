@@ -1,0 +1,45 @@
+﻿"use strict";
+
+load(__DIR__ + "../common/c_Namespace.ajs");
+load(__DIR__ + "../common/c_Selection.ajs");
+
+console.show();
+console.clear();
+console.log("Hide Elements With Given Property Value"); 
+
+
+var selectedItems = $(selection).filter("element");
+if (selectedItems == null || selectedItems.size() < 1)
+{
+	window.alert("No elements selected. Exiting...");
+	exit();
+}	
+
+var view = cElement_GetView(selectedItems.first());
+if (view == null)
+{
+	window.alert("No view selected. Exiting...");
+	exit();
+}
+
+var prop = window.prompt("Please specify property name (leave empty to cancel):", "");
+if (prop === null || prop === "") {
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+var propValue = window.prompt("Property value to look for '"+prop+"' (leave empty to cancel)?", "");
+if (propValue === null || propValue === "") {
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
+selectedItems.each(function(element) {
+
+	if (cConcept_GetProperty(element.concept, prop) == propValue)
+		window.alert("Yes!");	
+	else
+		window.alert("Yes!");	
+	
+	
+});	
+

@@ -8,6 +8,24 @@ console.log("Running script Set label from name");
 var selectedOccurences = CSelection_GetDirectlySelectedOccurences();
 lib_VerifyNotNull(selectedOccurences, "No objects selected");
 
+
+var overwriteExistingLabels = false;
+// Prompt the user with a yes/no question
+let optionoverwiteExistingLabels = window.prompt("Overwrite existing labels? (yes/no)", "no");
+//let overWriteExistingLabels = window.confirm("Overwrite existing labels?");
+//exit();
+// Check the response
+if (optionoverwiteExistingLabels !== null) {  // This ensures the user didn't cancel
+    if (optionoverwiteExistingLabels.toLowerCase() === "yes") {
+        console.log("User chose yes");
+		overwriteExistingLabels = true;
+	}
+} else {
+    console.log("User cancelled the prompt.");
+	window.alert("Cancelled - exiting...");	
+	exit();
+}
+
 selectedOccurences.each(function(occurence) {
 
 
@@ -25,9 +43,15 @@ selectedOccurences.each(function(occurence) {
 		console.log("Setting previously empty label to " + occurence.name);
 		occurence.setLabelExpression(occurence.name);
 	}
+	else if (labelExpression == " "){
+		console.log("WARNING: Not changing dummy space char label for  " + occurence.name);
+	}		
 	else {
-		console.log("Setting previously NOT empty label to " + occurence.name);
-		occurence.setLabelExpression(occurence.name);
+		
+		if (overwriteExistingLabels) {
+			console.log("Setting previously NOT empty label to " + occurence.name);
+			occurence.setLabelExpression(occurence.name);
+		}
 	}	
 	
 	// console.log("Skipping " + occurence.name + " due to existing labelExpression");
